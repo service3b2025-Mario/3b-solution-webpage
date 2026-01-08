@@ -1,0 +1,14 @@
+{
+  "query": "SELECT propertyType, COUNT(*) as count FROM properties WHERE propertyType IN ('CityLand', 'Retail', 'Lot', 'HouseAndLot') GROUP BY propertyType",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT propertyType, COUNT(*) as count FROM properties WHERE propertyType IN ('CityLand', 'Retail', 'Lot', 'HouseAndLot') GROUP BY propertyType",
+  "rows": [
+    {
+      "propertyType": "CityLand",
+      "count": "2"
+    }
+  ],
+  "messages": [],
+  "stdout": "propertyType\tcount\nCityLand\t2\n",
+  "stderr": "",
+  "execution_time_ms": 1507
+}

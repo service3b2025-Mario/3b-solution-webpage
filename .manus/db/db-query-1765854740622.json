@@ -1,0 +1,52 @@
+{
+  "query": "SELECT * FROM locations;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT * FROM locations;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Manila",
+      "country": "Philippines",
+      "region": "SouthEastAsia",
+      "description": "Premier hospitality and commercial hub in Southeast Asia",
+      "image": "NULL",
+      "projectCount": "60",
+      "specialization": "Luxury Hospitality & Mixed-Use",
+      "order": "1",
+      "isActive": "1",
+      "createdAt": "2025-12-16 01:59:11",
+      "updatedAt": "2025-12-16 01:59:11"
+    },
+    {
+      "id": "2",
+      "name": "Maldives",
+      "country": "Maldives",
+      "region": "Maldives",
+      "description": "Ultra Luxury High End Island Resorts",
+      "image": "NULL",
+      "projectCount": "4",
+      "specialization": "Island Resorts",
+      "order": "2",
+      "isActive": "1",
+      "createdAt": "2025-12-16 01:59:11",
+      "updatedAt": "2025-12-16 03:11:54"
+    },
+    {
+      "id": "3",
+      "name": "Europe",
+      "country": "Multiple",
+      "region": "Europe",
+      "description": "Premium hospitality across European capitals",
+      "image": "NULL",
+      "projectCount": "50",
+      "specialization": "Boutique Hotels",
+      "order": "3",
+      "isActive": "1",
+      "createdAt": "2025-12-16 01:59:11",
+      "updatedAt": "2025-12-16 01:59:11"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcountry\tregion\tdescription\timage\tprojectCount\tspecialization\torder\tisActive\tcreatedAt\tupdatedAt\n1\tManila\tPhilippines\tSouthEastAsia\tPremier hospitality and commercial hub in Southeast Asia\tNULL\t60\tLuxury Hospitality & Mixed-Use\t1\t1\t2025-12-16 01:59:11\t2025-12-16 01:59:11\n2\tMaldives\tMaldives\tMaldives\tUltra Luxury High End Island Resorts\tNULL\t4\tIsland Resorts\t2\t1\t2025-12-16 01:59:11\t2025-12-16 03:11:54\n3\tEurope\tMultiple\tEurope\tPremium hospitality across European capitals\tNULL\t50\tBoutique Hotels\t3\t1\t2025-12-16 01:59:11\t2025-12-16 01:59:11\n",
+  "stderr": "",
+  "execution_time_ms": 93
+}

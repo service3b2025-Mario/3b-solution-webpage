@@ -1,0 +1,70 @@
+{
+  "query": "SHOW TABLES;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SHOW TABLES;",
+  "rows": [
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "__drizzle_migrations"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "agent_availability"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "analytics_events"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "bookings"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "fx_rates"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "leads"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "legal_pages"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "locations"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "market_alerts"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "market_reports"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "portfolio_stats"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "properties"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "saved_searches"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "services"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "site_settings"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "success_stories"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "team_members"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "tour_feedback"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "users"
+    },
+    {
+      "Tables_in_DnWsBVTJUtGDXWt9zvifVT": "wishlist"
+    }
+  ],
+  "messages": [],
+  "stdout": "Tables_in_DnWsBVTJUtGDXWt9zvifVT\n__drizzle_migrations\nagent_availability\nanalytics_events\nbookings\nfx_rates\nleads\nlegal_pages\nlocations\nmarket_alerts\nmarket_reports\nportfolio_stats\nproperties\nsaved_searches\nservices\nsite_settings\nsuccess_stories\nteam_members\ntour_feedback\nusers\nwishlist\n",
+  "stderr": "",
+  "execution_time_ms": 49
+}

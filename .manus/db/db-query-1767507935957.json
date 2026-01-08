@@ -1,0 +1,9 @@
+{
+  "query": "SELECT id, title, slug FROM properties WHERE slug = 'anya-villas-ultra-luxury-tagaytay'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, slug FROM properties WHERE slug = 'anya-villas-ultra-luxury-tagaytay'",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1538
+}

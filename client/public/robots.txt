@@ -1,0 +1,12 @@
+# Allow all search engines to crawl the site
+User-agent: *
+Allow: /
+
+# Disallow admin and user-specific pages
+Disallow: /admin/
+Disallow: /my-wishlist
+Disallow: /my-saved-searches
+Disallow: /my-tours
+
+# Sitemap location
+Sitemap: https://www.3bsolution.com/sitemap.xml

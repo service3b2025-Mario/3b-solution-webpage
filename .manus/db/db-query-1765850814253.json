@@ -1,0 +1,90 @@
+{
+  "query": "SELECT id, label, value FROM portfolio_stats;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, label, value FROM portfolio_stats;",
+  "rows": [
+    {
+      "id": "1",
+      "label": "Total Projects",
+      "value": "124"
+    },
+    {
+      "id": "2",
+      "label": "Assets Under Advisory",
+      "value": "2.5"
+    },
+    {
+      "id": "3",
+      "label": "Average Annual Return",
+      "value": "18"
+    },
+    {
+      "id": "4",
+      "label": "Countries",
+      "value": "12"
+    },
+    {
+      "id": "5",
+      "label": "Total Projects",
+      "value": "124"
+    },
+    {
+      "id": "6",
+      "label": "Assets Under Advisory",
+      "value": "2.5"
+    },
+    {
+      "id": "7",
+      "label": "Average Annual Return",
+      "value": "18"
+    },
+    {
+      "id": "8",
+      "label": "Countries",
+      "value": "12"
+    },
+    {
+      "id": "9",
+      "label": "Total Projects",
+      "value": "124"
+    },
+    {
+      "id": "10",
+      "label": "Assets Under Advisory",
+      "value": "2.5"
+    },
+    {
+      "id": "11",
+      "label": "Average Annual Return",
+      "value": "18"
+    },
+    {
+      "id": "12",
+      "label": "Countries",
+      "value": "12"
+    },
+    {
+      "id": "13",
+      "label": "Total Projects",
+      "value": "124"
+    },
+    {
+      "id": "14",
+      "label": "Assets Under Advisory",
+      "value": "2.5"
+    },
+    {
+      "id": "15",
+      "label": "Average Annual Return",
+      "value": "18"
+    },
+    {
+      "id": "16",
+      "label": "Countries",
+      "value": "12"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tlabel\tvalue\n1\tTotal Projects\t124\n2\tAssets Under Advisory\t2.5\n3\tAverage Annual Return\t18\n4\tCountries\t12\n5\tTotal Projects\t124\n6\tAssets Under Advisory\t2.5\n7\tAverage Annual Return\t18\n8\tCountries\t12\n9\tTotal Projects\t124\n10\tAssets Under Advisory\t2.5\n11\tAverage Annual Return\t18\n12\tCountries\t12\n13\tTotal Projects\t124\n14\tAssets Under Advisory\t2.5\n15\tAverage Annual Return\t18\n16\tCountries\t12\n",
+  "stderr": "",
+  "execution_time_ms": 90
+}

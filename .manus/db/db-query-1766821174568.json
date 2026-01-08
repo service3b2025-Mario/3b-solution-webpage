@@ -1,0 +1,34 @@
+{
+  "query": "SELECT id, title, slug, landSizeSqm, buildingAreaSqm, floorAreaSqm, askingPriceNet, askingPriceGross, priceMin, priceMax FROM properties WHERE slug LIKE '%off-market%' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, slug, landSizeSqm, buildingAreaSqm, floorAreaSqm, askingPriceNet, askingPriceGross, priceMin, priceMax FROM properties WHERE slug LIKE '%off-market%' LIMIT 5;",
+  "rows": [
+    {
+      "id": "90005",
+      "title": "Off-Market Prime Development Site – Metro Manila CBD",
+      "slug": "off-market-prime-development-site-metro-manila",
+      "landSizeSqm": "NULL",
+      "buildingAreaSqm": "NULL",
+      "floorAreaSqm": "NULL",
+      "askingPriceNet": "NULL",
+      "askingPriceGross": "NULL",
+      "priceMin": "NULL",
+      "priceMax": "NULL"
+    },
+    {
+      "id": "90006",
+      "title": "Off-Market Income-Generating Hotel & Mixed-Use Asset – Metro Manila CBD",
+      "slug": "off-market-income-generating-hotel-metro-manila",
+      "landSizeSqm": "NULL",
+      "buildingAreaSqm": "NULL",
+      "floorAreaSqm": "NULL",
+      "askingPriceNet": "NULL",
+      "askingPriceGross": "NULL",
+      "priceMin": "NULL",
+      "priceMax": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tslug\tlandSizeSqm\tbuildingAreaSqm\tfloorAreaSqm\taskingPriceNet\taskingPriceGross\tpriceMin\tpriceMax\n90005\tOff-Market Prime Development Site – Metro Manila CBD\toff-market-prime-development-site-metro-manila\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\n90006\tOff-Market Income-Generating Hotel & Mixed-Use Asset – Metro Manila CBD\toff-market-income-generating-hotel-metro-manila\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 108
+}

@@ -1,0 +1,9 @@
+{
+  "query": "-- Bookings table indexes\nCREATE INDEX IF NOT EXISTS idx_bookings_userId ON bookings(userId);\nCREATE INDEX IF NOT EXISTS idx_bookings_propertyId ON bookings(propertyId);\nCREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);\n\n-- Leads table indexes\nCREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email);\nCREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status);\n\n-- Wishlist table indexes\nCREATE INDEX IF NOT EXISTS idx_wishlist_userId ON wishlist(userId);\nCREATE INDEX IF NOT EXISTS idx_wishlist_propertyId ON wishlist(propertyId);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute -- Bookings table indexes\nCREATE INDEX IF NOT EXISTS idx_bookings_userId ON bookings(userId);\nCREATE INDEX IF NOT EXISTS idx_bookings_propertyId ON bookings(propertyId);\nCREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(status);\n\n-- Leads table indexes\nCREATE INDEX IF NOT EXISTS idx_leads_email ON leads(email);\nCREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status);\n\n-- Wishlist table indexes\nCREATE INDEX IF NOT EXISTS idx_wishlist_userId ON wishlist(userId);\nCREATE INDEX IF NOT EXISTS idx_wishlist_propertyId ON wishlist(propertyId);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 6311
+}

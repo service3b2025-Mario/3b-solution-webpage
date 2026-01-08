@@ -1,0 +1,27 @@
+{
+  "query": "SELECT id, title, landSizeSqm, landSizeHa, buildingAreaSqm, floorAreaSqm, floors, units, unitsDetails, floorAreaRatio, askingPriceNet, askingPriceGross, priceMin, priceMax, currency FROM properties WHERE id = 30001",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, landSizeSqm, landSizeHa, buildingAreaSqm, floorAreaSqm, floors, units, unitsDetails, floorAreaRatio, askingPriceNet, askingPriceGross, priceMin, priceMax, currency FROM properties WHERE id = 30001",
+  "rows": [
+    {
+      "id": "30001",
+      "title": "Test 01",
+      "landSizeSqm": "5000.00",
+      "landSizeHa": "5.0000",
+      "buildingAreaSqm": "3500.00",
+      "floorAreaSqm": "4200.00",
+      "floors": "13",
+      "units": "120",
+      "unitsDetails": "80 studios",
+      "floorAreaRatio": "5.00",
+      "askingPriceNet": "42000.00",
+      "askingPriceGross": "47000.00",
+      "priceMin": "42000.00",
+      "priceMax": "47000.00",
+      "currency": "PHP"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tlandSizeSqm\tlandSizeHa\tbuildingAreaSqm\tfloorAreaSqm\tfloors\tunits\tunitsDetails\tfloorAreaRatio\taskingPriceNet\taskingPriceGross\tpriceMin\tpriceMax\tcurrency\n30001\tTest 01\t5000.00\t5.0000\t3500.00\t4200.00\t13\t120\t80 studios\t5.00\t42000.00\t47000.00\t42000.00\t47000.00\tPHP\n",
+  "stderr": "",
+  "execution_time_ms": 49
+}

@@ -1,0 +1,1 @@
+ALTER TABLE `properties` MODIFY COLUMN `region` enum('Philippines','SouthEastAsia','Maldives','Europe','NorthAmerica','Caribbean') NOT NULL;

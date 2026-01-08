@@ -1,0 +1,52 @@
+{
+  "query": "SELECT id, title, slug, city, country FROM properties LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, slug, city, country FROM properties LIMIT 10;",
+  "rows": [
+    {
+      "id": "1",
+      "title": "Makati Prime Tower",
+      "slug": "makati-prime-tower",
+      "city": "Makati",
+      "country": "Philippines"
+    },
+    {
+      "id": "2",
+      "title": "Makati Prime Tower",
+      "slug": "boracay-beach-resort",
+      "city": "Boracay",
+      "country": "Philippines"
+    },
+    {
+      "id": "3",
+      "title": "Makati Prime Tower",
+      "slug": "maldives-private-island",
+      "city": "North Malé Atoll",
+      "country": "Maldives"
+    },
+    {
+      "id": "4",
+      "title": "Makati Prime Tower",
+      "slug": "barcelona-boutique-hotel",
+      "city": "Barcelona",
+      "country": "Spain"
+    },
+    {
+      "id": "5",
+      "title": "Makati Prime Tower",
+      "slug": "miami-waterfront-commercial",
+      "city": "Miami",
+      "country": "USA"
+    },
+    {
+      "id": "6",
+      "title": "Makati Prime Tower",
+      "slug": "cebu-it-park-office",
+      "city": "Cebu",
+      "country": "Philippines"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tslug\tcity\tcountry\n1\tMakati Prime Tower\tmakati-prime-tower\tMakati\tPhilippines\n2\tMakati Prime Tower\tboracay-beach-resort\tBoracay\tPhilippines\n3\tMakati Prime Tower\tmaldives-private-island\tNorth Malé Atoll\tMaldives\n4\tMakati Prime Tower\tbarcelona-boutique-hotel\tBarcelona\tSpain\n5\tMakati Prime Tower\tmiami-waterfront-commercial\tMiami\tUSA\n6\tMakati Prime Tower\tcebu-it-park-office\tCebu\tPhilippines\n",
+  "stderr": "",
+  "execution_time_ms": 51
+}

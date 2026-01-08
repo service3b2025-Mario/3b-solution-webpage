@@ -1,0 +1,58 @@
+{
+  "query": "SELECT id, title, clientName, clientType, location, challenge, solution, results, shortDescription, image FROM success_stories ORDER BY id",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, clientName, clientType, location, challenge, solution, results, shortDescription, image FROM success_stories ORDER BY id",
+  "rows": [
+    {
+      "id": "30001",
+      "title": "International Investor Engagement",
+      "clientName": "European Family Office",
+      "clientType": "FamilyOffice",
+      "location": "Manila, Philippines",
+      "challenge": "An overseas family office from Europe discovered 3B Solution while researching market entry into the Philippines.",
+      "solution": "Compiled a targeted shortlist of suitable Manila properties. Built detailed ROI models reflecting local market realities. Coordinated legal and technical due diligence with Philippine partners. Organized virtual meetings across three time zones.",
+      "results": "The investor gained full transparency on opportunities and a structured acquisition strategy without needing to establish a local presence first.",
+      "shortDescription": "European family office successfully entered the Philippine market with full transparency and structured acquisition strategy.",
+      "image": "NULL"
+    },
+    {
+      "id": "30002",
+      "title": "Developer Market Entry Support",
+      "clientName": "Regional Development Company",
+      "clientType": "Developer",
+      "location": "Philippines",
+      "challenge": "A regional development company sought to expand beyond its home market but lacked local contacts.",
+      "solution": "Introduced them to pre-vetted titled development lots. Clarified Philippine ownership and licensing frameworks. Helped define optimal cooperation models. Connected them with architects, contractors, and operators.",
+      "results": "The developer was able to evaluate multiple projects quickly and establish a concrete expansion roadmap supported by reliable local stakeholders.",
+      "shortDescription": "Regional developer successfully expanded beyond home market with structured roadmap and reliable local stakeholders.",
+      "image": "NULL"
+    },
+    {
+      "id": "30003",
+      "title": "Conversion Journey Optimization",
+      "clientName": "Online Visitors",
+      "clientType": "PrivateInvestor",
+      "location": "Global",
+      "challenge": "Potential buyers were engaging with online teasers but were uncertain how to proceed.",
+      "solution": "Designed intuitive CTA journeys on the website. Standardized NDA and inquiry processes. Provided step-by-step guidance after form submission. Supported users in both mobile and desktop environments.",
+      "results": "Higher-quality inquiries and well-informed leads ready for real negotiations.",
+      "shortDescription": "Enhanced website user experience resulted in higher-quality inquiries and well-informed leads ready for negotiations.",
+      "image": "NULL"
+    },
+    {
+      "id": "30004",
+      "title": "Cross-Border Coordination Excellence",
+      "clientName": "Middle Eastern Investor Group",
+      "clientType": "Institutional",
+      "location": "Philippines",
+      "challenge": "A Middle Eastern investor group required fast access to data on a confidential Philippine hospitality project.",
+      "solution": "Managed secure document exchange. Produced professional two-pager project summaries. Synchronized communication between owner, operator, and investor. Ensured rapid follow-ups and clarifications.",
+      "results": "The group could assess an off-market project within days instead of months, demonstrating speed and transparency.",
+      "shortDescription": "Middle Eastern investor group assessed confidential off-market project within days instead of months through rapid coordination.",
+      "image": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tclientName\tclientType\tlocation\tchallenge\tsolution\tresults\tshortDescription\timage\n30001\tInternational Investor Engagement\tEuropean Family Office\tFamilyOffice\tManila, Philippines\tAn overseas family office from Europe discovered 3B Solution while researching market entry into the Philippines.\tCompiled a targeted shortlist of suitable Manila properties. Built detailed ROI models reflecting local market realities. Coordinated legal and technical due diligence with Philippine partners. Organized virtual meetings across three time zones.\tThe investor gained full transparency on opportunities and a structured acquisition strategy without needing to establish a local presence first.\tEuropean family office successfully entered the Philippine market with full transparency and structured acquisition strategy.\tNULL\n30002\tDeveloper Market Entry Support\tRegional Development Company\tDeveloper\tPhilippines\tA regional development company sought to expand beyond its home market but lacked local contacts.\tIntroduced them to pre-vetted titled development lots. Clarified Philippine ownership and licensing frameworks. Helped define optimal cooperation models. Connected them with architects, contractors, and operators.\tThe developer was able to evaluate multiple projects quickly and establish a concrete expansion roadmap supported by reliable local stakeholders.\tRegional developer successfully expanded beyond home market with structured roadmap and reliable local stakeholders.\tNULL\n30003\tConversion Journey Optimization\tOnline Visitors\tPrivateInvestor\tGlobal\tPotential buyers were engaging with online teasers but were uncertain how to proceed.\tDesigned intuitive CTA journeys on the website. Standardized NDA and inquiry processes. Provided step-by-step guidance after form submission. Supported users in both mobile and desktop environments.\tHigher-quality inquiries and well-informed leads ready for real negotiations.\tEnhanced website user experience resulted in higher-quality inquiries and well-informed leads ready for negotiations.\tNULL\n30004\tCross-Border Coordination Excellence\tMiddle Eastern Investor Group\tInstitutional\tPhilippines\tA Middle Eastern investor group required fast access to data on a confidential Philippine hospitality project.\tManaged secure document exchange. Produced professional two-pager project summaries. Synchronized communication between owner, operator, and investor. Ensured rapid follow-ups and clarifications.\tThe group could assess an off-market project within days instead of months, demonstrating speed and transparency.\tMiddle Eastern investor group assessed confidential off-market project within days instead of months through rapid coordination.\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1522
+}

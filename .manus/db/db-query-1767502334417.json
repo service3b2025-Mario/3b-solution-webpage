@@ -1,0 +1,98 @@
+{
+  "query": "SELECT propertyType, title FROM properties ORDER BY propertyType",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT propertyType, title FROM properties ORDER BY propertyType",
+  "rows": [
+    {
+      "propertyType": "Hospitality",
+      "title": "Boutique Hotel – General Luna, Siargao PH"
+    },
+    {
+      "propertyType": "Island",
+      "title": "Off-Market Private Island Development Opportunity – Philippines"
+    },
+    {
+      "propertyType": "Resort",
+      "title": "Off-Market Private Island & Boutique Resort Opportunity – Philippines"
+    },
+    {
+      "propertyType": "Resort",
+      "title": "Off-Market Fully Operational 5-Star Island Resort – Maldives"
+    },
+    {
+      "propertyType": "CityHotel",
+      "title": "3 Star Airport City Hotel Metro Manila"
+    },
+    {
+      "propertyType": "CityHotel",
+      "title": "3 Star City Hotel North EDSA PH"
+    },
+    {
+      "propertyType": "CityHotel",
+      "title": "3 Star City Hotel PH"
+    },
+    {
+      "propertyType": "CityHotel",
+      "title": "Off-Market Uptown Corner Lot with Existing Income – Metro Manila CBD"
+    },
+    {
+      "propertyType": "CityHotel",
+      "title": "Off-Market Income-Generating Hotel & Mixed-Use Asset – Metro Manila CBD"
+    },
+    {
+      "propertyType": "CityHotel",
+      "title": "3 Star City Hotel Ermita PH"
+    },
+    {
+      "propertyType": "MixedUse",
+      "title": "Prime CBD Serviced Residence & Hospitality Investment – Philippines"
+    },
+    {
+      "propertyType": "MixedUse",
+      "title": "Off-Market Income-Generating Condotel & Mixed-Use Asset – Metro Manila CBD"
+    },
+    {
+      "propertyType": "MixedUse",
+      "title": "Off-Market Prime Mixed-Use Development Site – Metro Manila Core"
+    },
+    {
+      "propertyType": "MixedUse",
+      "title": "Off-Market Brand-New Mixed-Use High-Rise – Metro Manila CBD"
+    },
+    {
+      "propertyType": "Office",
+      "title": "Off-Market Income-Generating Office & Mixed-Use Asset – Metro Manila CBD"
+    },
+    {
+      "propertyType": "CityLand",
+      "title": "Off-Market Super Prime Development Land – Manila Bay Growth Corridor"
+    },
+    {
+      "propertyType": "CityLand",
+      "title": "Off-Market Prime Development Site – Metro Manila CBD"
+    },
+    {
+      "propertyType": "Land",
+      "title": "Off-Market Large-Scale Development Land – Greater Metro Manila Region"
+    },
+    {
+      "propertyType": "Land",
+      "title": "Off-Market Large-Scale Beachfront Development Opportunity – PH"
+    },
+    {
+      "propertyType": "Land",
+      "title": "Antipolo Valley Estate – Prime Large-Scale Development Land"
+    },
+    {
+      "propertyType": "Land",
+      "title": "Botong Francisco Estates – Prime Development Land, Rizal"
+    },
+    {
+      "propertyType": "Land",
+      "title": "Mt. Everest Heights – Prime Development Land, Antipolo City"
+    }
+  ],
+  "messages": [],
+  "stdout": "propertyType\ttitle\nHospitality\tBoutique Hotel – General Luna, Siargao PH\nIsland\tOff-Market Private Island Development Opportunity – Philippines\nResort\tOff-Market Private Island & Boutique Resort Opportunity – Philippines\nResort\tOff-Market Fully Operational 5-Star Island Resort – Maldives\nCityHotel\t3 Star Airport City Hotel Metro Manila\nCityHotel\t3 Star City Hotel North EDSA PH\nCityHotel\t3 Star City Hotel PH\nCityHotel\tOff-Market Uptown Corner Lot with Existing Income – Metro Manila CBD\nCityHotel\tOff-Market Income-Generating Hotel & Mixed-Use Asset – Metro Manila CBD\nCityHotel\t3 Star City Hotel Ermita PH\nMixedUse\tPrime CBD Serviced Residence & Hospitality Investment – Philippines\nMixedUse\tOff-Market Income-Generating Condotel & Mixed-Use Asset – Metro Manila CBD\nMixedUse\tOff-Market Prime Mixed-Use Development Site – Metro Manila Core\nMixedUse\tOff-Market Brand-New Mixed-Use High-Rise – Metro Manila CBD\nOffice\tOff-Market Income-Generating Office & Mixed-Use Asset – Metro Manila CBD\nCityLand\tOff-Market Super Prime Development Land – Manila Bay Growth Corridor\nCityLand\tOff-Market Prime Development Site – Metro Manila CBD\nLand\tOff-Market Large-Scale Development Land – Greater Metro Manila Region\nLand\tOff-Market Large-Scale Beachfront Development Opportunity – PH\nLand\tAntipolo Valley Estate – Prime Large-Scale Development Land\nLand\tBotong Francisco Estates – Prime Development Land, Rizal\nLand\tMt. Everest Heights – Prime Development Land, Antipolo City\n",
+  "stderr": "",
+  "execution_time_ms": 1522
+}

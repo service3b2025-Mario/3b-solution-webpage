@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, name, country FROM locations;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, name, country FROM locations;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Manila",
+      "country": "Philippines"
+    },
+    {
+      "id": "2",
+      "name": "Maldives",
+      "country": "Maldives"
+    },
+    {
+      "id": "3",
+      "name": "Europe",
+      "country": "Multiple"
+    },
+    {
+      "id": "4",
+      "name": "Manila",
+      "country": "Philippines"
+    },
+    {
+      "id": "5",
+      "name": "Maldives",
+      "country": "Maldives"
+    },
+    {
+      "id": "6",
+      "name": "Europe",
+      "country": "Multiple"
+    },
+    {
+      "id": "7",
+      "name": "Manila",
+      "country": "Philippines"
+    },
+    {
+      "id": "8",
+      "name": "Maldives",
+      "country": "Maldives"
+    },
+    {
+      "id": "9",
+      "name": "Europe",
+      "country": "Multiple"
+    },
+    {
+      "id": "10",
+      "name": "Manila",
+      "country": "Philippines"
+    },
+    {
+      "id": "11",
+      "name": "Maldives",
+      "country": "Maldives"
+    },
+    {
+      "id": "12",
+      "name": "Europe",
+      "country": "Multiple"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tcountry\n1\tManila\tPhilippines\n2\tMaldives\tMaldives\n3\tEurope\tMultiple\n4\tManila\tPhilippines\n5\tMaldives\tMaldives\n6\tEurope\tMultiple\n7\tManila\tPhilippines\n8\tMaldives\tMaldives\n9\tEurope\tMultiple\n10\tManila\tPhilippines\n11\tMaldives\tMaldives\n12\tEurope\tMultiple\n",
+  "stderr": "",
+  "execution_time_ms": 52
+}

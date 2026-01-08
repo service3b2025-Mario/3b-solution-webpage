@@ -1,0 +1,70 @@
+{
+  "query": "SELECT id, name, role FROM team_members;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, name, role FROM team_members;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Georg Blascheck",
+      "role": "Managing Director"
+    },
+    {
+      "id": "2",
+      "name": "Engela Pacayra",
+      "role": "Investment Director"
+    },
+    {
+      "id": "3",
+      "name": "Bibian Bock",
+      "role": "Operations Director"
+    },
+    {
+      "id": "4",
+      "name": "Georg Blascheck",
+      "role": "Managing Director"
+    },
+    {
+      "id": "5",
+      "name": "Engela Pacayra",
+      "role": "Investment Director"
+    },
+    {
+      "id": "6",
+      "name": "Bibian Bock",
+      "role": "Operations Director"
+    },
+    {
+      "id": "7",
+      "name": "Georg Blascheck",
+      "role": "Managing Director"
+    },
+    {
+      "id": "8",
+      "name": "Engela Pacayra",
+      "role": "Investment Director"
+    },
+    {
+      "id": "9",
+      "name": "Bibian Bock",
+      "role": "Operations Director"
+    },
+    {
+      "id": "10",
+      "name": "Georg Blascheck",
+      "role": "Managing Director"
+    },
+    {
+      "id": "11",
+      "name": "Engela Pacayra",
+      "role": "Investment Director"
+    },
+    {
+      "id": "12",
+      "name": "Bibian Bock",
+      "role": "Operations Director"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\trole\n1\tGeorg Blascheck\tManaging Director\n2\tEngela Pacayra\tInvestment Director\n3\tBibian Bock\tOperations Director\n4\tGeorg Blascheck\tManaging Director\n5\tEngela Pacayra\tInvestment Director\n6\tBibian Bock\tOperations Director\n7\tGeorg Blascheck\tManaging Director\n8\tEngela Pacayra\tInvestment Director\n9\tBibian Bock\tOperations Director\n10\tGeorg Blascheck\tManaging Director\n11\tEngela Pacayra\tInvestment Director\n12\tBibian Bock\tOperations Director\n",
+  "stderr": "",
+  "execution_time_ms": 61
+}

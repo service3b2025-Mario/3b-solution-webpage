@@ -1,0 +1,31 @@
+{
+  "query": "SELECT * FROM team_members WHERE name LIKE '%Engela%'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT * FROM team_members WHERE name LIKE '%Engela%'",
+  "rows": [
+    {
+      "id": "3",
+      "name": "Ma.Engela Rose Pacayra Espares",
+      "role": "Director & Founder",
+      "bio": "Dedicated to providing exceptional client experiences. Engela ensures seamless communication and personalized service for all our investors. Philippine market expert.",
+      "shortBio": "Head of Philippine market",
+      "photo": "https://d2xsxph8kpxj0f.cloudfront.net/310419663029887923/DnWsBVTJUtGDXWt9zvifVT/properties/1766654674689-7omhf6.png",
+      "email": "engelapacayraph@3bsolution.de",
+      "phone": "+63975689632",
+      "linkedIn": "https://www.linkedin.com/in/engela-pacayra-828b79271",
+      "calendlyUrl": "NULL",
+      "googleMeetUrl": "NULL",
+      "teamsUrl": "NULL",
+      "zoomUrl": "NULL",
+      "isExpert": "1",
+      "order": "3",
+      "isActive": "1",
+      "createdAt": "2025-12-16 01:59:11",
+      "updatedAt": "2026-01-06 16:35:38",
+      "location": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\trole\tbio\tshortBio\tphoto\temail\tphone\tlinkedIn\tcalendlyUrl\tgoogleMeetUrl\tteamsUrl\tzoomUrl\tisExpert\torder\tisActive\tcreatedAt\tupdatedAt\tlocation\n3\tMa.Engela Rose Pacayra Espares\tDirector & Founder\tDedicated to providing exceptional client experiences. Engela ensures seamless communication and personalized service for all our investors. Philippine market expert.\tHead of Philippine market\thttps://d2xsxph8kpxj0f.cloudfront.net/310419663029887923/DnWsBVTJUtGDXWt9zvifVT/properties/1766654674689-7omhf6.png\tengelapacayraph@3bsolution.de\t+63975689632\thttps://www.linkedin.com/in/engela-pacayra-828b79271\tNULL\tNULL\tNULL\tNULL\t1\t3\t1\t2025-12-16 01:59:11\t2026-01-06 16:35:38\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1519
+}

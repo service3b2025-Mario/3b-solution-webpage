@@ -1,0 +1,28 @@
+{
+  "query": "SELECT id, title, assetClass, landSizeSqm, landSizeHa, buildingAreaSqm, floorAreaSqm, floors, units, unitsDetails, floorAreaRatio, askingPriceNet, askingPriceGross, incomeGenerating, incomeDetails, others FROM properties WHERE id = 1 LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, assetClass, landSizeSqm, landSizeHa, buildingAreaSqm, floorAreaSqm, floors, units, unitsDetails, floorAreaRatio, askingPriceNet, askingPriceGross, incomeGenerating, incomeDetails, others FROM properties WHERE id = 1 LIMIT 1;",
+  "rows": [
+    {
+      "id": "1",
+      "title": "Makati Prime Tower",
+      "assetClass": "Hospitality",
+      "landSizeSqm": "8500.00",
+      "landSizeHa": "0.8500",
+      "buildingAreaSqm": "6200.00",
+      "floorAreaSqm": "5800.00",
+      "floors": "4",
+      "units": "85",
+      "unitsDetails": "45 Deluxe Rooms, 30 Premium Suites, 10 Presidential Suites",
+      "floorAreaRatio": "2.35",
+      "askingPriceNet": "28500000.00",
+      "askingPriceGross": "32000000.00",
+      "incomeGenerating": "1",
+      "incomeDetails": "Current annual revenue: $4.2M with 78% occupancy rate. Detailed P&L statements available after NDA.",
+      "others": "Property includes beachfront access, private marina with 20 boat slips, and exclusive membership to adjacent golf course."
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tassetClass\tlandSizeSqm\tlandSizeHa\tbuildingAreaSqm\tfloorAreaSqm\tfloors\tunits\tunitsDetails\tfloorAreaRatio\taskingPriceNet\taskingPriceGross\tincomeGenerating\tincomeDetails\tothers\n1\tMakati Prime Tower\tHospitality\t8500.00\t0.8500\t6200.00\t5800.00\t4\t85\t45 Deluxe Rooms, 30 Premium Suites, 10 Presidential Suites\t2.35\t28500000.00\t32000000.00\t1\tCurrent annual revenue: $4.2M with 78% occupancy rate. Detailed P&L statements available after NDA.\tProperty includes beachfront access, private marina with 20 boat slips, and exclusive membership to adjacent golf course.\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

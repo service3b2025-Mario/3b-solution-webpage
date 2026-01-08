@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE portfolio_stats SET value = 'USD 750 Mill' WHERE label = 'Assets Under Advisory';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute UPDATE portfolio_stats SET value = 'USD 750 Mill' WHERE label = 'Assets Under Advisory';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 54
+}

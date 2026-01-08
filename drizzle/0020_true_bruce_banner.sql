@@ -1,0 +1,1 @@
+ALTER TABLE `properties` ADD `continent` varchar(50);

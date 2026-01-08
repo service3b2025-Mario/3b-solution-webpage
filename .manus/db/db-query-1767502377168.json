@@ -1,0 +1,18 @@
+{
+  "query": "SELECT title, propertyType FROM properties WHERE propertyType IN ('CityLand', 'Retail', 'Lot', 'HouseAndLot')",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT title, propertyType FROM properties WHERE propertyType IN ('CityLand', 'Retail', 'Lot', 'HouseAndLot')",
+  "rows": [
+    {
+      "title": "Off-Market Prime Development Site – Metro Manila CBD",
+      "propertyType": "CityLand"
+    },
+    {
+      "title": "Off-Market Super Prime Development Land – Manila Bay Growth Corridor",
+      "propertyType": "CityLand"
+    }
+  ],
+  "messages": [],
+  "stdout": "title\tpropertyType\nOff-Market Prime Development Site – Metro Manila CBD\tCityLand\nOff-Market Super Prime Development Land – Manila Bay Growth Corridor\tCityLand\n",
+  "stderr": "",
+  "execution_time_ms": 1561
+}

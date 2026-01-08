@@ -1,0 +1,136 @@
+{
+  "query": "SELECT id, title, region, country FROM properties WHERE country LIKE '%Philippines%' OR country LIKE '%Philippine%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, region, country FROM properties WHERE country LIKE '%Philippines%' OR country LIKE '%Philippine%';",
+  "rows": [
+    {
+      "id": "60001",
+      "title": "3 Star City Hotel Ermita PH",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "90001",
+      "title": "3 Star Airport City Hotel Metro Manila",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "90002",
+      "title": "3 Star City Hotel North EDSA PH",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "90003",
+      "title": "3 Star City Hotel PH",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "90004",
+      "title": "Boutique Hotel – General Luna, Siargao PH",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "90005",
+      "title": "Off-Market Prime Development Site – Metro Manila CBD",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "90006",
+      "title": "Off-Market Income-Generating Hotel & Mixed-Use Asset – Metro Manila CBD",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "90007",
+      "title": "Off-Market Income-Generating Office & Mixed-Use Asset – Metro Manila CBD",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "90008",
+      "title": "Off-Market Large-Scale Beachfront Development Opportunity – PH",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "120001",
+      "title": "Off-Market Large-Scale Development Land – Greater Metro Manila Region",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "120002",
+      "title": "Off-Market Income-Generating Condotel & Mixed-Use Asset – Metro Manila CBD",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "120003",
+      "title": "Off-Market Private Island & Boutique Resort Opportunity – Philippines",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "120005",
+      "title": "Off-Market Prime Mixed-Use Development Site – Metro Manila Core",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "150001",
+      "title": "Off-Market Private Island Development Opportunity – Philippines",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "150002",
+      "title": "Prime CBD Serviced Residence & Hospitality Investment – Philippines",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "150003",
+      "title": "Antipolo Valley Estate – Prime Large-Scale Development Land",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "150004",
+      "title": "Botong Francisco Estates – Prime Development Land, Rizal",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "150005",
+      "title": "Mt. Everest Heights – Prime Development Land, Antipolo City",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "150006",
+      "title": "Off-Market Brand-New Mixed-Use High-Rise – Metro Manila CBD",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "150007",
+      "title": "Off-Market Super Prime Development Land – Manila Bay Growth Corridor",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    },
+    {
+      "id": "150008",
+      "title": "Off-Market Uptown Corner Lot with Existing Income – Metro Manila CBD",
+      "region": "SouthEastAsia",
+      "country": "Philippines"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tregion\tcountry\n60001\t3 Star City Hotel Ermita PH\tSouthEastAsia\tPhilippines\n90001\t3 Star Airport City Hotel Metro Manila\tSouthEastAsia\tPhilippines\n90002\t3 Star City Hotel North EDSA PH\tSouthEastAsia\tPhilippines\n90003\t3 Star City Hotel PH\tSouthEastAsia\tPhilippines\n90004\tBoutique Hotel – General Luna, Siargao PH\tSouthEastAsia\tPhilippines\n90005\tOff-Market Prime Development Site – Metro Manila CBD\tSouthEastAsia\tPhilippines\n90006\tOff-Market Income-Generating Hotel & Mixed-Use Asset – Metro Manila CBD\tSouthEastAsia\tPhilippines\n90007\tOff-Market Income-Generating Office & Mixed-Use Asset – Metro Manila CBD\tSouthEastAsia\tPhilippines\n90008\tOff-Market Large-Scale Beachfront Development Opportunity – PH\tSouthEastAsia\tPhilippines\n120001\tOff-Market Large-Scale Development Land – Greater Metro Manila Region\tSouthEastAsia\tPhilippines\n120002\tOff-Market Income-Generating Condotel & Mixed-Use Asset – Metro Manila CBD\tSouthEastAsia\tPhilippines\n120003\tOff-Market Private Island & Boutique Resort Opportunity – Philippines\tSouthEastAsia\tPhilippines\n120005\tOff-Market Prime Mixed-Use Development Site – Metro Manila Core\tSouthEastAsia\tPhilippines\n150001\tOff-Market Private Island Development Opportunity – Philippines\tSouthEastAsia\tPhilippines\n150002\tPrime CBD Serviced Residence & Hospitality Investment – Philippines\tSouthEastAsia\tPhilippines\n150003\tAntipolo Valley Estate – Prime Large-Scale Development Land\tSouthEastAsia\tPhilippines\n150004\tBotong Francisco Estates – Prime Development Land, Rizal\tSouthEastAsia\tPhilippines\n150005\tMt. Everest Heights – Prime Development Land, Antipolo City\tSouthEastAsia\tPhilippines\n150006\tOff-Market Brand-New Mixed-Use High-Rise – Metro Manila CBD\tSouthEastAsia\tPhilippines\n150007\tOff-Market Super Prime Development Land – Manila Bay Growth Corridor\tSouthEastAsia\tPhilippines\n150008\tOff-Market Uptown Corner Lot with Existing Income – Metro Manila CBD\tSouthEastAsia\tPhilippines\n",
+  "stderr": "",
+  "execution_time_ms": 58
+}

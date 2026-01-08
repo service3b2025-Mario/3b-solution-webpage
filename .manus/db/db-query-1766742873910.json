@@ -1,0 +1,55 @@
+{
+  "query": "SELECT id, title, priceMin, priceMax, expectedReturn, shortDescription, mainImage FROM properties LIMIT 5",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, priceMin, priceMax, expectedReturn, shortDescription, mainImage FROM properties LIMIT 5",
+  "rows": [
+    {
+      "id": "1",
+      "title": "Makati Prime Tower",
+      "priceMin": "25000000.00",
+      "priceMax": "35000000.00",
+      "expectedReturn": "18.50",
+      "shortDescription": "Premium mixed-use development in Manila CBD",
+      "mainImage": "NULL"
+    },
+    {
+      "id": "2",
+      "title": "Boracay Beach Resort",
+      "priceMin": "45000000.00",
+      "priceMax": "55000000.00",
+      "expectedReturn": "22.00",
+      "shortDescription": "Beachfront luxury resort development",
+      "mainImage": "https://d2xsxph8kpxj0f.cloudfront.net/310419663029887923/DnWsBVTJUtGDXWt9zvifVT/properties/1766107937200-ievhy9.png"
+    },
+    {
+      "id": "3",
+      "title": "Maldives Private Island",
+      "priceMin": "85000000.00",
+      "priceMax": "100000000.00",
+      "expectedReturn": "25.00",
+      "shortDescription": "Exclusive private island resort opportunity",
+      "mainImage": "NULL"
+    },
+    {
+      "id": "4",
+      "title": "Barcelona Boutique Hotel",
+      "priceMin": "18000000.00",
+      "priceMax": "22000000.00",
+      "expectedReturn": "15.00",
+      "shortDescription": "Historic building conversion in Gothic Quarter",
+      "mainImage": "NULL"
+    },
+    {
+      "id": "6",
+      "title": "Cebu IT Park Office Tower",
+      "priceMin": "35000000.00",
+      "priceMax": "42000000.00",
+      "expectedReturn": "14.00",
+      "shortDescription": "Grade A office tower in Cebu IT Park",
+      "mainImage": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tpriceMin\tpriceMax\texpectedReturn\tshortDescription\tmainImage\n1\tMakati Prime Tower\t25000000.00\t35000000.00\t18.50\tPremium mixed-use development in Manila CBD\tNULL\n2\tBoracay Beach Resort\t45000000.00\t55000000.00\t22.00\tBeachfront luxury resort development\thttps://d2xsxph8kpxj0f.cloudfront.net/310419663029887923/DnWsBVTJUtGDXWt9zvifVT/properties/1766107937200-ievhy9.png\n3\tMaldives Private Island\t85000000.00\t100000000.00\t25.00\tExclusive private island resort opportunity\tNULL\n4\tBarcelona Boutique Hotel\t18000000.00\t22000000.00\t15.00\tHistoric building conversion in Gothic Quarter\tNULL\n6\tCebu IT Park Office Tower\t35000000.00\t42000000.00\t14.00\tGrade A office tower in Cebu IT Park\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 52
+}

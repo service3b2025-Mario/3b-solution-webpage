@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test react-svg-worldmap</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script>
+    // Simple test to see if the library works
+    console.log('React loaded:', typeof React !== 'undefined');
+    console.log('ReactDOM loaded:', typeof ReactDOM !== 'undefined');
+    
+    // Check if react-svg-worldmap is available
+    fetch('/node_modules/react-svg-worldmap/dist/index.js')
+      .then(r => r.text())
+      .then(code => {
+        console.log('react-svg-worldmap file size:', code.length);
+        console.log('First 500 chars:', code.substring(0, 500));
+      })
+      .catch(err => console.error('Failed to load react-svg-worldmap:', err));
+  </script>
+</body>
+</html>

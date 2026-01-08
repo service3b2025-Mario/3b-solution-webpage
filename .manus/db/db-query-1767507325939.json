@@ -1,0 +1,18 @@
+{
+  "query": "SHOW COLUMNS FROM properties WHERE Field = 'region'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SHOW COLUMNS FROM properties WHERE Field = 'region'",
+  "rows": [
+    {
+      "Field": "region",
+      "Type": "enum('Philippines','SouthEastAsia','Maldives','Europe','NorthAmerica','Caribbean')",
+      "Null": "NO",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    }
+  ],
+  "messages": [],
+  "stdout": "Field\tType\tNull\tKey\tDefault\tExtra\nregion\tenum('Philippines','SouthEastAsia','Maldives','Europe','NorthAmerica','Caribbean')\tNO\t\tNULL\t\n",
+  "stderr": "",
+  "execution_time_ms": 1540
+}

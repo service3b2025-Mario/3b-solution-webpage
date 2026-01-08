@@ -1,0 +1,19 @@
+{
+  "query": "SELECT id, title, realPropertyName, region, country, status, continent FROM properties WHERE country LIKE '%Dominican%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, realPropertyName, region, country, status, continent FROM properties WHERE country LIKE '%Dominican%';",
+  "rows": [
+    {
+      "id": "210001",
+      "title": "Off-Market Caribbean Peninsula – Ultra-Scale Beachfront Development Opportunity (Dominican Republic)",
+      "realPropertyName": "Punta Estero Hondo Dominican Republic (Confidential)",
+      "region": "SouthEastAsia",
+      "country": "Dominican Republic",
+      "status": "offMarket",
+      "continent": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\trealPropertyName\tregion\tcountry\tstatus\tcontinent\n210001\tOff-Market Caribbean Peninsula – Ultra-Scale Beachfront Development Opportunity (Dominican Republic)\tPunta Estero Hondo Dominican Republic (Confidential)\tSouthEastAsia\tDominican Republic\toffMarket\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 1494
+}

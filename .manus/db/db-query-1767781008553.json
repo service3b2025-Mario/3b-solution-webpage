@@ -1,0 +1,30 @@
+{
+  "query": "SELECT * FROM team_members WHERE name LIKE '%Georg%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT * FROM team_members WHERE name LIKE '%Georg%';",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Georg Blascheck",
+      "role": "CEO & Founder - Real Estate Expert",
+      "bio": "Visionary leader with 8+ years in finance, insurance and global real estate. Georg has pioneered innovative investment strategies across Asia, Europe, and other locations.",
+      "shortBio": "CEO & Founder with 8+ years in finance, insurance and real estate",
+      "photo": "https://d2xsxph8kpxj0f.cloudfront.net/310419663029887923/DnWsBVTJUtGDXWt9zvifVT/properties/1766654631778-xcbgg.png",
+      "email": "georgblascheck@3bsolution.de",
+      "phone": "+49 176 56787896",
+      "linkedIn": "https://www.linkedin.com/in/georg-blascheck-11b261296",
+      "calendlyUrl": "NULL",
+      "googleMeetUrl": "NULL",
+      "teamsUrl": "NULL",
+      "zoomUrl": "NULL",
+      "isExpert": "1",
+      "order": "1",
+      "isActive": "1",
+      "createdAt": "2025-12-16 01:59:11",
+      "updatedAt": "2026-01-06 16:35:38"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\trole\tbio\tshortBio\tphoto\temail\tphone\tlinkedIn\tcalendlyUrl\tgoogleMeetUrl\tteamsUrl\tzoomUrl\tisExpert\torder\tisActive\tcreatedAt\tupdatedAt\n1\tGeorg Blascheck\tCEO & Founder - Real Estate Expert\tVisionary leader with 8+ years in finance, insurance and global real estate. Georg has pioneered innovative investment strategies across Asia, Europe, and other locations.\tCEO & Founder with 8+ years in finance, insurance and real estate\thttps://d2xsxph8kpxj0f.cloudfront.net/310419663029887923/DnWsBVTJUtGDXWt9zvifVT/properties/1766654631778-xcbgg.png\tgeorgblascheck@3bsolution.de\t+49 176 56787896\thttps://www.linkedin.com/in/georg-blascheck-11b261296\tNULL\tNULL\tNULL\tNULL\t1\t1\t1\t2025-12-16 01:59:11\t2026-01-06 16:35:38\n",
+  "stderr": "",
+  "execution_time_ms": 1588
+}

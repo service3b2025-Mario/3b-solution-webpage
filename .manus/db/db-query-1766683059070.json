@@ -1,0 +1,36 @@
+{
+  "query": "SELECT * FROM success_stories WHERE featured = true;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT * FROM success_stories WHERE featured = true;",
+  "rows": [
+    {
+      "id": "1",
+      "title": "Manila Hotel Portfolio Acquisition",
+      "slug": "manila-hotel-portfolio",
+      "clientName": "European Family Office",
+      "clientType": "FamilyOffice",
+      "location": "Manila, Philippines",
+      "propertyType": "Hospitality",
+      "investmentAmount": "$12,000,000",
+      "returnAchieved": "24% IRR",
+      "timeline": "4 years",
+      "shortDescription": "Strategic acquisition of 3 boutique hotels in Manila CBD",
+      "fullStory": "We assisted a European family office in identifying and acquiring a portfolio of three boutique hotels in Manila. Through careful due diligence and strategic negotiations, we secured favorable terms and implemented operational improvements that significantly enhanced returns.",
+      "challenge": "The client sought exposure to the Philippine hospitality market but lacked local expertise and connections.",
+      "solution": "We provided end-to-end support including market analysis, property identification, due diligence, negotiation, and post-acquisition asset management.",
+      "results": "The portfolio achieved a 24% IRR over 4 years, exceeding initial projections by 6 percentage points.",
+      "testimonial": "3B Solution's local expertise and professional approach made our entry into the Philippine market seamless and highly profitable.",
+      "image": "NULL",
+      "images": "NULL",
+      "featured": "1",
+      "featuredMonth": "2024-12",
+      "tags": "NULL",
+      "isActive": "1",
+      "createdAt": "2025-12-16 01:59:11",
+      "updatedAt": "2025-12-16 02:07:04"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tslug\tclientName\tclientType\tlocation\tpropertyType\tinvestmentAmount\treturnAchieved\ttimeline\tshortDescription\tfullStory\tchallenge\tsolution\tresults\ttestimonial\timage\timages\tfeatured\tfeaturedMonth\ttags\tisActive\tcreatedAt\tupdatedAt\n1\tManila Hotel Portfolio Acquisition\tmanila-hotel-portfolio\tEuropean Family Office\tFamilyOffice\tManila, Philippines\tHospitality\t$12,000,000\t24% IRR\t4 years\tStrategic acquisition of 3 boutique hotels in Manila CBD\tWe assisted a European family office in identifying and acquiring a portfolio of three boutique hotels in Manila. Through careful due diligence and strategic negotiations, we secured favorable terms and implemented operational improvements that significantly enhanced returns.\tThe client sought exposure to the Philippine hospitality market but lacked local expertise and connections.\tWe provided end-to-end support including market analysis, property identification, due diligence, negotiation, and post-acquisition asset management.\tThe portfolio achieved a 24% IRR over 4 years, exceeding initial projections by 6 percentage points.\t3B Solution's local expertise and professional approach made our entry into the Philippine market seamless and highly profitable.\tNULL\tNULL\t1\t2024-12\tNULL\t1\t2025-12-16 01:59:11\t2025-12-16 02:07:04\n",
+  "stderr": "",
+  "execution_time_ms": 54
+}

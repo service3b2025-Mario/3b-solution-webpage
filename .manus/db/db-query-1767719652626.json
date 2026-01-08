@@ -1,0 +1,9 @@
+{
+  "query": "-- Properties table indexes for filtering and sorting\nCREATE INDEX IF NOT EXISTS idx_properties_country ON properties(country);\nCREATE INDEX IF NOT EXISTS idx_properties_region ON properties(region);\nCREATE INDEX IF NOT EXISTS idx_properties_status ON properties(status);\nCREATE INDEX IF NOT EXISTS idx_properties_propertyType ON properties(propertyType);\nCREATE INDEX IF NOT EXISTS idx_properties_featured ON properties(featured);\n\n-- Composite indexes for common filter combinations\nCREATE INDEX IF NOT EXISTS idx_properties_country_status ON properties(country, status);\nCREATE INDEX IF NOT EXISTS idx_properties_region_type ON properties(region, propertyType);\nCREATE INDEX IF NOT EXISTS idx_properties_status_featured ON properties(status, featured);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute -- Properties table indexes for filtering and sorting\nCREATE INDEX IF NOT EXISTS idx_properties_country ON properties(country);\nCREATE INDEX IF NOT EXISTS idx_properties_region ON properties(region);\nCREATE INDEX IF NOT EXISTS idx_properties_status ON properties(status);\nCREATE INDEX IF NOT EXISTS idx_properties_propertyType ON properties(propertyType);\nCREATE INDEX IF NOT EXISTS idx_properties_featured ON properties(featured);\n\n-- Composite indexes for common filter combinations\nCREATE INDEX IF NOT EXISTS idx_properties_country_status ON properties(country, status);\nCREATE INDEX IF NOT EXISTS idx_properties_region_type ON properties(region, propertyType);\nCREATE INDEX IF NOT EXISTS idx_properties_status_featured ON properties(status, featured);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 7378
+}

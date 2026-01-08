@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE success_stories SET investmentAmount = '$12,500,000' WHERE slug = 'manila-hotel-portfolio';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute UPDATE success_stories SET investmentAmount = '$12,500,000' WHERE slug = 'manila-hotel-portfolio';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 54
+}

@@ -1,0 +1,25 @@
+{
+  "query": "SELECT region, status, COUNT(*) as count FROM properties GROUP BY region, status ORDER BY region, status;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT region, status, COUNT(*) as count FROM properties GROUP BY region, status ORDER BY region, status;",
+  "rows": [
+    {
+      "region": "Philippines",
+      "status": "available",
+      "count": "8"
+    },
+    {
+      "region": "Philippines",
+      "status": "offMarket",
+      "count": "13"
+    },
+    {
+      "region": "Maldives",
+      "status": "offMarket",
+      "count": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "region\tstatus\tcount\nPhilippines\tavailable\t8\nPhilippines\toffMarket\t13\nMaldives\toffMarket\t1\n",
+  "stderr": "",
+  "execution_time_ms": 54
+}

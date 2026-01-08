@@ -1,0 +1,60 @@
+{
+  "query": "SELECT id, title, createdAt FROM properties ORDER BY createdAt DESC LIMIT 10",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, createdAt FROM properties ORDER BY createdAt DESC LIMIT 10",
+  "rows": [
+    {
+      "id": "180007",
+      "title": "Anya Villas – Ultra-Luxury Residential Villas, Tagaytay",
+      "createdAt": "2026-01-04 06:26:42"
+    },
+    {
+      "id": "180006",
+      "title": "Test Property",
+      "createdAt": "2026-01-04 06:16:28"
+    },
+    {
+      "id": "180005",
+      "title": "Sta. Rosa Prime Development Land – Mixed-Use, Leisure & Resort",
+      "createdAt": "2026-01-04 06:08:40"
+    },
+    {
+      "id": "180004",
+      "title": "Confidential CBD-Adjacent Development Site – Philippines",
+      "createdAt": "2026-01-04 06:02:16"
+    },
+    {
+      "id": "180003",
+      "title": "Off-Market Large-Scale Beachfront Resort & Leisure Estate – Philippines",
+      "createdAt": "2026-01-04 05:56:47"
+    },
+    {
+      "id": "180002",
+      "title": "Corner Prime Lot – Premium CBD High-Rise Development Site",
+      "createdAt": "2026-01-04 05:49:36"
+    },
+    {
+      "id": "180001",
+      "title": "Confidential Large-Scale Mixed-Use & Leisure Land Investment",
+      "createdAt": "2026-01-04 05:48:26"
+    },
+    {
+      "id": "150008",
+      "title": "Off-Market Uptown Corner Lot with Existing Income – Metro Manila CBD",
+      "createdAt": "2026-01-03 10:17:31"
+    },
+    {
+      "id": "150007",
+      "title": "Off-Market Super Prime Development Land – Manila Bay Growth Corridor",
+      "createdAt": "2026-01-03 10:12:49"
+    },
+    {
+      "id": "150006",
+      "title": "Off-Market Brand-New Mixed-Use High-Rise – Metro Manila CBD",
+      "createdAt": "2026-01-03 09:39:00"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tcreatedAt\n180007\tAnya Villas – Ultra-Luxury Residential Villas, Tagaytay\t2026-01-04 06:26:42\n180006\tTest Property\t2026-01-04 06:16:28\n180005\tSta. Rosa Prime Development Land – Mixed-Use, Leisure & Resort\t2026-01-04 06:08:40\n180004\tConfidential CBD-Adjacent Development Site – Philippines\t2026-01-04 06:02:16\n180003\tOff-Market Large-Scale Beachfront Resort & Leisure Estate – Philippines\t2026-01-04 05:56:47\n180002\tCorner Prime Lot – Premium CBD High-Rise Development Site\t2026-01-04 05:49:36\n180001\tConfidential Large-Scale Mixed-Use & Leisure Land Investment\t2026-01-04 05:48:26\n150008\tOff-Market Uptown Corner Lot with Existing Income – Metro Manila CBD\t2026-01-03 10:17:31\n150007\tOff-Market Super Prime Development Land – Manila Bay Growth Corridor\t2026-01-03 10:12:49\n150006\tOff-Market Brand-New Mixed-Use High-Rise – Metro Manila CBD\t2026-01-03 09:39:00\n",
+  "stderr": "",
+  "execution_time_ms": 1634
+}

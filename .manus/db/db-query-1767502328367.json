@@ -1,0 +1,42 @@
+{
+  "query": "SELECT propertyType, COUNT(*) as count FROM properties GROUP BY propertyType ORDER BY count DESC",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT propertyType, COUNT(*) as count FROM properties GROUP BY propertyType ORDER BY count DESC",
+  "rows": [
+    {
+      "propertyType": "CityHotel",
+      "count": "6"
+    },
+    {
+      "propertyType": "Land",
+      "count": "5"
+    },
+    {
+      "propertyType": "MixedUse",
+      "count": "4"
+    },
+    {
+      "propertyType": "Resort",
+      "count": "2"
+    },
+    {
+      "propertyType": "CityLand",
+      "count": "2"
+    },
+    {
+      "propertyType": "Hospitality",
+      "count": "1"
+    },
+    {
+      "propertyType": "Island",
+      "count": "1"
+    },
+    {
+      "propertyType": "Office",
+      "count": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "propertyType\tcount\nCityHotel\t6\nLand\t5\nMixedUse\t4\nResort\t2\nCityLand\t2\nHospitality\t1\nIsland\t1\nOffice\t1\n",
+  "stderr": "",
+  "execution_time_ms": 1563
+}

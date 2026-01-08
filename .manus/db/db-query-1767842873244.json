@@ -1,0 +1,17 @@
+{
+  "query": "SELECT id, name, role, bio, shortBio FROM team_members WHERE name LIKE '%Bibian%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, name, role, bio, shortBio FROM team_members WHERE name LIKE '%Bibian%';",
+  "rows": [
+    {
+      "id": "2",
+      "name": "Bibian Pacayra Bock",
+      "role": "President & Founder",
+      "bio": "Expert in hospitality marketing with deep expertise in Southeast Asian markets. Bibian leads our marketing strategy and portfolio team.",
+      "shortBio": "President with expertise in Southeast Asian hospitality marketing"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\trole\tbio\tshortBio\n2\tBibian Pacayra Bock\tPresident & Founder\tExpert in hospitality marketing with deep expertise in Southeast Asian markets. Bibian leads our marketing strategy and portfolio team.\tPresident with expertise in Southeast Asian hospitality marketing\n",
+  "stderr": "",
+  "execution_time_ms": 1732
+}

@@ -1,0 +1,17 @@
+{
+  "query": "SELECT id, title, region, country, status FROM properties WHERE country LIKE '%Dominican%' OR region = 'Caribbean' OR country LIKE '%Caribbean%' LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, region, country, status FROM properties WHERE country LIKE '%Dominican%' OR region = 'Caribbean' OR country LIKE '%Caribbean%' LIMIT 10;",
+  "rows": [
+    {
+      "id": "210001",
+      "title": "Off-Market Caribbean Peninsula – Ultra-Scale Beachfront Development Opportunity (Dominican Republic)",
+      "region": "SouthEastAsia",
+      "country": "Dominican Republic",
+      "status": "offMarket"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tregion\tcountry\tstatus\n210001\tOff-Market Caribbean Peninsula – Ultra-Scale Beachfront Development Opportunity (Dominican Republic)\tSouthEastAsia\tDominican Republic\toffMarket\n",
+  "stderr": "",
+  "execution_time_ms": 1919
+}

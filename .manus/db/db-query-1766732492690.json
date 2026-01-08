@@ -1,0 +1,16 @@
+{
+  "query": "SELECT id, title, description, shortDescription FROM properties WHERE id = 2;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, description, shortDescription FROM properties WHERE id = 2;",
+  "rows": [
+    {
+      "id": "2",
+      "title": "Boracay Beach Resort",
+      "description": "An exclusive 5-star beachfront resort featuring 120 luxury villas and suites, world-class spa facilities, and multiple dining venues. Located on the pristine shores of Boracay with direct beach access.",
+      "shortDescription": "Beachfront luxury resort development"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tdescription\tshortDescription\n2\tBoracay Beach Resort\tAn exclusive 5-star beachfront resort featuring 120 luxury villas and suites, world-class spa facilities, and multiple dining venues. Located on the pristine shores of Boracay with direct beach access.\tBeachfront luxury resort development\n",
+  "stderr": "",
+  "execution_time_ms": 53
+}

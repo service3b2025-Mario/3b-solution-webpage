@@ -1,0 +1,22 @@
+{
+  "query": "SELECT DISTINCT region, COUNT(*) as count FROM properties WHERE region IS NOT NULL GROUP BY region ORDER BY region",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT DISTINCT region, COUNT(*) as count FROM properties WHERE region IS NOT NULL GROUP BY region ORDER BY region",
+  "rows": [
+    {
+      "region": "Philippines",
+      "count": "21"
+    },
+    {
+      "region": "SouthEastAsia",
+      "count": "28"
+    },
+    {
+      "region": "Maldives",
+      "count": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "region\tcount\nPhilippines\t21\nSouthEastAsia\t28\nMaldives\t1\n",
+  "stderr": "",
+  "execution_time_ms": 1540
+}

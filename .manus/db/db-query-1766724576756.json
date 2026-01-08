@@ -1,0 +1,40 @@
+{
+  "query": "SELECT id, title, slug FROM properties ORDER BY id LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, slug FROM properties ORDER BY id LIMIT 10;",
+  "rows": [
+    {
+      "id": "1",
+      "title": "Makati Prime Tower",
+      "slug": "makati-prime-tower"
+    },
+    {
+      "id": "2",
+      "title": "Boracay Beach Resort",
+      "slug": "boracay-beach-resort"
+    },
+    {
+      "id": "3",
+      "title": "Maldives Private Island",
+      "slug": "maldives-private-island"
+    },
+    {
+      "id": "4",
+      "title": "Barcelona Boutique Hotel",
+      "slug": "barcelona-boutique-hotel"
+    },
+    {
+      "id": "5",
+      "title": "Miami Waterfront Commercial",
+      "slug": "miami-waterfront-commercial"
+    },
+    {
+      "id": "6",
+      "title": "Cebu IT Park Office Tower",
+      "slug": "cebu-it-park-office"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tslug\n1\tMakati Prime Tower\tmakati-prime-tower\n2\tBoracay Beach Resort\tboracay-beach-resort\n3\tMaldives Private Island\tmaldives-private-island\n4\tBarcelona Boutique Hotel\tbarcelona-boutique-hotel\n5\tMiami Waterfront Commercial\tmiami-waterfront-commercial\n6\tCebu IT Park Office Tower\tcebu-it-park-office\n",
+  "stderr": "",
+  "execution_time_ms": 77
+}

@@ -1,0 +1,46 @@
+{
+  "query": "SELECT id, title, fileUrl, category FROM resources ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, fileUrl, category FROM resources ORDER BY id;",
+  "rows": [
+    {
+      "id": "1",
+      "title": "2025 Investment Guide",
+      "fileUrl": "https://example.com/investment-guide-2025.pdf",
+      "category": "investment_guide"
+    },
+    {
+      "id": "2",
+      "title": "Philippines Market Report Q4 2025",
+      "fileUrl": "https://example.com/philippines-q4-2025.pdf",
+      "category": "market_report"
+    },
+    {
+      "id": "3",
+      "title": "Maldives Resort Investment Case Study",
+      "fileUrl": "https://example.com/maldives-case-study.pdf",
+      "category": "case_study"
+    },
+    {
+      "id": "4",
+      "title": "Caribbean Investment Opportunities 2025",
+      "fileUrl": "https://example.com/caribbean-opportunities-2025.pdf",
+      "category": "market_report"
+    },
+    {
+      "id": "5",
+      "title": "European Hospitality Market Whitepaper",
+      "fileUrl": "https://example.com/europe-hospitality-whitepaper.pdf",
+      "category": "whitepaper"
+    },
+    {
+      "id": "6",
+      "title": "USA Premium Hotel Investment Case Study",
+      "fileUrl": "https://example.com/usa-hotel-case-study.pdf",
+      "category": "case_study"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tfileUrl\tcategory\n1\t2025 Investment Guide\thttps://example.com/investment-guide-2025.pdf\tinvestment_guide\n2\tPhilippines Market Report Q4 2025\thttps://example.com/philippines-q4-2025.pdf\tmarket_report\n3\tMaldives Resort Investment Case Study\thttps://example.com/maldives-case-study.pdf\tcase_study\n4\tCaribbean Investment Opportunities 2025\thttps://example.com/caribbean-opportunities-2025.pdf\tmarket_report\n5\tEuropean Hospitality Market Whitepaper\thttps://example.com/europe-hospitality-whitepaper.pdf\twhitepaper\n6\tUSA Premium Hotel Investment Case Study\thttps://example.com/usa-hotel-case-study.pdf\tcase_study\n",
+  "stderr": "",
+  "execution_time_ms": 1477
+}

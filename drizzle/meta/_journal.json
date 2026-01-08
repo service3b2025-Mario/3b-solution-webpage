@@ -1,0 +1,160 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1765849279302,
+      "tag": "0000_handy_prism",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1765849444577,
+      "tag": "0001_noisy_tyger_tiger",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1765874385904,
+      "tag": "0002_many_mandroid",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1766108903592,
+      "tag": "0003_spotty_madelyne_pryor",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1766109534431,
+      "tag": "0004_overjoyed_spacker_dave",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1766111559822,
+      "tag": "0005_clammy_namora",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1766117170434,
+      "tag": "0006_violet_puppet_master",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1766118521571,
+      "tag": "0007_abnormal_pandemic",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1766125542898,
+      "tag": "0008_greedy_miss_america",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1766125818912,
+      "tag": "0009_gifted_black_bolt",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1766650131447,
+      "tag": "0010_amazing_wildside",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1766678450963,
+      "tag": "0011_fancy_johnny_blaze",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1766680782973,
+      "tag": "0012_flaky_sasquatch",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "5",
+      "when": 1766737019164,
+      "tag": "0013_gray_beast",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "5",
+      "when": 1766744152863,
+      "tag": "0014_next_makkari",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "5",
+      "when": 1766809707933,
+      "tag": "0015_mighty_mandrill",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "5",
+      "when": 1766812245936,
+      "tag": "0016_mature_kylun",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "5",
+      "when": 1767435676648,
+      "tag": "0017_tiny_brood",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1767438522081,
+      "tag": "0018_clammy_squadron_sinister",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "5",
+      "when": 1767498105165,
+      "tag": "0019_sloppy_boomerang",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "5",
+      "when": 1767621999353,
+      "tag": "0020_true_bruce_banner",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1767781413065,
+      "tag": "0021_tearful_terrax",
+      "breakpoints": true
+    }
+  ]
+}

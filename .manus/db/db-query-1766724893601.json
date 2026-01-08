@@ -1,0 +1,21 @@
+{
+  "query": "SELECT id, title, landSizeSqm, buildingAreaSqm, floors, units, assetClass, askingPriceNet, incomeGenerating FROM properties WHERE id = 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, landSizeSqm, buildingAreaSqm, floors, units, assetClass, askingPriceNet, incomeGenerating FROM properties WHERE id = 1;",
+  "rows": [
+    {
+      "id": "1",
+      "title": "Makati Prime Tower",
+      "landSizeSqm": "12500.00",
+      "buildingAreaSqm": "8900.00",
+      "floors": "5",
+      "units": "120",
+      "assetClass": "Hospitality",
+      "askingPriceNet": "42000000.00",
+      "incomeGenerating": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tlandSizeSqm\tbuildingAreaSqm\tfloors\tunits\tassetClass\taskingPriceNet\tincomeGenerating\n1\tMakati Prime Tower\t12500.00\t8900.00\t5\t120\tHospitality\t42000000.00\t1\n",
+  "stderr": "",
+  "execution_time_ms": 51
+}

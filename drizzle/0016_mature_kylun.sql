@@ -1,0 +1,1 @@
+ALTER TABLE `properties` MODIFY COLUMN `status` enum('available','reserved','sold','offMarket') DEFAULT 'available';

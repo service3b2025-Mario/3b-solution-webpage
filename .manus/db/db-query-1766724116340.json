@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE properties SET \n  assetClass = 'Hospitality',\n  landSizeSqm = 8500.00,\n  landSizeHa = 0.85,\n  buildingAreaSqm = 6200.00,\n  floorAreaSqm = 5800.00,\n  floors = 4,\n  units = 85,\n  unitsDetails = '45 Deluxe Rooms, 30 Premium Suites, 10 Presidential Suites',\n  floorAreaRatio = 2.35,\n  askingPriceNet = 28500000.00,\n  askingPriceGross = 32000000.00,\n  incomeGenerating = true,\n  incomeDetails = 'Current annual revenue: $4.2M with 78% occupancy rate. Detailed P&L statements available after NDA.',\n  others = 'Property includes beachfront access, private marina with 20 boat slips, and exclusive membership to adjacent golf course.'\nWHERE id = 1\nLIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute UPDATE properties SET \n  assetClass = 'Hospitality',\n  landSizeSqm = 8500.00,\n  landSizeHa = 0.85,\n  buildingAreaSqm = 6200.00,\n  floorAreaSqm = 5800.00,\n  floors = 4,\n  units = 85,\n  unitsDetails = '45 Deluxe Rooms, 30 Premium Suites, 10 Presidential Suites',\n  floorAreaRatio = 2.35,\n  askingPriceNet = 28500000.00,\n  askingPriceGross = 32000000.00,\n  incomeGenerating = true,\n  incomeDetails = 'Current annual revenue: $4.2M with 78% occupancy rate. Detailed P&L statements available after NDA.',\n  others = 'Property includes beachfront access, private marina with 20 boat slips, and exclusive membership to adjacent golf course.'\nWHERE id = 1\nLIMIT 1;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 327
+}

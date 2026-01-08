@@ -1,0 +1,1 @@
+ALTER TABLE `properties` ADD `landPricePerSqm` decimal(15,2);

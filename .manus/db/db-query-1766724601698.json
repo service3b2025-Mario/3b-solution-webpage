@@ -1,0 +1,17 @@
+{
+  "query": "SELECT id, title, slug, assetClass, landSizeSqm FROM properties WHERE title LIKE '%Boracay%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, slug, assetClass, landSizeSqm FROM properties WHERE title LIKE '%Boracay%';",
+  "rows": [
+    {
+      "id": "2",
+      "title": "Boracay Beach Resort",
+      "slug": "boracay-beach-resort",
+      "assetClass": "Hospitality",
+      "landSizeSqm": "12500.00"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tslug\tassetClass\tlandSizeSqm\n2\tBoracay Beach Resort\tboracay-beach-resort\tHospitality\t12500.00\n",
+  "stderr": "",
+  "execution_time_ms": 62
+}

@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE properties MODIFY COLUMN status ENUM('available', 'reserved', 'sold', 'offMarket') DEFAULT 'available'",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute ALTER TABLE properties MODIFY COLUMN status ENUM('available', 'reserved', 'sold', 'offMarket') DEFAULT 'available'",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 558
+}

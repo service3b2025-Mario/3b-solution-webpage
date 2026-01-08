@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE team_members \nSET linkedIn = CASE \n  WHEN name = 'Georg Blascheck' THEN 'https://www.linkedin.com/in/georg-blascheck-11b261296'\n  WHEN name = 'Bibian Pacayra Bock' THEN 'https://www.linkedin.com/in/bibian-pacayra-498766330'\n  WHEN name = 'Ma.Engela Rose Pacayra Espares' THEN 'https://www.linkedin.com/in/engela-pacayra-828b79271'\nEND\nWHERE name IN ('Georg Blascheck', 'Bibian Pacayra Bock', 'Ma.Engela Rose Pacayra Espares');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute UPDATE team_members \nSET linkedIn = CASE \n  WHEN name = 'Georg Blascheck' THEN 'https://www.linkedin.com/in/georg-blascheck-11b261296'\n  WHEN name = 'Bibian Pacayra Bock' THEN 'https://www.linkedin.com/in/bibian-pacayra-498766330'\n  WHEN name = 'Ma.Engela Rose Pacayra Espares' THEN 'https://www.linkedin.com/in/engela-pacayra-828b79271'\nEND\nWHERE name IN ('Georg Blascheck', 'Bibian Pacayra Bock', 'Ma.Engela Rose Pacayra Espares');",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1833
+}

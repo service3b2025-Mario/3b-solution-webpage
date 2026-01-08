@@ -1,0 +1,18 @@
+{
+  "query": "SELECT id, title, slug, investmentAmount, returnAchieved, timeline FROM success_stories WHERE featured = true LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT id, title, slug, investmentAmount, returnAchieved, timeline FROM success_stories WHERE featured = true LIMIT 5;",
+  "rows": [
+    {
+      "id": "1",
+      "title": "Manila Hotel Portfolio Acquisition",
+      "slug": "manila-hotel-portfolio",
+      "investmentAmount": "$12,000,000",
+      "returnAchieved": "24% IRR",
+      "timeline": "4 years"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tslug\tinvestmentAmount\treturnAchieved\ttimeline\n1\tManila Hotel Portfolio Acquisition\tmanila-hotel-portfolio\t$12,000,000\t24% IRR\t4 years\n",
+  "stderr": "",
+  "execution_time_ms": 100
+}

@@ -1,0 +1,28 @@
+{
+  "query": "UPDATE team_members SET \n  name = 'Georg Blascheck',\n  photo = '/team-georg.png',\n  role = 'CEO & Founder',\n  bio = 'Visionary leader with 15+ years in global real estate investment. Georg has pioneered innovative investment strategies across Asia, Europe, and the Americas.',\n  shortBio = 'CEO & Founder with 15+ years in global real estate'\nWHERE id = 1;\n\nUPDATE team_members SET \n  name = 'Bibian Pacayra Bock',\n  photo = '/team-bibian.png',\n  role = 'Chief Investment Officer',\n  bio = 'Expert in hospitality investments with deep expertise in Southeast Asian markets. Bibian leads our investment strategy and portfolio management.',\n  shortBio = 'CIO with expertise in Southeast Asian hospitality'\nWHERE id = 2;\n\nUPDATE team_members SET \n  name = 'Ma. Engela Rose Pacayra Espares',\n  photo = '/team-engela.png',\n  role = 'Head of Client Relations',\n  bio = 'Dedicated to providing exceptional client experiences. Engela ensures seamless communication and personalized service for all our investors.',\n  shortBio = 'Head of Client Relations ensuring exceptional service'\nWHERE id = 3;\n\nSELECT id, name, role, photo FROM team_members;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute UPDATE team_members SET \n  name = 'Georg Blascheck',\n  photo = '/team-georg.png',\n  role = 'CEO & Founder',\n  bio = 'Visionary leader with 15+ years in global real estate investment. Georg has pioneered innovative investment strategies across Asia, Europe, and the Americas.',\n  shortBio = 'CEO & Founder with 15+ years in global real estate'\nWHERE id = 1;\n\nUPDATE team_members SET \n  name = 'Bibian Pacayra Bock',\n  photo = '/team-bibian.png',\n  role = 'Chief Investment Officer',\n  bio = 'Expert in hospitality investments with deep expertise in Southeast Asian markets. Bibian leads our investment strategy and portfolio management.',\n  shortBio = 'CIO with expertise in Southeast Asian hospitality'\nWHERE id = 2;\n\nUPDATE team_members SET \n  name = 'Ma. Engela Rose Pacayra Espares',\n  photo = '/team-engela.png',\n  role = 'Head of Client Relations',\n  bio = 'Dedicated to providing exceptional client experiences. Engela ensures seamless communication and personalized service for all our investors.',\n  shortBio = 'Head of Client Relations ensuring exceptional service'\nWHERE id = 3;\n\nSELECT id, name, role, photo FROM team_members;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Georg Blascheck",
+      "role": "CEO & Founder",
+      "photo": "/team-georg.png"
+    },
+    {
+      "id": "2",
+      "name": "Bibian Pacayra Bock",
+      "role": "Chief Investment Officer",
+      "photo": "/team-bibian.png"
+    },
+    {
+      "id": "3",
+      "name": "Ma. Engela Rose Pacayra Espares",
+      "role": "Head of Client Relations",
+      "photo": "/team-engela.png"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\trole\tphoto\n1\tGeorg Blascheck\tCEO & Founder\t/team-georg.png\n2\tBibian Pacayra Bock\tChief Investment Officer\t/team-bibian.png\n3\tMa. Engela Rose Pacayra Espares\tHead of Client Relations\t/team-engela.png\n",
+  "stderr": "",
+  "execution_time_ms": 166
+}

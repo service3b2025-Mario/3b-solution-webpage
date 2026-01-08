@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE properties SET title = 'Boracay Beach Resort' WHERE slug = 'boracay-beach-resort';\nUPDATE properties SET title = 'Maldives Private Island' WHERE slug = 'maldives-private-island';\nUPDATE properties SET title = 'Barcelona Boutique Hotel' WHERE slug = 'barcelona-boutique-hotel';\nUPDATE properties SET title = 'Miami Waterfront Commercial' WHERE slug = 'miami-waterfront-commercial';\nUPDATE properties SET title = 'Cebu IT Park Office Tower' WHERE slug = 'cebu-it-park-office';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute UPDATE properties SET title = 'Boracay Beach Resort' WHERE slug = 'boracay-beach-resort';\nUPDATE properties SET title = 'Maldives Private Island' WHERE slug = 'maldives-private-island';\nUPDATE properties SET title = 'Barcelona Boutique Hotel' WHERE slug = 'barcelona-boutique-hotel';\nUPDATE properties SET title = 'Miami Waterfront Commercial' WHERE slug = 'miami-waterfront-commercial';\nUPDATE properties SET title = 'Cebu IT Park Office Tower' WHERE slug = 'cebu-it-park-office';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 114
+}

@@ -1,0 +1,30 @@
+{
+  "query": "SELECT name, role, bio FROM team_members WHERE id = 1",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2nrMUifPqSFVuPK.root --database DnWsBVTJUtGDXWt9zvifVT --execute SELECT name, role, bio FROM team_members WHERE id = 1",
+  "rows": [
+    {
+      "name": "Georg Blascheck",
+      "role": "CEO & Founder - Real Estate Expert",
+      "bio": "Georg Blascheck is the founder of 3B Solution in Germany and serves as the strategic link between international investors and high-potential projects across the Philippines and selected global markets. After completing his Abitur at the German Embassy School in Beijing, he began his professional career in 2018 with an apprenticeship as a Salesman for Insurances and Finance Products. Since 2021, he has worked in self-employed advisory roles within the insurance and financial sector, building extensive experience in client consulting, negotiations, and structured sales processes."
+    }
+  ],
+  "messages": [
+    "In 2024, Georg expanded his qualifications by obtaining the official brokerage license through the Chamber of Industry and Commerce (IHK) and added certification for arranging home-savings and loan products. This professional foundation is complemented by significant time spent abroad and a strong ability to operate confidently in cross-cultural environments.",
+    "Georg's approach is defined by transparency, reliability, and a solutions-oriented mindset. With many years of hands-on work in distribution and consulting, he understands how to adapt to a wide range of personalities and decision-makers. Today, his primary focus is on commercial real estate, investor relations, and the development of sustainable, value-creating opportunities in Southeast Asia, Europe, the United States, and the Maldives.",
+    "Core Expertise:",
+    "• International commercial real estate brokerage",
+    "• Investment project sourcing and structuring",
+    "• Cross-border business development",
+    "• Demographic-driven market analysis",
+    "• Sales coaching and process optimization",
+    "• Insurance and finance advisory services in Germany",
+    "Key Qualifications:",
+    "• Trained Salesman for Insurances and Finance Products (2018-2021)",
+    "• Self-employed financial and insurance consultant (since 2021)",
+    "• IHK-certified real estate broker (2024)",
+    "• Licensed to arrange Building Loan Contracts and loan-related products (2024)"
+  ],
+  "stdout": "name\trole\tbio\nGeorg Blascheck\tCEO & Founder - Real Estate Expert\tGeorg Blascheck is the founder of 3B Solution in Germany and serves as the strategic link between international investors and high-potential projects across the Philippines and selected global markets. After completing his Abitur at the German Embassy School in Beijing, he began his professional career in 2018 with an apprenticeship as a Salesman for Insurances and Finance Products. Since 2021, he has worked in self-employed advisory roles within the insurance and financial sector, building extensive experience in client consulting, negotiations, and structured sales processes.\n\nIn 2024, Georg expanded his qualifications by obtaining the official brokerage license through the Chamber of Industry and Commerce (IHK) and added certification for arranging home-savings and loan products. This professional foundation is complemented by significant time spent abroad and a strong ability to operate confidently in cross-cultural environments.\n\nGeorg's approach is defined by transparency, reliability, and a solutions-oriented mindset. With many years of hands-on work in distribution and consulting, he understands how to adapt to a wide range of personalities and decision-makers. Today, his primary focus is on commercial real estate, investor relations, and the development of sustainable, value-creating opportunities in Southeast Asia, Europe, the United States, and the Maldives.\n\nCore Expertise:\n• International commercial real estate brokerage\n• Investment project sourcing and structuring\n• Cross-border business development\n• Demographic-driven market analysis\n• Sales coaching and process optimization\n• Insurance and finance advisory services in Germany\n\nKey Qualifications:\n• Trained Salesman for Insurances and Finance Products (2018-2021)\n• Self-employed financial and insurance consultant (since 2021)\n• IHK-certified real estate broker (2024)\n• Licensed to arrange Building Loan Contracts and loan-related products (2024)\n",
+  "stderr": "",
+  "execution_time_ms": 1582
+}
