@@ -148,6 +148,12 @@ export async function getProperties(filters?: {
     } else if (filters.region === 'Philippines') {
       // Show all properties where country is Philippines
       conditions.push(eq(properties.country, 'Philippines'));
+    } else if (filters.region === 'NorthAmerica') {
+      // Handle NorthAmerica (no space) by mapping to "North America" (with space)
+      const countries = getCountriesByRegion('North America');
+      if (countries.length > 0) {
+        conditions.push(inArray(properties.country, countries));
+      }
     } else if (filters.region === 'Caribbean') {
       // Get all countries in Caribbean region
       const countries = getCountriesByRegion(REGIONS.CARIBBEAN);
