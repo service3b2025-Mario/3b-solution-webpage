@@ -1,7 +1,8 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Menu, Phone, Mail, MapPin, Linkedin, Twitter, Facebook, User, Heart, Bookmark, LogOut, Calendar, Home, Building2, Briefcase, Info, Users, TrendingUp, Trophy, MessageSquare } from "lucide-react";
+import { Menu, Phone, Mail, MapPin, Linkedin, Facebook, User, Heart, Bookmark, LogOut, Calendar, Home, Building2, Briefcase, Info, Users, TrendingUp, Trophy, MessageSquare, Globe } from "lucide-react";
+import { Instagram } from "lucide-react";
 import { BackToTop } from "@/components/BackToTop";
 import { ChatWidget } from "@/components/ChatWidget";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -216,7 +217,7 @@ export function Footer() {
       {/* Main Footer */}
       <div className="py-16">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
             {/* Company Info */}
             <div>
               <div className="mb-6">
@@ -231,14 +232,19 @@ export function Footer() {
                 Delivering 15-30% annual returns backed by global expertise.
               </p>
               <div className="flex gap-4">
-                <a href="#" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+                <a href="#" aria-label="LinkedIn" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
                   <Linkedin className="w-5 h-5" />
                 </a>
-                <a href="#" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
-                  <Twitter className="w-5 h-5" />
-                </a>
-                <a href="#" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+                <a href="#" aria-label="Facebook" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
                   <Facebook className="w-5 h-5" />
+                </a>
+                <a href="#" aria-label="Instagram" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+                  <Instagram className="w-5 h-5" />
+                </a>
+                <a href="#" aria-label="TikTok" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                  </svg>
                 </a>
               </div>
             </div>
@@ -247,7 +253,7 @@ export function Footer() {
             <div>
               <h4 className="font-semibold mb-6">Quick Links</h4>
               <ul className="space-y-3">
-                {navLinks.slice(0, 4).map((link) => (
+                {navLinks.map((link) => (
                   <li key={link.href}>
                     <Link href={link.href} className="text-primary-foreground/70 hover:text-white transition-colors text-sm">
                       {link.label}
@@ -261,10 +267,22 @@ export function Footer() {
             <div>
               <h4 className="font-semibold mb-6">Our Services</h4>
               <ul className="space-y-3">
-                <li><span className="text-primary-foreground/70 text-sm">Investment Advisory</span></li>
-                <li><span className="text-primary-foreground/70 text-sm">Property Acquisition</span></li>
-                <li><span className="text-primary-foreground/70 text-sm">Asset Management</span></li>
-                <li><span className="text-primary-foreground/70 text-sm">Development Consulting</span></li>
+                <li><Link href="/services" className="text-primary-foreground/70 hover:text-white transition-colors text-sm">Investment Advisory</Link></li>
+                <li><Link href="/services" className="text-primary-foreground/70 hover:text-white transition-colors text-sm">Property Acquisition</Link></li>
+                <li><Link href="/services" className="text-primary-foreground/70 hover:text-white transition-colors text-sm">Asset Management</Link></li>
+                <li><Link href="/services" className="text-primary-foreground/70 hover:text-white transition-colors text-sm">Development Consulting</Link></li>
+              </ul>
+            </div>
+
+            {/* Market Areas */}
+            <div>
+              <h4 className="font-semibold mb-6">Market Areas</h4>
+              <ul className="space-y-3">
+                <li><Link href="/properties?region=SouthEastAsia" className="text-primary-foreground/70 hover:text-white transition-colors text-sm flex items-center gap-2"><Globe className="w-4 h-4" /> Philippines</Link></li>
+                <li><Link href="/properties?region=Maldives" className="text-primary-foreground/70 hover:text-white transition-colors text-sm flex items-center gap-2"><Globe className="w-4 h-4" /> Maldives</Link></li>
+                <li><Link href="/properties?region=Caribbean" className="text-primary-foreground/70 hover:text-white transition-colors text-sm flex items-center gap-2"><Globe className="w-4 h-4" /> Caribbean</Link></li>
+                <li><Link href="/properties?region=NorthAmerica" className="text-primary-foreground/70 hover:text-white transition-colors text-sm flex items-center gap-2"><Globe className="w-4 h-4" /> USA</Link></li>
+                <li><Link href="/properties?region=Europe" className="text-primary-foreground/70 hover:text-white transition-colors text-sm flex items-center gap-2"><Globe className="w-4 h-4" /> Europe</Link></li>
               </ul>
             </div>
 
