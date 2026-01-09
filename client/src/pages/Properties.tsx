@@ -225,7 +225,6 @@ export default function Properties() {
     if (typeParam) setPropertyType(typeParam);
     if (priceParam) setPriceRange(priceParam);
   }, []);
-    };
     
     checkMobileDevice();
     window.addEventListener('resize', checkMobileDevice);
