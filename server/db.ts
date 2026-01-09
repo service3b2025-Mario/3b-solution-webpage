@@ -1531,7 +1531,7 @@ export async function getPropertyCountsByRegion() {
   // First, count by country
   result.forEach(row => {
     if (row.country) {
-      counts[row.country] = row.count;
+      counts[row.country] = Number(row.count);
     }
   });
   
@@ -1560,7 +1560,7 @@ export async function getPropertyCountsByRegion() {
   }
   
   // Add "all" count
-  const allCount = result.reduce((sum, row) => sum + row.count, 0);
+  const allCount = result.reduce((sum, row) => sum + Number(row.count), 0);
   counts['all'] = allCount;
   
   return counts;
