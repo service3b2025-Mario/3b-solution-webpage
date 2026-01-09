@@ -200,19 +200,15 @@ export default function Properties() {
     }
   }, [isMobileFilterOpen]);
 
-  // Read URL parameters on mount to set initial filters
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const regionParam = params.get('region');
-    const locationParam = params.get('location');
-    const typeParam = params.get('type');
-    const priceParam = params.get('price');
-    
-    if (regionParam) setRegion(regionParam);
-    if (locationParam) setSelectedLocation(locationParam);
-    if (typeParam) setPropertyType(typeParam);
-    if (priceParam) setPriceRange(priceParam);
-  }, []);
+  if (regionParam) {
+  setSelectedLocation(regionParam);  // ← Maps to the correct state
+  // Also sets the location type (country vs region)
+  if (regionParam === 'Philippines' || regionParam === 'Maldives') {
+    setLocationType('country');
+  } else if (regionParam === 'NorthAmerica' || regionParam === 'SouthEastAsia' || regionParam === 'Caribbean' || regionParam === 'Europe') {
+    setLocationType('region');
+  }
+}
 
   // Reset pagination when filters change
   useEffect(() => {
