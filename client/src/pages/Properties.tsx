@@ -225,12 +225,7 @@ export default function Properties() {
     if (typeParam) setPropertyType(typeParam);
     if (priceParam) setPriceRange(priceParam);
   }, []);
-   useEffect(() => {
-  checkMobileDevice();
-    window.addEventListener('resize', checkMobileDevice);
-    return () => window.removeEventListener('resize', checkMobileDevice);
-  }, []);
-
+  
   // Detect orientation changes
   useEffect(() => {
     const checkOrientation = () => {
