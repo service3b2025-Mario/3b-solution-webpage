@@ -95,7 +95,7 @@ export default function SuccessStories() {
                       <div className="text-sm font-medium text-secondary/70 mb-1">Timeframe</div>
                       <div className="text-2xl md:text-3xl font-bold text-secondary">{featuredStory.timeline}</div>
                     </div>
-    
+    </div>
                   <Button 
                     onClick={() => handleStoryClick(featuredStory)}
                     className="bg-secondary hover:bg-secondary/90 text-white"
