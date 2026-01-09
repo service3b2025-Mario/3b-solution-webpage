@@ -81,17 +81,17 @@ export default function SuccessStories() {
                   <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">{featuredStory.title}</h2>
                   <p className="text-muted-foreground mb-6 leading-relaxed">{featuredStory.challenge}</p>
                   <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className="text-center p-4 bg-muted rounded-lg">
                       <div className="text-2xl font-bold text-secondary">{featuredStory.investmentAmount || 'N/A'}</div>
                       <div className="text-xs text-muted-foreground">Investment</div>
                     </div>
                     {featuredStory.returnAchieved && featuredStory.returnAchieved !== 'N/A' && (
-                      <div className="text-center p-4 bg-muted/50 rounded-lg">
+                      <div className="text-center p-4 bg-muted rounded-lg">
                         <div className="text-2xl font-bold text-secondary">{featuredStory.returnAchieved}%</div>
                         <div className="text-xs text-muted-foreground">Return</div>
                       </div>
                     )}
-                    <div className="text-center p-4 bg-muted/50 rounded-lg">
+                    <div className="text-center p-4 bg-muted rounded-lg">
                       <div className="text-2xl font-bold text-secondary">{featuredStory.timeline}</div>
                       <div className="text-xs text-muted-foreground">Timeframe</div>
                     </div>
