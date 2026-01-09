@@ -200,29 +200,31 @@ export default function Properties() {
     }
   }, [isMobileFilterOpen]);
 
-  if (regionParam) {
-  setSelectedLocation(regionParam);  // ← Maps to the correct state
-  // Also sets the location type (country vs region)
-  if (regionParam === 'Philippines' || regionParam === 'Maldives') {
-    setLocationType('country');
-  } else if (regionParam === 'NorthAmerica' || regionParam === 'SouthEastAsia' || regionParam === 'Caribbean' || regionParam === 'Europe') {
-    setLocationType('region');
-  }
-}
-
-  // Reset pagination when filters change
+    // Read URL parameters on mount to set initial filters
   useEffect(() => {
-    setCurrentLimit(20);
-  }, [search, region, propertyType, priceRange, selectedLocation]);
-
-  // Detect mobile device (phone/tablet with touch) - more strict detection
-  useEffect(() => {
-    const checkMobileDevice = () => {
-      // Only consider it a mobile device if it has mobile user agent AND small screen
-      const hasMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      const hasSmallScreen = window.innerWidth < 768;
-      const isMobile = hasMobileUserAgent && hasSmallScreen;
-      setIsMobileDevice(isMobile);
+    const params = new URLSearchParams(window.location.search);
+    const regionParam = params.get('region');
+    const locationParam = params.get('location');
+    const typeParam = params.get('type');
+    const priceParam = params.get('price');
+    
+    // Keep the original region state assignment
+    if (regionParam) setRegion(regionParam);
+    
+    // ALSO map region parameter to selectedLocation for the LocationHierarchyDropdown
+    if (regionParam) {
+      setSelectedLocation(regionParam);
+      // Determine location type based on region value
+      if (regionParam === 'Philippines' || regionParam === 'Maldives') {
+        setLocationType('country');
+      } else if (regionParam === 'NorthAmerica' || regionParam === 'SouthEastAsia' || regionParam === 'Caribbean' || regionParam === 'Europe') {
+        setLocationType('region');
+      }
+    }
+    if (locationParam) setSelectedLocation(locationParam);
+    if (typeParam) setPropertyType(typeParam);
+    if (priceParam) setPriceRange(priceParam);
+  }, []);
     };
     
     checkMobileDevice();
