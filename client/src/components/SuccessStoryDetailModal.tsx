@@ -13,15 +13,7 @@ export function SuccessStoryDetailModal({ story, open, onClose }: SuccessStoryDe
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto relative">
-         {/* Custom Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute -top-3 -right-3 z-50 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-gray-100 transition-colors"
-          aria-label="Close"
-        >
-          <X className="w-5 h-5 text-gray-600" />
-        </button>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
 
         <DialogHeader>
           <DialogTitle className="sr-only">{story.title}</DialogTitle>
