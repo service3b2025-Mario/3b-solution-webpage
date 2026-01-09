@@ -16,14 +16,7 @@ export function SuccessStoryDetailModal({ story, open, onClose }: SuccessStoryDe
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="sr-only">{story.title}</DialogTitle>
-          <Button
-            onClick={onClose}
-            variant="ghost"
-            size="icon"
-            className="absolute right-4 top-4 rounded-full"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          
         </DialogHeader>
 
         {/* Story Image */}
