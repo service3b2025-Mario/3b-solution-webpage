@@ -80,17 +80,22 @@ export default function SuccessStories() {
                   </div>
                   <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">{featuredStory.title}</h2>
                   <p className="text-muted-foreground mb-6 leading-relaxed">{featuredStory.challenge}</p>
-                  <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="text-center p-4 bg-muted rounded-lg">
-                      <div className="text-2xl font-bold text-secondary">{featuredStory.investmentAmount || 'N/A'}</div>
-                      <div className="text-xs text-muted-foreground">Investment</div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div className="text-center p-5 bg-secondary/10 border-2 border-secondary/20 rounded-xl">
+                      <div className="text-sm font-medium text-secondary/70 mb-1">Investment</div>
+                      <div className="text-2xl md:text-3xl font-bold text-secondary">{featuredStory.investmentAmount || 'Confidential'}</div>
                     </div>
                     {featuredStory.returnAchieved && featuredStory.returnAchieved !== 'N/A' && (
-                      <div className="text-center p-4 bg-muted rounded-lg">
-                        <div className="text-2xl font-bold text-secondary">{featuredStory.returnAchieved}%</div>
-                        <div className="text-xs text-muted-foreground">Return</div>
+                      <div className="text-center p-5 bg-secondary/10 border-2 border-secondary/20 rounded-xl">
+                        <div className="text-sm font-medium text-secondary/70 mb-1">Return</div>
+                        <div className="text-2xl md:text-3xl font-bold text-secondary">{featuredStory.returnAchieved}%</div>
                       </div>
                     )}
+                    <div className="text-center p-5 bg-secondary/10 border-2 border-secondary/20 rounded-xl">
+                      <div className="text-sm font-medium text-secondary/70 mb-1">Timeframe</div>
+                      <div className="text-2xl md:text-3xl font-bold text-secondary">{featuredStory.timeline}</div>
+                    </div>
+                  </div>
                     <div className="text-center p-4 bg-muted rounded-lg">
                       <div className="text-2xl font-bold text-secondary">{featuredStory.timeline}</div>
                       <div className="text-xs text-muted-foreground">Timeframe</div>
