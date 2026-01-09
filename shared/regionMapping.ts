@@ -195,8 +195,19 @@ export function getCountriesByContinent(continent: string): string[] {
 
 // Get all countries for a specific region
 export function getCountriesByRegion(region: string): string[] {
+  // Handle common region name variations (no space vs with space)
+  const regionAliases: Record<string, string> = {
+    'NorthAmerica': 'North America',
+    'SouthEastAsia': 'Southeast Asia',
+    'SouthAsia': 'South Asia',
+    'EastAsia': 'East Asia',
+  };
+  
+  // Normalize the region name
+  const normalizedRegion = regionAliases[region] || region;
+  
   return Object.entries(COUNTRY_MAPPING)
-    .filter(([_, value]) => value.region === region)
+    .filter(([_, value]) => value.region === normalizedRegion)
     .map(([country, _]) => country);
 }
 
