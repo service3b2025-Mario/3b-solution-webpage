@@ -30,6 +30,7 @@ import ContentManagement from "./admin/ContentManagement";
 import { TeamMemberEditDialog } from "@/components/TeamMemberEditDialog";
 import { DownloadAnalytics } from "@/components/DownloadAnalytics";
 import { RealPropertyNameWidget } from "@/components/RealPropertyNameWidget";
+import { AdminLoginForm } from "@/components/AdminLoginForm";
 
 const sidebarItems = [
   { id: "dashboard", label: "Dashboard", icon: BarChart3 },
@@ -67,24 +68,7 @@ export default function Admin() {
   }
 
   if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Card className="w-full max-w-md">
-          <CardContent className="p-8 text-center">
-            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Building2 className="w-8 h-8 text-primary" />
-            </div>
-            <h1 className="text-2xl font-bold mb-2">Admin Portal</h1>
-            <p className="text-muted-foreground mb-6">Please sign in to access the admin dashboard</p>
-            <a href={getLoginUrl()}>
-              <Button className="w-full bg-secondary hover:bg-secondary/90 text-white">
-                Sign In
-              </Button>
-            </a>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <AdminLoginForm onSuccess={() => window.location.reload()} />;
   }
 
   // Check if user is admin
