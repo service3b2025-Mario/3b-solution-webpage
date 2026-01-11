@@ -108,9 +108,11 @@ export function ChatWidget() {
   }
 
   // Demo mode: Render visual placeholder
+  // Desktop: Chat button at bottom-6, BackToTop at bottom-24 (above chat)
+  // Mobile: Chat button stacked vertically with other buttons
   return (
     <>
-      {/* Demo Chat Button - Stacked vertically on mobile */}
+      {/* Demo Chat Button - Stacked vertically on mobile, at bottom on desktop */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-[13rem] md:bottom-6 right-6 md:right-8 z-40 md:z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#FF8C00] text-white shadow-lg transition-all hover:scale-110 hover:shadow-xl"
