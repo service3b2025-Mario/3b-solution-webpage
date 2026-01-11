@@ -96,20 +96,23 @@ export default function InvestmentCalculator() {
     return value.toLocaleString('en-US');
   };
 
-  // Update input value when slider or currency changes
+  // Update input value when slider changes or currency changes
+  // This ensures the green input field stays in sync with the slider
   useEffect(() => {
     setInputValue(formatInputValue(displayedInvestmentAmount));
-  }, [displayedInvestmentAmount]);
+  }, [investmentAmountUSD, currency, rate]);
 
-  // Handle input change - update slider in real-time as user types
+  // Handle input change - update slider and blue display in real-time as user types
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
-    // Format with thousand separators as user types
+    
     if (value) {
       const numValue = parseInt(value);
+      // Update the input field with formatted value
       setInputValue(numValue.toLocaleString('en-US'));
       
-      // Update slider in real-time: convert to USD and clamp to valid range
+      // Update the USD amount (which controls the slider and blue display)
+      // Convert from display currency to USD and clamp to valid range
       const usdAmount = convertToUSD(numValue);
       const clampedUSD = Math.max(100000, Math.min(100000000, usdAmount));
       setInvestmentAmountUSD(clampedUSD);
@@ -138,6 +141,12 @@ export default function InvestmentCalculator() {
       handleInputBlur();
       (e.target as HTMLInputElement).blur();
     }
+  };
+
+  // Handle slider change - this updates the USD amount which triggers the useEffect
+  // to update the input field and the blue display amount
+  const handleSliderChange = (value: number[]) => {
+    setInvestmentAmountUSD(value[0]);
   };
 
   useEffect(() => {
@@ -225,8 +234,9 @@ export default function InvestmentCalculator() {
               <div className="flex justify-between items-start mb-2">
                 <label className="text-sm font-medium text-foreground">Investment Amount</label>
                 <div className="flex flex-col items-end gap-2">
+                  {/* Blue display - shows formatted currency amount */}
                   <span className="text-lg font-bold text-primary">{formatCurrency(displayedInvestmentAmount)}</span>
-                  {/* Direct Input Field - Right Aligned */}
+                  {/* Green input field - Direct Input Field - Right Aligned */}
                   <div className="relative w-64">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-base">
                       {selectedCurrency.symbol}
@@ -247,10 +257,10 @@ export default function InvestmentCalculator() {
                 Enter amount or use slider below
               </p>
 
-              {/* Slider */}
+              {/* Red slider - Slider */}
               <Slider
                 value={[investmentAmountUSD]}
-                onValueChange={(v) => setInvestmentAmountUSD(v[0])}
+                onValueChange={handleSliderChange}
                 min={100000}
                 max={100000000}
                 step={50000}
