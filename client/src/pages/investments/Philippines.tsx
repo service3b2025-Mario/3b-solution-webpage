@@ -212,7 +212,7 @@ export default function InvestmentsPhilippines() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {(properties?.items || []).slice(0, 6).map((property) => (
-                  <Link key={property.id} href={`/properties`}>
+                                    <Link key={property.id} href={`/properties?region=Philippines`}>
                     <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden border-2 h-full">
                       <div className="h-56 bg-gradient-to-br from-primary/20 to-secondary/20 relative overflow-hidden">
                         {property.mainImage ? (
