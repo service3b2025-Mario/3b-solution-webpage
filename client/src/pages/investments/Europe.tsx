@@ -111,7 +111,7 @@ export default function InvestmentsEurope() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {(properties?.items || []).slice(0, 6).map((property) => (
-                                    <Link key={property.id} href={`/properties/${property.id}`}>
+                   <Link key={property.id} href={`/properties/${property.slug}`}>
                     <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden border-2 h-full">
                       <div className="h-56 bg-gradient-to-br from-[#2B7A8B]/20 to-[#1e5563]/20 relative overflow-hidden">
                         {property.mainImage ? (
