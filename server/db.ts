@@ -834,7 +834,7 @@ export async function upsertSetting(key: string, value: string, type: 'text' | '
   const db = await getDb();
   if (!db) return false;
   await db.insert(siteSettings).values({ key, value, type, category })
-    .onDuplicateKeyUpdate({ set: { value, type, category } });
+    .onConflictDoUpdate({ target: siteSettings.key, set: { value, type, category } });
   return true;
 }
 
@@ -906,7 +906,7 @@ export async function upsertFxRate(data: InsertFxRate) {
   const db = await getDb();
   if (!db) return false;
   await db.insert(fxRates).values(data)
-    .onDuplicateKeyUpdate({ set: { rate: data.rate, fetchedAt: data.fetchedAt } });
+    .onConflictDoUpdate({ target: fxRates.currency, set: { rate: data.rate, fetchedAt: data.fetchedAt } });
   return true;
 }
 
