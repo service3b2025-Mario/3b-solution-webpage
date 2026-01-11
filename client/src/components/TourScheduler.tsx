@@ -39,7 +39,7 @@ export function TourScheduler({ propertyId, propertyTitle }: TourSchedulerProps)
 
   const handleConfirm = () => {
     if (!user) {
-      window.location.href = getLoginUrl();
+      window.location.href = "/admin";
       return;
     }
 
@@ -107,7 +107,7 @@ export function TourScheduler({ propertyId, propertyTitle }: TourSchedulerProps)
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <a href={getLoginUrl()}>
+          <a href="/admin">
             <Button className="w-full">
               Sign In to Schedule Tour
             </Button>
