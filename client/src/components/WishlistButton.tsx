@@ -48,7 +48,7 @@ export function WishlistButton({ propertyId, className = "" }: WishlistButtonPro
       toast.error("Please sign in to save properties to your wishlist", {
         action: {
           label: "Sign In",
-          onClick: () => window.location.href = getLoginUrl(),
+          onClick: () => window.location.href = "/admin",
         },
       });
       return;
