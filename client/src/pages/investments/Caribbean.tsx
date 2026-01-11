@@ -1,15 +1,31 @@
+import { useState } from "react";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
 import { ArrowRight, Building2, TrendingUp, MapPin } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { PropertyDetailModal } from "@/components/PropertyDetailModal";
 
 export default function InvestmentsCaribbean() {
   const { data: properties, isLoading } = trpc.properties.list.useQuery({
     region: "Caribbean",
     limit: 6,
   });
+
+  // Modal state
+  const [selectedProperty, setSelectedProperty] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handlePropertyClick = (property: any) => {
+    setSelectedProperty(property);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedProperty(null);
+  };
 
   return (
     <Layout>
@@ -111,8 +127,12 @@ export default function InvestmentsCaribbean() {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {(properties?.items || []).slice(0, 6).map((property) => (
-                                    <Link key={property.id} href={`/properties/${property.id}`}>
-                    <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden border-2 h-full">
+                  <div 
+                    key={property.id} 
+                    onClick={() => handlePropertyClick(property)}
+                    className="cursor-pointer"
+                  >
+                    <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden border-2 h-full">
                       <div className="h-56 bg-gradient-to-br from-[#8B4513]/20 to-[#6b3410]/20 relative overflow-hidden">
                         {property.mainImage ? (
                           <img 
@@ -154,7 +174,7 @@ export default function InvestmentsCaribbean() {
                         )}
                       </CardContent>
                     </Card>
-                  </Link>
+                  </div>
                 ))}
               </div>
 
@@ -190,6 +210,13 @@ export default function InvestmentsCaribbean() {
           </div>
         </div>
       </section>
+
+      {/* Property Detail Modal */}
+      <PropertyDetailModal
+        property={selectedProperty}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </Layout>
   );
 }
