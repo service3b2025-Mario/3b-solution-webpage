@@ -273,13 +273,14 @@ class SDKServer {
       if (sessionUserId.startsWith("admin_")) {
         console.log("[Auth] Admin user not found in DB, creating from session...");
         try {
-          await db.upsertUser({
-            openId: sessionUserId,
-            name: session.name || "Admin User",
-            email: "admin@3bsolution.com",
-            loginMethod: "email",
-            lastSignedIn: signedInAt,
-          });
+         await db.upsertUser({
+  openId: sessionUserId,
+  name: session.name || "Admin User",
+  email: "admin@3bsolution.com",
+  loginMethod: "email",
+  role: "admin",
+  lastSignedIn: signedInAt,
+});
           user = await db.getUserByOpenId(sessionUserId);
           console.log("[Auth] Admin user created successfully");
         } catch (dbError) {
