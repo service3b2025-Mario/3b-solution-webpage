@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,9 +15,16 @@ export function AdminLoginForm({ onSuccess }: AdminLoginFormProps) {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Handle button click directly instead of form submit
+  const handleLogin = async () => {
+    if (isLoading) return;
+    if (!email || !password) {
+      setError("Please enter both email and password");
+      return;
+    }
+    
     setIsLoading(true);
     setError(null);
 
@@ -52,6 +59,23 @@ export function AdminLoginForm({ onSuccess }: AdminLoginFormProps) {
     }
   };
 
+  // Prevent any form submission - we handle login via button click only
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Do nothing - login is handled by button click
+    return false;
+  };
+
+  // Handle Enter key in password field
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.stopPropagation();
+      handleLogin();
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
@@ -71,35 +95,57 @@ export function AdminLoginForm({ onSuccess }: AdminLoginFormProps) {
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Use div instead of form to completely prevent browser form behavior */}
+          <form 
+            ref={formRef}
+            onSubmit={handleFormSubmit}
+            autoComplete="off"
+            className="space-y-4"
+          >
+            {/* Hidden field to trick browser autofill */}
+            <input type="text" name="prevent_autofill" style={{ display: 'none' }} />
+            <input type="password" name="prevent_autofill_pass" style={{ display: 'none' }} />
+            
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="admin-email">Email</Label>
               <Input
-                id="email"
+                id="admin-email"
+                name="admin-email-field"
                 type="email"
                 placeholder="admin@3bsolution.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
                 disabled={isLoading}
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
+                data-lpignore="true"
+                data-form-type="other"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="admin-password">Password</Label>
               <Input
-                id="password"
+                id="admin-password"
+                name="admin-password-field"
                 type="password"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
+                onKeyDown={handleKeyDown}
                 disabled={isLoading}
+                autoComplete="new-password"
+                data-lpignore="true"
+                data-form-type="other"
               />
             </div>
 
+            {/* Use type="button" to prevent form submission */}
             <Button
-              type="submit"
+              type="button"
+              onClick={handleLogin}
               className="w-full bg-secondary hover:bg-secondary/90 text-white"
               disabled={isLoading}
             >
