@@ -935,17 +935,6 @@ export default function Properties() {
             <p className="text-muted-foreground">
               {properties?.total || 0} properties found
             </p>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="return">Highest Return</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           {isLoading ? (
