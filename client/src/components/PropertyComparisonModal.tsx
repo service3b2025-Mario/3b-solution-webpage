@@ -63,13 +63,13 @@ export function PropertyComparisonModal({ properties, isOpen, onClose, onRemove 
 
   const ComparisonRow = ({ label, values, icon: Icon }: { label: string; values: (string | number | undefined)[]; icon?: any }) => (
     <div className="border-b border-border last:border-b-0">
-      <div className={`grid ${getGridCols()} gap-2 md:gap-4 py-3 md:py-4`}>
-        <div className="flex items-center gap-1 md:gap-2 font-medium text-muted-foreground text-xs md:text-sm min-w-[80px] md:min-w-[120px]">
-          {Icon && <Icon className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />}
-          <span className="truncate">{label}</span>
+      <div className={`grid ${getGridCols()} gap-4 md:gap-6 lg:gap-8 py-4 md:py-5 px-4 md:px-6`}>
+        <div className="flex items-center gap-2 font-medium text-muted-foreground text-sm md:text-base min-w-[100px] md:min-w-[140px] lg:min-w-[160px]">
+          {Icon && <Icon className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />}
+          <span>{label}</span>
         </div>
         {values.slice(0, 3).map((value, index) => (
-          <div key={index} className="text-xs md:text-sm min-w-[100px] break-words">
+          <div key={index} className="text-sm md:text-base lg:text-lg">
             {value || "—"}
           </div>
         ))}
@@ -79,30 +79,30 @@ export function PropertyComparisonModal({ properties, isOpen, onClose, onRemove 
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] max-w-7xl max-h-[90vh] overflow-hidden p-0">
-        <DialogHeader className="p-4 md:p-6 pb-0">
-          <DialogTitle className="text-xl md:text-2xl">Property Comparison</DialogTitle>
+      <DialogContent className="w-[95vw] max-w-[95vw] lg:max-w-[90vw] xl:max-w-[85vw] max-h-[90vh] overflow-hidden p-0">
+        <DialogHeader className="p-4 md:p-6 lg:p-8 pb-0">
+          <DialogTitle className="text-xl md:text-2xl lg:text-3xl">Property Comparison</DialogTitle>
         </DialogHeader>
 
-        {/* Scrollable container - horizontal on mobile, vertical on all */}
-        <div className="overflow-x-auto overflow-y-auto max-h-[calc(90vh-120px)] p-4 md:p-6 pt-2">
-          <div className="min-w-[600px] md:min-w-0 space-y-4 md:space-y-6">
+        {/* Scrollable container */}
+        <div className="overflow-x-auto overflow-y-auto max-h-[calc(90vh-140px)] p-4 md:p-6 lg:p-8 pt-4">
+          <div className="min-w-[600px] md:min-w-0 space-y-6 md:space-y-8">
             {/* Property Images and Titles */}
-            <div className={`grid ${getGridCols()} gap-2 md:gap-4`}>
-              <div className="font-medium text-muted-foreground text-xs md:text-sm flex items-center min-w-[80px] md:min-w-[120px]">
+            <div className={`grid ${getGridCols()} gap-4 md:gap-6 lg:gap-8`}>
+              <div className="font-medium text-muted-foreground text-sm md:text-base flex items-center min-w-[100px] md:min-w-[140px] lg:min-w-[160px]">
                 Property
               </div>
               {properties.slice(0, 3).map((property) => (
-                <div key={property.id} className="relative min-w-[140px] md:min-w-0">
+                <div key={property.id} className="relative">
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute top-1 right-1 md:top-2 md:right-2 z-10 h-5 w-5 md:h-6 md:w-6 bg-black/50 hover:bg-black/70 rounded-full"
+                    className="absolute top-2 right-2 z-10 h-6 w-6 md:h-8 md:w-8 bg-black/50 hover:bg-black/70 rounded-full"
                     onClick={() => onRemove(property.id)}
                   >
-                    <X className="w-3 h-3 md:w-4 md:h-4 text-white" />
+                    <X className="w-4 h-4 md:w-5 md:h-5 text-white" />
                   </Button>
-                  <div className="aspect-video bg-muted rounded-lg overflow-hidden mb-2">
+                  <div className="aspect-video bg-muted rounded-lg overflow-hidden mb-3">
                     {property.mainImage ? (
                       <img
                         src={property.mainImage}
@@ -111,14 +111,14 @@ export function PropertyComparisonModal({ properties, isOpen, onClose, onRemove 
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Building2 className="w-8 h-8 md:w-12 md:h-12 text-muted-foreground/30" />
+                        <Building2 className="w-12 h-12 md:w-16 md:h-16 text-muted-foreground/30" />
                       </div>
                     )}
                   </div>
-                  <h3 className="font-semibold text-xs md:text-sm line-clamp-2">{property.title}</h3>
+                  <h3 className="font-semibold text-sm md:text-base lg:text-lg line-clamp-2">{property.title}</h3>
                   <Badge 
                     variant={property.status === 'available' ? 'default' : 'secondary'} 
-                    className="mt-1 text-[10px] md:text-xs"
+                    className="mt-2 text-xs md:text-sm"
                   >
                     {property.status}
                   </Badge>
@@ -170,25 +170,25 @@ export function PropertyComparisonModal({ properties, isOpen, onClose, onRemove 
               
               {/* Features */}
               <div className="border-b border-border last:border-b-0">
-                <div className={`grid ${getGridCols()} gap-2 md:gap-4 py-3 md:py-4`}>
-                  <div className="font-medium text-muted-foreground text-xs md:text-sm min-w-[80px] md:min-w-[120px]">
+                <div className={`grid ${getGridCols()} gap-4 md:gap-6 lg:gap-8 py-4 md:py-5 px-4 md:px-6`}>
+                  <div className="font-medium text-muted-foreground text-sm md:text-base min-w-[100px] md:min-w-[140px] lg:min-w-[160px]">
                     Features
                   </div>
                   {properties.slice(0, 3).map((property, index) => (
-                    <div key={index} className="text-xs md:text-sm space-y-1 min-w-[100px]">
+                    <div key={index} className="text-sm md:text-base space-y-1">
                       {property.features && property.features.length > 0 ? (
-                        property.features.slice(0, 4).map((feature, i) => (
-                          <div key={i} className="flex items-center gap-1">
+                        property.features.slice(0, 5).map((feature, i) => (
+                          <div key={i} className="flex items-center gap-2">
                             <span className="text-green-500 flex-shrink-0">✓</span>
-                            <span className="text-[10px] md:text-xs truncate">{feature}</span>
+                            <span className="text-xs md:text-sm">{feature}</span>
                           </div>
                         ))
                       ) : (
                         <span className="text-muted-foreground">—</span>
                       )}
-                      {property.features && property.features.length > 4 && (
-                        <span className="text-[10px] md:text-xs text-muted-foreground">
-                          +{property.features.length - 4} more
+                      {property.features && property.features.length > 5 && (
+                        <span className="text-xs md:text-sm text-muted-foreground">
+                          +{property.features.length - 5} more
                         </span>
                       )}
                     </div>
@@ -198,25 +198,25 @@ export function PropertyComparisonModal({ properties, isOpen, onClose, onRemove 
 
               {/* Amenities */}
               <div className="border-b border-border last:border-b-0">
-                <div className={`grid ${getGridCols()} gap-2 md:gap-4 py-3 md:py-4`}>
-                  <div className="font-medium text-muted-foreground text-xs md:text-sm min-w-[80px] md:min-w-[120px]">
+                <div className={`grid ${getGridCols()} gap-4 md:gap-6 lg:gap-8 py-4 md:py-5 px-4 md:px-6`}>
+                  <div className="font-medium text-muted-foreground text-sm md:text-base min-w-[100px] md:min-w-[140px] lg:min-w-[160px]">
                     Amenities
                   </div>
                   {properties.slice(0, 3).map((property, index) => (
-                    <div key={index} className="text-xs md:text-sm space-y-1 min-w-[100px]">
+                    <div key={index} className="text-sm md:text-base space-y-1">
                       {property.amenities && property.amenities.length > 0 ? (
-                        property.amenities.slice(0, 4).map((amenity, i) => (
-                          <div key={i} className="flex items-center gap-1">
+                        property.amenities.slice(0, 5).map((amenity, i) => (
+                          <div key={i} className="flex items-center gap-2">
                             <span className="text-blue-500 flex-shrink-0">✓</span>
-                            <span className="text-[10px] md:text-xs truncate">{amenity}</span>
+                            <span className="text-xs md:text-sm">{amenity}</span>
                           </div>
                         ))
                       ) : (
                         <span className="text-muted-foreground">—</span>
                       )}
-                      {property.amenities && property.amenities.length > 4 && (
-                        <span className="text-[10px] md:text-xs text-muted-foreground">
-                          +{property.amenities.length - 4} more
+                      {property.amenities && property.amenities.length > 5 && (
+                        <span className="text-xs md:text-sm text-muted-foreground">
+                          +{property.amenities.length - 5} more
                         </span>
                       )}
                     </div>
@@ -228,9 +228,9 @@ export function PropertyComparisonModal({ properties, isOpen, onClose, onRemove 
         </div>
 
         {/* Fixed footer */}
-        <div className="p-4 md:p-6 pt-0 border-t bg-white">
+        <div className="p-4 md:p-6 lg:p-8 pt-4 border-t bg-white">
           <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={onClose}>
+            <Button variant="outline" onClick={onClose} className="md:text-base md:px-6 md:py-2">
               Close
             </Button>
           </div>
