@@ -85,6 +85,12 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
+export async function updateUserRole(openId: string, role: 'user' | 'admin'): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(users).set({ role }).where(eq(users.openId, openId));
+}
+
 // Properties operations
 export async function getProperties(filters?: {
   region?: string;
@@ -1645,5 +1651,3 @@ export async function incrementResourceDownloadCount(id: number) {
     .set({ downloadCount: sql`${resources.downloadCount} + 1` })
     .where(eq(resources.id, id));
 }
-
-
