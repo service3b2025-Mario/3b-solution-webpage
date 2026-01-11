@@ -1,7 +1,5 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Building2, Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -15,13 +13,18 @@ export function AdminLoginForm({ onSuccess }: AdminLoginFormProps) {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const formRef = useRef<HTMLFormElement>(null);
 
-  // Handle button click directly instead of form submit
-  const handleLogin = async () => {
+  // ONLY called when user explicitly clicks the Sign In button
+  const handleLoginClick = async () => {
     if (isLoading) return;
-    if (!email || !password) {
-      setError("Please enter both email and password");
+    
+    if (!email.trim()) {
+      setError("Please enter your email address");
+      return;
+    }
+    
+    if (!password) {
+      setError("Please enter your password");
       return;
     }
     
@@ -34,7 +37,7 @@ export function AdminLoginForm({ onSuccess }: AdminLoginFormProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: email.trim(), password }),
         credentials: "include",
       });
 
@@ -45,7 +48,6 @@ export function AdminLoginForm({ onSuccess }: AdminLoginFormProps) {
       }
 
       if (data.success) {
-        // Refresh the page to load the admin dashboard
         if (onSuccess) {
           onSuccess();
         } else {
@@ -56,23 +58,6 @@ export function AdminLoginForm({ onSuccess }: AdminLoginFormProps) {
       setError(err instanceof Error ? err.message : "Login failed. Please try again.");
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  // Prevent any form submission - we handle login via button click only
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // Do nothing - login is handled by button click
-    return false;
-  };
-
-  // Handle Enter key in password field
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      e.stopPropagation();
-      handleLogin();
     }
   };
 
@@ -95,23 +80,17 @@ export function AdminLoginForm({ onSuccess }: AdminLoginFormProps) {
             </Alert>
           )}
 
-          {/* Use div instead of form to completely prevent browser form behavior */}
-          <form 
-            ref={formRef}
-            onSubmit={handleFormSubmit}
-            autoComplete="off"
-            className="space-y-4"
-          >
-            {/* Hidden field to trick browser autofill */}
-            <input type="text" name="prevent_autofill" style={{ display: 'none' }} />
-            <input type="password" name="prevent_autofill_pass" style={{ display: 'none' }} />
-            
+          {/* NO FORM ELEMENT - Just divs to prevent any browser form behavior */}
+          <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="admin-email">Email</Label>
-              <Input
-                id="admin-email"
-                name="admin-email-field"
-                type="email"
+              <label htmlFor="login-email" className="text-sm font-medium leading-none">
+                Email
+              </label>
+              {/* Plain HTML input - no form association */}
+              <input
+                id="login-email"
+                type="text"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 placeholder="admin@3bsolution.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -119,33 +98,31 @@ export function AdminLoginForm({ onSuccess }: AdminLoginFormProps) {
                 autoComplete="off"
                 autoCorrect="off"
                 autoCapitalize="off"
-                spellCheck="false"
-                data-lpignore="true"
-                data-form-type="other"
+                spellCheck={false}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="admin-password">Password</Label>
-              <Input
-                id="admin-password"
-                name="admin-password-field"
+              <label htmlFor="login-password" className="text-sm font-medium leading-none">
+                Password
+              </label>
+              {/* Plain HTML input - no form association */}
+              <input
+                id="login-password"
                 type="password"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={handleKeyDown}
                 disabled={isLoading}
-                autoComplete="new-password"
-                data-lpignore="true"
-                data-form-type="other"
+                autoComplete="off"
               />
             </div>
 
-            {/* Use type="button" to prevent form submission */}
+            {/* Button with explicit onClick - NO form submission possible */}
             <Button
               type="button"
-              onClick={handleLogin}
+              onClick={handleLoginClick}
               className="w-full bg-secondary hover:bg-secondary/90 text-white"
               disabled={isLoading}
             >
@@ -158,7 +135,7 @@ export function AdminLoginForm({ onSuccess }: AdminLoginFormProps) {
                 "Sign In"
               )}
             </Button>
-          </form>
+          </div>
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
             <p>Contact your administrator if you need access.</p>
