@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo } from "react";
 
 type UseAuthOptions = {
   redirectOnUnauthenticated?: boolean;
-  redirectPath?: string | null;
+  redirectPath?: string;
 };
 
 export function useAuth(options?: UseAuthOptions) {
@@ -70,7 +70,7 @@ export function useAuth(options?: UseAuthOptions) {
     if (state.user) return;
     // Don't redirect on server-side
     if (typeof window === "undefined") return;
-    // Don't redirect if no redirect path is configured (OAuth not set up)
+    // Don't redirect if no redirect path is configured (OAuth not set up) or empty string
     if (!redirectPath) return;
     // Don't redirect if already on the redirect path
     if (window.location.pathname === redirectPath) return;
