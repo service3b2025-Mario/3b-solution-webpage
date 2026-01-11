@@ -5,11 +5,12 @@ import { useCallback, useEffect, useMemo } from "react";
 
 type UseAuthOptions = {
   redirectOnUnauthenticated?: boolean;
-  redirectPath?: string;
+  redirectPath?: string | null;
 };
 
 export function useAuth(options?: UseAuthOptions) {
-  const { redirectOnUnauthenticated = false, redirectPath = getLoginUrl() } =
+  const loginUrl = getLoginUrl();
+  const { redirectOnUnauthenticated = false, redirectPath = loginUrl } =
     options ?? {};
   const utils = trpc.useUtils();
 
@@ -61,13 +62,20 @@ export function useAuth(options?: UseAuthOptions) {
   ]);
 
   useEffect(() => {
+    // Don't redirect if redirectOnUnauthenticated is false
     if (!redirectOnUnauthenticated) return;
+    // Don't redirect if still loading
     if (meQuery.isLoading || logoutMutation.isPending) return;
+    // Don't redirect if user is authenticated
     if (state.user) return;
+    // Don't redirect on server-side
     if (typeof window === "undefined") return;
+    // Don't redirect if no redirect path is configured (OAuth not set up)
+    if (!redirectPath) return;
+    // Don't redirect if already on the redirect path
     if (window.location.pathname === redirectPath) return;
 
-    window.location.href = redirectPath
+    window.location.href = redirectPath;
   }, [
     redirectOnUnauthenticated,
     redirectPath,
