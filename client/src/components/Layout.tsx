@@ -139,7 +139,7 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <a href={getLoginUrl()} className="hidden md:block">
+              <a href="/admin" className="hidden md:block">
                 <Button variant="outline" size="sm">
                   <User className="mr-2 h-4 w-4" />
                   Sign In
