@@ -101,12 +101,18 @@ export default function InvestmentCalculator() {
     setInputValue(formatInputValue(displayedInvestmentAmount));
   }, [displayedInvestmentAmount]);
 
-  // Handle input change
+  // Handle input change - update slider in real-time as user types
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
     // Format with thousand separators as user types
     if (value) {
-      setInputValue(parseInt(value).toLocaleString('en-US'));
+      const numValue = parseInt(value);
+      setInputValue(numValue.toLocaleString('en-US'));
+      
+      // Update slider in real-time: convert to USD and clamp to valid range
+      const usdAmount = convertToUSD(numValue);
+      const clampedUSD = Math.max(100000, Math.min(100000000, usdAmount));
+      setInvestmentAmountUSD(clampedUSD);
     } else {
       setInputValue("");
     }
