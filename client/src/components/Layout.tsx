@@ -274,17 +274,6 @@ export function Footer() {
               </ul>
             </div>
 
-            {/* Market Areas */}
-            <div>
-              <h4 className="font-semibold mb-6">Market Areas</h4>
-              <ul className="space-y-3">
-                <li><Link href="/properties?region=SouthEastAsia" className="text-primary-foreground/70 hover:text-white transition-colors text-sm flex items-center gap-2"><Globe className="w-4 h-4" /> Philippines</Link></li>
-                <li><Link href="/properties?region=Maldives" className="text-primary-foreground/70 hover:text-white transition-colors text-sm flex items-center gap-2"><Globe className="w-4 h-4" /> Maldives</Link></li>
-                <li><Link href="/properties?region=Caribbean" className="text-primary-foreground/70 hover:text-white transition-colors text-sm flex items-center gap-2"><Globe className="w-4 h-4" /> Caribbean</Link></li>
-                <li><Link href="/properties?region=NorthAmerica" className="text-primary-foreground/70 hover:text-white transition-colors text-sm flex items-center gap-2"><Globe className="w-4 h-4" /> USA</Link></li>
-                <li><Link href="/properties?region=Europe" className="text-primary-foreground/70 hover:text-white transition-colors text-sm flex items-center gap-2"><Globe className="w-4 h-4" /> Europe</Link></li>
-              </ul>
-            </div>
 
             {/* Contact */}
             <div>
