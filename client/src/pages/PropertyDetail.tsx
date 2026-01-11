@@ -11,11 +11,11 @@ import InvestmentCalculator from "@/components/InvestmentCalculator";
 export default function PropertyDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { data: property, isLoading } = trpc.properties.getBySlug.useQuery(slug || "");
-  const { data: similarProperties } = trpc.properties.list.useQuery( {
-    region: property?.region,
-    limit: 3
+  const { data: similarProperties } = trpc.properties.list.useQuery({ 
+    region: property?.region, 
+    limit: 3 
   }, { enabled: !!property });
-
+  
   const incrementViews = trpc.properties.incrementViews.useMutation();
 
   useEffect(() => {
@@ -163,50 +163,137 @@ export default function PropertyDetail() {
                   <InvestmentCalculator />
                 </CardContent>
               </Card>
+
+              {/* Property Specifications */}
+              <Card className="border-0 shadow-lg">
+                <CardHeader>
+                  <CardTitle>Property Specifications</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <p className="text-muted-foreground">Basic Information</p>
+                      <p><span className="font-semibold">ID:</span> {property.id}</p>
+                      <p><span className="font-semibold">Region:</span> {property.region}</p>
+                      <p><span className="font-semibold">Type:</span> {property.propertyType}</p>
+                      <p><span className="font-semibold">Country:</span> {property.country}</p>
+                      <p><span className="font-semibold">Asset Class:</span> {property.assetClass || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Size & Dimensions</p>
+                      <p><span className="font-semibold">Land Size (sqm):</span> {property.landSizeSqm || 'N/A'}</p>
+                      <p><span className="font-semibold">Land Size (ha):</span> {property.landSizeHa || 'N/A'}</p>
+                      <p><span className="font-semibold">Building Area (sqm):</span> {property.buildingAreaSqm || 'N/A'}</p>
+                      <p><span className="font-semibold">Floor Area (sqm):</span> {property.floorAreaSqm || 'N/A'}</p>
+                      <p><span className="font-semibold">Floors:</span> {property.floors || 'N/A'}</p>
+                      <p><span className="font-semibold">FAR:</span> {property.floorAreaRatio || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Units Information</p>
+                      <p><span className="font-semibold">Total Units:</span> {property.units || 'N/A'}</p>
+                      <p><span className="font-semibold">Units Details:</span> {property.unitsDetails || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Pricing & Investment</p>
+                      <p><span className="font-semibold">Asking Price (Net):</span> ${Number(property.askingPriceNet || 0).toLocaleString()}</p>
+                      <p><span className="font-semibold">Asking Price (Gross):</span> ${Number(property.askingPriceGross || 0).toLocaleString()}</p>
+                      <p><span className="font-semibold">Min Price:</span> ${Number(property.priceMin || 0).toLocaleString()}</p>
+                      <p><span className="font-semibold">Max Price:</span> ${Number(property.priceMax || 0).toLocaleString()}</p>
+                      <p><span className="font-semibold">Currency:</span> {property.currency || 'N/A'}</p>
+                      <p><span className="font-semibold">ROI:</span> {property.roiPercent || 'N/A'}%</p>
+                      <p><span className="font-semibold">Expected Return:</span> {property.expectedReturn || 'N/A'}%</p>
+                      <p><span className="font-semibold">Investment Timeline:</span> {property.investmentTimeline || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Amenities</p>
+                      <p>{amenities.length > 0 ? amenities.join(', ') : 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Income Generating</p>
+                      <p>{property.incomeGenerating ? 'Yes' : 'No'}</p>
+                      {property.incomeGenerating && <p><span className="font-semibold">Income Details:</span> {property.incomeDetails || 'N/A'}</p>}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Sidebar */}
             <div className="space-y-6">
-              {/* Price Card */}
+              {/* Schedule Virtual Tour */}
+              <Card className="border-0 shadow-lg">
+                <CardContent className="p-6">
+                  <h4 className="font-semibold mb-4">Schedule Virtual Tour</h4>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Sign in to book a personalized virtual tour with our investment team.
+                  </p>
+                  <Link href="/schedule-tour">
+                    <Button className="w-full bg-primary hover:bg-primary/90 text-white h-12">
+                      Sign In to Schedule Tour
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+
+              {/* Request Information Form */}
               <Card className="border-0 shadow-lg sticky top-28">
                 <CardContent className="p-6">
-                  <div className="mb-6">
-                    <span className="text-sm text-muted-foreground">Investment Range</span>
-                    <div className="text-3xl font-bold text-primary">
-                      ${Number(property.priceMin || 0).toLocaleString()} - ${Number(property.priceMax || 0).toLocaleString()}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                        <TrendingUp className="w-4 h-4" />
-                        <span className="text-xs">Expected Return</span>
+                  <h4 className="font-semibold mb-4">Request Information</h4>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Interested in this property? Fill out the form below and our team will get in touch with you.
+                  </p>
+                  <form className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="firstName" className="sr-only">First Name</label>
+                        <input type="text" id="firstName" placeholder="First Name" className="w-full p-2 border rounded-md" />
                       </div>
-                      <div className="text-2xl font-bold text-secondary">{property.expectedReturn}%</div>
-                    </div>
-                    <div className="p-4 bg-muted/50 rounded-lg">
-                      <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                        <Calendar className="w-4 h-4" />
-                        <span className="text-xs">Timeline</span>
+                      <div>
+                        <label htmlFor="lastName" className="sr-only">Last Name</label>
+                        <input type="text" id="lastName" placeholder="Last Name" className="w-full p-2 border rounded-md" />
                       </div>
-                      <div className="text-2xl font-bold text-foreground">{property.investmentTimeline || "5-7 yrs"}</div>
                     </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Link href="/contact">
-                      <Button className="w-full bg-secondary hover:bg-secondary/90 text-white h-12">
-                        Schedule Consultation
-                      </Button>
-                    </Link>
-                    <Button variant="outline" className="w-full h-12">
-                      Request Information
+                    <div>
+                      <label htmlFor="email" className="sr-only">Email</label>
+                      <input type="email" id="email" placeholder="john@example.com" className="w-full p-2 border rounded-md" />
+                    </div>
+                    <div>
+                      <label htmlFor="phone" className="sr-only">Phone Number</label>
+                      <input type="tel" id="phone" placeholder="+1 (555) 123-4567" className="w-full p-2 border rounded-md" />
+                    </div>
+                    <div>
+                      <label htmlFor="investorType" className="sr-only">Investor Type</label>
+                      <select id="investorType" className="w-full p-2 border rounded-md">
+                        <option>Select Investor Type</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="investmentRange" className="sr-only">Investment Range</label>
+                      <select id="investmentRange" className="w-full p-2 border rounded-md">
+                        <option>Select Investment Range</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="message" className="sr-only">Message</label>
+                      <textarea id="message" placeholder="Tell us about your investment goals and timeline..." rows={3} className="w-full p-2 border rounded-md"></textarea>
+                    </div>
+                    <Button type="submit" className="w-full bg-secondary hover:bg-secondary/90 text-white h-12">
+                      Submit Inquiry
                     </Button>
-                  </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      By submitting this form, you agree to be contacted by 3B Solution regarding this property and other investment opportunities.
+                    </p>
+                  </form>
 
                   <div className="mt-6 pt-6 border-t border-border">
                     <h4 className="font-semibold mb-4">Contact Expert</h4>
+                    <div className="flex items-center gap-3 mb-4">
+                      <img src="/path/to/georg-blancheck.jpg" alt="Georg Blancheck" className="w-10 h-10 rounded-full" />
+                      <div>
+                        <p className="font-semibold">Georg Blancheck</p>
+                        <p className="text-sm text-muted-foreground">CEO & Founder - Real Estate Expert</p>
+                      </div>
+                    </div>
                     <div className="space-y-3">
                       <a href="tel:+63123456789" className="flex items-center gap-3 text-muted-foreground hover:text-foreground">
                         <Phone className="w-4 h-4" />
