@@ -833,8 +833,20 @@ export async function getAllSettings() {
 export async function upsertSetting(key: string, value: string, type: 'text' | 'number' | 'json' | 'html' = 'text', category?: string) {
   const db = await getDb();
   if (!db) return false;
-  await db.insert(siteSettings).values({ key, value, type, category })
-    .onConflictDoUpdate({ target: siteSettings.key, set: { value, type, category } });
+  
+  // Check if setting exists
+  const existing = await db.select().from(siteSettings).where(eq(siteSettings.key, key)).limit(1);
+  
+  if (existing.length > 0) {
+    // Update existing setting
+    await db.update(siteSettings)
+      .set({ value, type, category })
+      .where(eq(siteSettings.key, key));
+  } else {
+    // Insert new setting
+    await db.insert(siteSettings).values({ key, value, type, category });
+  }
+  
   return true;
 }
 
