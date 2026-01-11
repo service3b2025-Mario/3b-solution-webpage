@@ -310,7 +310,7 @@ export default function Properties() {
   };
 
   const filters: any = { limit: currentLimit };
-  if (region !== "all") filters.region = region;
+  // Region filter removed - using only selectedLocation to fix region switching issue
   if (selectedLocation) {
     filters.location = selectedLocation;
     filters.locationType = locationType;
