@@ -447,7 +447,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="font-medium">Business Hours</p>
-                      <p className="text-sm text-muted-foreground">Mon - Fri: 9:00 AM - 6:00 PM (GMT+8)</p>
+                      <p className="text-sm text-muted-foreground">Mon - Sat: 8:00 AM - 8:00 PM</p>
                     </div>
                   </div>
                 </CardContent>
@@ -459,30 +459,44 @@ export default function Contact() {
                   <CardTitle>Our Experts</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {(experts || []).map((expert) => (
-                    <div key={expert.id} className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
-                      {expert.photo ? (
-                        <img 
-                          src={expert.photo} 
-                          alt={expert.name}
-                          className="w-12 h-12 rounded-full object-cover object-top"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                          <Users className="w-6 h-6 text-primary" />
+                  {(experts || []).map((expert) => {
+                    // Determine timezone based on expert name
+                    const getTimezone = (name: string) => {
+                      if (name.toLowerCase().includes('georg')) return 'CET (German Time)';
+                      if (name.toLowerCase().includes('engela')) return 'GMT+8 (Philippine Time)';
+                      if (name.toLowerCase().includes('bibian')) return 'GMT+8 (Chinese Time)';
+                      return 'GMT+8';
+                    };
+                    
+                    return (
+                      <div key={expert.id} className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
+                        {expert.photo ? (
+                          <img 
+                            src={expert.photo} 
+                            alt={expert.name}
+                            className="w-12 h-12 rounded-full object-cover object-top"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                            <Users className="w-6 h-6 text-primary" />
+                          </div>
+                        )}
+                        <div className="flex-1">
+                          <p className="font-medium">{expert.name}</p>
+                          <p className="text-sm text-muted-foreground">{expert.role}</p>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                            <Clock className="w-3 h-3" />
+                            Mon-Sat 8AM-8PM {getTimezone(expert.name)}
+                          </p>
                         </div>
-                      )}
-                      <div className="flex-1">
-                        <p className="font-medium">{expert.name}</p>
-                        <p className="text-sm text-muted-foreground">{expert.role}</p>
+                        {expert.linkedIn && (
+                          <a href={expert.linkedIn} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-secondary">
+                            <Linkedin className="w-5 h-5" />
+                          </a>
+                        )}
                       </div>
-                      {expert.linkedIn && (
-                        <a href={expert.linkedIn} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-secondary">
-                          <Linkedin className="w-5 h-5" />
-                        </a>
-                      )}
-                    </div>
-                  ))}
+                    );
+                  })}
                 </CardContent>
               </Card>
 
