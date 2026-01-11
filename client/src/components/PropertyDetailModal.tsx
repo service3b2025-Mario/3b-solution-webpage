@@ -151,14 +151,14 @@ export function PropertyDetailModal({
         <div className="absolute right-4 top-4 z-50 flex items-center gap-2">
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="rounded-full bg-background/80 backdrop-blur-sm p-2 hover:bg-muted transition-colors shadow-md"
+            className="rounded-full bg-background/80 backdrop-blur-sm w-10 h-10 flex items-center justify-center hover:bg-muted transition-colors shadow-md"
             title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
           >
             {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
           </button>
           <button
             onClick={onClose}
-            className="rounded-full bg-background/80 backdrop-blur-sm p-2 hover:bg-muted transition-colors shadow-md"
+            className="rounded-full bg-background/80 backdrop-blur-sm w-10 h-10 flex items-center justify-center hover:bg-muted transition-colors shadow-md"
             title="Close"
           >
             <X className="h-4 w-4" />
