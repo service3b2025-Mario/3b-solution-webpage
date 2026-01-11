@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +14,8 @@ import { toast } from "sonner";
 import { 
   Building2, Users, FileText, BarChart3, Calendar, Mail, 
   TrendingUp, Globe, Settings, Home, LogOut, Plus, Eye, Edit, Trash2,
-  ChevronRight, ChevronLeft, Bell, DollarSign, Target, X, MessageSquare, Phone, Maximize2, Minimize2
+  ChevronRight, ChevronLeft, Bell, DollarSign, Target, X, MessageSquare, Phone, Maximize2, Minimize2,
+  Linkedin, Facebook, Instagram, Save, ExternalLink
 } from "lucide-react";
 import { MediaUpload } from "@/components/MediaUpload";
 import { SalesFunnelDashboard } from "@/components/SalesFunnelDashboard";
@@ -1627,6 +1628,9 @@ function SettingsSection() {
         <p className="text-muted-foreground">Configure your platform settings</p>
       </div>
 
+      {/* Social Media Settings */}
+      <SocialMediaSettings />
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="border-0 shadow-lg">
           <CardHeader>
@@ -1662,6 +1666,169 @@ function SettingsSection() {
         </Card>
       </div>
     </div>
+  );
+}
+
+// Social Media Settings Component
+function SocialMediaSettings() {
+  const [socialLinks, setSocialLinks] = useState([
+    { key: "social_linkedin", label: "LinkedIn", placeholder: "https://linkedin.com/company/your-company", value: "" },
+    { key: "social_facebook", label: "Facebook", placeholder: "https://facebook.com/your-page", value: "" },
+    { key: "social_instagram", label: "Instagram", placeholder: "https://instagram.com/your-account", value: "" },
+    { key: "social_tiktok", label: "TikTok", placeholder: "https://tiktok.com/@your-account", value: "" },
+  ]);
+  const [isSaving, setIsSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  // Fetch existing settings
+  const { data: settings, isLoading } = trpc.settings.getByCategory.useQuery("social");
+  const upsertMutation = trpc.settings.upsert.useMutation();
+
+  // Load existing values when settings are fetched
+  useEffect(() => {
+    if (settings && Array.isArray(settings)) {
+      setSocialLinks(prev => prev.map(link => {
+        const setting = settings.find((s: any) => s.key === link.key);
+        return {
+          ...link,
+          value: setting?.value || "",
+        };
+      }));
+    }
+  }, [settings]);
+
+  const handleChange = (key: string, value: string) => {
+    setSocialLinks(prev => prev.map(link => 
+      link.key === key ? { ...link, value } : link
+    ));
+    setHasChanges(true);
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      for (const link of socialLinks) {
+        await upsertMutation.mutateAsync({
+          key: link.key,
+          value: link.value,
+          type: "text",
+          category: "social",
+        });
+      }
+      toast.success("Social media links saved successfully!");
+      setHasChanges(false);
+    } catch (error) {
+      console.error("Error saving social links:", error);
+      toast.error("Failed to save social media links");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const validateUrl = (url: string): boolean => {
+    if (!url) return true;
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const getIcon = (key: string) => {
+    switch (key) {
+      case "social_linkedin": return <Linkedin className="w-4 h-4" />;
+      case "social_facebook": return <Facebook className="w-4 h-4" />;
+      case "social_instagram": return <Instagram className="w-4 h-4" />;
+      case "social_tiktok": return (
+        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+        </svg>
+      );
+      default: return null;
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Card className="border-0 shadow-lg">
+        <CardContent className="p-8">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="border-0 shadow-lg">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+            <Linkedin className="w-5 h-5 text-primary" />
+          </div>
+          Social Media Links
+        </CardTitle>
+        <CardDescription>
+          Manage the social media links displayed in the website footer. Leave empty to hide a specific link.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {socialLinks.map((link) => {
+          const isValid = validateUrl(link.value);
+          
+          return (
+            <div key={link.key} className="space-y-2">
+              <Label htmlFor={link.key} className="flex items-center gap-2">
+                {getIcon(link.key)}
+                {link.label}
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  id={link.key}
+                  type="url"
+                  placeholder={link.placeholder}
+                  value={link.value}
+                  onChange={(e) => handleChange(link.key, e.target.value)}
+                  className={!isValid ? "border-destructive" : ""}
+                />
+                {link.value && isValid && (
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => window.open(link.value, "_blank")}
+                    title="Open link"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+              {!isValid && (
+                <p className="text-sm text-destructive">Please enter a valid URL</p>
+              )}
+            </div>
+          );
+        })}
+
+        <div className="flex justify-end pt-4 border-t">
+          <Button 
+            onClick={handleSave} 
+            disabled={isSaving || !hasChanges || socialLinks.some(l => !validateUrl(l.value))}
+            className="min-w-[120px]"
+          >
+            {isSaving ? (
+              <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+            ) : (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Save Changes
+              </>
+            )}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
