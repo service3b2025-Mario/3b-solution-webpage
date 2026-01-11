@@ -11,11 +11,11 @@ import InvestmentCalculator from "@/components/InvestmentCalculator";
 export default function PropertyDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { data: property, isLoading } = trpc.properties.getBySlug.useQuery(slug || "");
-  const { data: similarProperties } = trpc.properties.list.useQuery({ 
-    region: property?.region, 
-    limit: 3 
+  const { data: similarProperties } = trpc.properties.list.useQuery( {
+    region: property?.region,
+    limit: 3
   }, { enabled: !!property });
-  
+
   const incrementViews = trpc.properties.incrementViews.useMutation();
 
   useEffect(() => {
@@ -81,9 +81,13 @@ export default function PropertyDetail() {
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
               {/* Gallery */}
-              <div className="aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl flex items-center justify-center">
-                <Building2 className="w-24 h-24 text-primary/30" />
-              </div>
+              {property.mainImage ? (
+                <img src={property.mainImage} alt={property.title} className="w-full h-full object-cover rounded-xl" />
+              ) : (
+                <div className="aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 rounded-xl flex items-center justify-center">
+                  <Building2 className="w-24 h-24 text-primary/30" />
+                </div>
+              )}
 
               {/* Title & Location */}
               <div>
