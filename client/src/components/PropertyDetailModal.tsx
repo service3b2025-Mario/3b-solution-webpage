@@ -1,19 +1,15 @@
 import { useState, useMemo } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { 
   X, MapPin, Bed, Bath, Square, Heart, Share2, Play, Camera,
-  Check, Home, Calendar, Car, Thermometer, Wind, Layers, DollarSign,
-  TrendingUp, Building2, Phone, Star, ChevronLeft, ChevronRight, Maximize2, Minimize2
+  Check, Home, Car, Thermometer, Wind, Layers, DollarSign,
+  TrendingUp, Building2, ChevronLeft, ChevronRight, Maximize2, Minimize2
 } from "lucide-react";
-import { PropertyInquiryForm } from "./PropertyInquiryForm";
-import { TourScheduler } from "./TourScheduler";
+import { BookingSelector } from "./BookingSelector";
 
 interface Property {
   id: number;
@@ -106,14 +102,6 @@ export function PropertyDetailModal({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [mediaTab, setMediaTab] = useState<'photos' | 'video' | 'tour'>('photos');
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [contactForm, setContactForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    contactMethod: "",
-    message: ""
-  });
-  
   if (!property) return null;
 
   // Use actual features from property data
@@ -131,11 +119,6 @@ export function PropertyDetailModal({
       currency: 'USD',
       maximumFractionDigits: 0
     }).format(price);
-  };
-
-  const handleContactSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Contact form submitted:", contactForm);
   };
 
   return (
@@ -554,96 +537,15 @@ export function PropertyDetailModal({
                 </div>
               </div>
 
-              {/* Right Column - Sidebar */}
+              {/* Right Column - Sidebar with Booking */}
               <div className="space-y-4">
-                {/* Tour Scheduler */}
-                <TourScheduler propertyId={property.id} propertyTitle={property.title} />
-                
-                {/* Property Inquiry Form */}
-                <PropertyInquiryForm propertyId={property.id} propertyTitle={property.title} />
-                
-                {/* Agent Contact Card */}
                 <div className="bg-muted/30 rounded-lg p-4">
-                  <div className="flex items-center gap-3 mb-3 pb-3 border-b">
-                    {agent.image ? (
-                      <img 
-                        src={agent.image} 
-                        alt={agent.name}
-                        className="w-10 h-10 rounded-full object-cover object-top flex-shrink-0"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center flex-shrink-0">
-                        <span className="text-xs font-bold text-primary">GB</span>
-                      </div>
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold text-sm truncate">{agent.name}</h3>
-                      <p className="text-xs text-muted-foreground truncate">{agent.title}</p>
-                      <div className="flex items-center gap-1">
-                        <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                        <span className="text-xs font-medium">{agent.rating}</span>
-                        <span className="text-xs text-muted-foreground">({agent.reviews})</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <form onSubmit={handleContactSubmit} className="space-y-2.5">
-                    <Input 
-                      placeholder="Your Name" 
-                      className="h-8 text-sm"
-                      value={contactForm.name}
-                      onChange={(e) => setContactForm(prev => ({ ...prev, name: e.target.value }))}
-                    />
-                    <Input 
-                      type="email" 
-                      placeholder="Email Address" 
-                      className="h-8 text-sm"
-                      value={contactForm.email}
-                      onChange={(e) => setContactForm(prev => ({ ...prev, email: e.target.value }))}
-                    />
-                    <Input 
-                      type="tel" 
-                      placeholder="Phone Number" 
-                      className="h-8 text-sm"
-                      value={contactForm.phone}
-                      onChange={(e) => setContactForm(prev => ({ ...prev, phone: e.target.value }))}
-                    />
-                    <Select 
-                      value={contactForm.contactMethod}
-                      onValueChange={(value) => setContactForm(prev => ({ ...prev, contactMethod: value }))}
-                    >
-                      <SelectTrigger className="h-8 text-sm">
-                        <SelectValue placeholder="Contact Method" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="email">Email</SelectItem>
-                        <SelectItem value="phone">Phone</SelectItem>
-                        <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Textarea 
-                      placeholder="Message (optional)" 
-                      rows={2}
-                      className="text-sm resize-none"
-                      value={contactForm.message}
-                      onChange={(e) => setContactForm(prev => ({ ...prev, message: e.target.value }))}
-                    />
-                    <Button type="submit" className="w-full h-8 bg-primary hover:bg-primary/90 text-sm">
-                      Request Information
-                    </Button>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button type="button" variant="outline" className="h-8 text-xs">
-                        <Calendar className="w-3 h-3 mr-1" /> Schedule
-                      </Button>
-                      <Button type="button" variant="outline" className="h-8 text-xs">
-                        <Phone className="w-3 h-3 mr-1" /> Call
-                      </Button>
-                    </div>
-                  </form>
+                  <h3 className="font-semibold text-base mb-3">Schedule a Consultation</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Interested in this property? Connect with our team.
+                  </p>
+                  <BookingSelector />
                 </div>
-
-
-
               </div>
             </div>
           </div>
