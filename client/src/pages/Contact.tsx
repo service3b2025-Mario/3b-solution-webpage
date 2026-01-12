@@ -1,180 +1,162 @@
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { Mail, MapPin, Clock, Globe, Linkedin, Check, Users } from "lucide-react";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { BookingSelector } from "@/components/BookingSelector";
+import { Link } from "wouter";
 
 export default function Contact() {
   const { data: experts } = trpc.team.experts.useQuery();
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary to-primary/90 py-20">
+      {/* Breadcrumb */}
+      <section className="bg-muted/30 py-4">
         <div className="container">
           <Breadcrumb items={[{ label: "Contact" }]} />
-          <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Contact Us
-            </h1>
-            <p className="text-xl text-white/80">
-              Connect with our expert team for personalized investment guidance
-            </p>
-          </div>
         </div>
       </section>
 
-      {/* Contact Content */}
-      <section className="py-16 bg-background pb-32">
+      {/* Page Title */}
+      <section className="py-8 md:py-12">
+        <div className="container text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+            Contact Us
+          </h1>
+          <p className="text-muted-foreground">
+            Connect with our expert team for personalized investment guidance
+          </p>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <section className="pb-16">
         <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Consultation Booking */}
-            <div className="lg:col-span-2">
-              <Card className="border-0 shadow-xl">
-                <CardHeader>
-                  <CardTitle className="text-2xl">Schedule a Consultation</CardTitle>
-                  <p className="text-muted-foreground">
-                    Choose how you'd like to connect with our team
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <BookingSelector />
-                </CardContent>
-              </Card>
-            </div>
+          {/* Row 1: Schedule a Consultation - Full Width */}
+          <Card className="border shadow-lg mb-8">
+            <CardHeader className="text-center pb-4">
+              <CardTitle className="text-xl md:text-2xl">Schedule a Consultation</CardTitle>
+              <p className="text-muted-foreground text-sm">
+                Choose how you'd like to connect with our team
+              </p>
+            </CardHeader>
+            <CardContent>
+              <BookingSelector />
+            </CardContent>
+          </Card>
 
-            {/* Sidebar */}
-            <div className="space-y-6">
-              {/* Contact Info */}
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle>Get in Touch</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-5 h-5 text-secondary" />
-                    </div>
-                    <div>
-                      <p className="font-medium">3B SolutionPH Corp.</p>
-                      <p className="text-sm text-muted-foreground">7th Floor Unit 710, High Street South Corporate Plaza, Tower 2</p>
-                      <p className="text-sm text-muted-foreground">26th Street Corner 11th Ave., Bonifacio Global City</p>
-                      <p className="text-sm text-muted-foreground">1630 Taguig City, Philippines</p>
-                    </div>
+          {/* Row 2: Get in Touch + Our Experts - 50/50 Grid on Desktop */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            {/* Get in Touch */}
+            <Card className="border shadow-lg bg-amber-50/50 h-full">
+              <CardHeader>
+                <CardTitle className="text-lg">Get in Touch</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 bg-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-4 h-4 text-secondary" />
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-5 h-5 text-secondary" />
-                    </div>
-                    <div>
-                      <p className="font-medium">3B SolutionDE</p>
-                      <p className="text-sm text-muted-foreground">Weidenweg 17, 15806 Zossen, Germany</p>
-                    </div>
+                  <div>
+                    <p className="font-medium text-sm">3B SolutionPH Corp.</p>
+                    <p className="text-xs text-muted-foreground">BGC, Taguig City</p>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-5 h-5 text-secondary" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Email</p>
-                      <a href="mailto:info@3bsolution.de" className="text-sm text-muted-foreground hover:text-foreground">
-                        info@3bsolution.de
-                      </a>
-                    </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 bg-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-4 h-4 text-secondary" />
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Globe className="w-5 h-5 text-secondary" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Website</p>
-                      <a href="https://www.3bsolution.com" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground">
-                        www.3bsolution.com
-                      </a>
-                    </div>
+                  <div>
+                    <p className="font-medium text-sm">3B SolutionDE</p>
+                    <p className="text-xs text-muted-foreground">Zossen, Germany</p>
                   </div>
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center">
-                      <Clock className="w-5 h-5 text-secondary" />
-                    </div>
-                    <div>
-                      <p className="font-medium">Business Hours</p>
-                      <p className="text-sm text-muted-foreground">Mon - Sat: 8:00 AM - 8:00 PM</p>
-                    </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 bg-secondary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-4 h-4 text-secondary" />
                   </div>
-                </CardContent>
-              </Card>
+                  <div>
+                    <p className="font-medium text-sm">Email</p>
+                    <a href="mailto:info@3bsolution.de" className="text-xs text-muted-foreground hover:text-foreground">
+                      info@3bsolution.de
+                    </a>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-              {/* Expert Team */}
-              <Card className="border-0 shadow-lg">
-                <CardHeader>
-                  <CardTitle>Our Experts</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {(experts || []).map((expert) => {
-                    // Determine timezone based on expert name
-                    const getTimezone = (name: string) => {
-                      if (name.toLowerCase().includes('georg')) return 'CET (German Time)';
-                      if (name.toLowerCase().includes('engela')) return 'GMT+8 (Philippine Time)';
-                      if (name.toLowerCase().includes('bibian')) return 'GMT+8 (Chinese Time)';
-                      return 'GMT+8';
-                    };
-                    
-                    return (
-                      <div key={expert.id} className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
-                        {expert.photo ? (
-                          <img 
-                            src={expert.photo} 
-                            alt={expert.name}
-                            className="w-12 h-12 rounded-full object-cover object-top"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                            <Users className="w-6 h-6 text-primary" />
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium">{expert.name}</p>
-                          <p className="text-sm text-muted-foreground">{expert.role}</p>
-                          <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                            <Clock className="w-3 h-3" />
-                            Mon-Sat 8AM-8PM {getTimezone(expert.name)}
-                          </p>
-                        </div>
-                        {expert.linkedIn && (
-                          <a href={expert.linkedIn} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-secondary">
-                            <Linkedin className="w-5 h-5" />
-                          </a>
-                        )}
+            {/* Our Experts */}
+            <Card className="border shadow-lg bg-amber-50/50 h-full">
+              <CardHeader>
+                <CardTitle className="text-lg">Our Experts</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {(experts || []).map((expert) => (
+                  <div key={expert.id} className="flex items-center gap-3 p-2 bg-white/60 rounded-lg">
+                    {expert.photo ? (
+                      <img 
+                        src={expert.photo} 
+                        alt={expert.name}
+                        className="w-10 h-10 rounded-full object-cover object-top"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                        <Users className="w-5 h-5 text-primary" />
                       </div>
-                    );
-                  })}
-                </CardContent>
-              </Card>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm">{expert.name}</p>
+                      <p className="text-xs text-muted-foreground">{expert.role}</p>
+                    </div>
+                    {expert.linkedIn && (
+                      <a href={expert.linkedIn} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-secondary">
+                        <Linkedin className="w-4 h-4" />
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
 
-              {/* Why Contact Us */}
-              <Card className="border-0 shadow-lg bg-gradient-to-br from-primary to-primary/90 text-primary-foreground">
-                <CardContent className="p-6">
-                  <h3 className="font-semibold text-lg mb-4">Why Contact Us?</h3>
-                  <ul className="space-y-3">
-                    {[
-                      "Free consultation with no obligation",
-                      "Personalized investment recommendations",
-                      "Access to exclusive opportunities",
-                      "Expert guidance from industry experts",
-                    ].map((item, index) => (
-                      <li key={index} className="flex items-center gap-3">
-                        <div className="w-5 h-5 bg-secondary rounded-full flex items-center justify-center">
-                          <Check className="w-3 h-3 text-white" />
-                        </div>
-                        <span className="text-sm">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
+          {/* Row 3: Why Contact Us? - Full Width */}
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-primary to-primary/90 text-primary-foreground mb-8">
+            <CardContent className="p-6 md:p-8">
+              <h3 className="font-semibold text-lg md:text-xl mb-4 text-center">Why Contact Us?</h3>
+              <div className="flex flex-col md:flex-row md:justify-center md:gap-8 gap-3">
+                {[
+                  "Free consultation with no obligation",
+                  "Personalized investment recommendations",
+                  "Access to exclusive opportunities",
+                  "Expert guidance from industry experts",
+                ].map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div className="w-5 h-5 bg-secondary rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-3 h-3 text-white" />
+                    </div>
+                    <span className="text-sm">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Row 4: CTA - Full Width */}
+          <div className="bg-secondary rounded-xl p-8 md:p-12 text-center">
+            <h2 className="text-xl md:text-2xl font-bold text-white mb-4">
+              Ready to Start Your Investment Journey?
+            </h2>
+            <Link href="/contact">
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="bg-white text-secondary hover:bg-white/90 border-white"
+              >
+                Schedule Consultation
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
