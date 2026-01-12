@@ -62,7 +62,7 @@ export function MobileContactMenu() {
   return (
     <>
       {/* Mobile Contact Button - Only visible on mobile */}
-      <div className="md:hidden fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+      <div className="md:hidden fixed bottom-24 right-6 z-40 flex flex-col gap-3">
         <Button
           onClick={() => setIsOpen(true)}
           size="lg"
