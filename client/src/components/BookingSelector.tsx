@@ -55,9 +55,10 @@ const investmentRanges = [
 
 interface BookingSelectorProps {
   className?: string;
+  layout?: "horizontal" | "vertical";
 }
 
-export function BookingSelector({ className }: BookingSelectorProps) {
+export function BookingSelector({ className, layout = "horizontal" }: BookingSelectorProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -174,8 +175,8 @@ export function BookingSelector({ className }: BookingSelectorProps) {
 
   return (
     <div className={className}>
-      {/* 3-Option Selector - Always horizontal */}
-      <div className="grid grid-cols-3 gap-2 md:gap-4 mb-6">
+      {/* 3-Option Selector */}
+      <div className={layout === "vertical" ? "flex flex-col gap-3 mb-6" : "grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"}>
         {consultationOptions.map((option) => {
           const Icon = option.icon;
           const isSelected = selectedOption === option.id;
@@ -184,28 +185,51 @@ export function BookingSelector({ className }: BookingSelectorProps) {
             <Card
               key={option.id}
               onClick={() => handleOptionSelect(option.id)}
-              className={`cursor-pointer transition-all duration-200 hover:shadow-lg ${
+              className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
                 isSelected
                   ? "border-2 border-secondary bg-secondary/5 shadow-md"
                   : "border border-border hover:border-secondary/50"
               }`}
             >
-              <CardContent className="p-3 md:p-6 text-center">
-                <div
-                  className={`w-10 h-10 md:w-14 md:h-14 mx-auto mb-2 md:mb-4 rounded-full flex items-center justify-center ${
-                    isSelected ? "bg-secondary text-white" : "bg-muted"
-                  }`}
-                >
-                  <Icon className="w-5 h-5 md:w-7 md:h-7" />
-                </div>
-                <h3 className="font-semibold text-xs md:text-lg mb-1 leading-tight">{option.title}</h3>
-                <p className="text-xs text-muted-foreground hidden md:block">{option.subtitle}</p>
-                {isSelected && (
-                  <div className="mt-3">
-                    <Check className="w-5 h-5 text-secondary mx-auto" />
+              {layout === "vertical" ? (
+                /* Vertical Layout - Icon on left, text beside */
+                <CardContent className="p-3 md:p-4">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        isSelected ? "bg-secondary text-white" : "bg-muted"
+                      }`}
+                    >
+                      <Icon className="w-5 h-5 md:w-6 md:h-6" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm md:text-base leading-tight">{option.title}</h3>
+                      <p className="text-xs text-muted-foreground">{option.subtitle}</p>
+                    </div>
+                    {isSelected && (
+                      <Check className="w-5 h-5 text-secondary flex-shrink-0" />
+                    )}
                   </div>
-                )}
-              </CardContent>
+                </CardContent>
+              ) : (
+                /* Horizontal Layout - Icon centered, text below */
+                <CardContent className="p-6 text-center">
+                  <div
+                    className={`w-14 h-14 mx-auto mb-4 rounded-full flex items-center justify-center ${
+                      isSelected ? "bg-secondary text-white" : "bg-muted"
+                    }`}
+                  >
+                    <Icon className="w-7 h-7" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-1">{option.title}</h3>
+                  <p className="text-sm text-muted-foreground">{option.subtitle}</p>
+                  {isSelected && (
+                    <div className="mt-3">
+                      <Check className="w-5 h-5 text-secondary mx-auto" />
+                    </div>
+                  )}
+                </CardContent>
+              )}
             </Card>
           );
         })}
