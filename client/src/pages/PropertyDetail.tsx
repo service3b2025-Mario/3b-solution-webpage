@@ -7,6 +7,7 @@ import { Link, useParams } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { MapPin, Building2, Calendar, TrendingUp, ArrowLeft, Phone, Mail, ChevronRight, Check } from "lucide-react";
 import InvestmentCalculator from "@/components/InvestmentCalculator";
+import { BookingSelector } from "@/components/BookingSelector";
 
 export default function PropertyDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -70,7 +71,7 @@ export default function PropertyDetail() {
       </div>
 
       {/* Property Header */}
-      <section className="py-8">
+      <section className="py-8 pb-32">
         <div className="container">
           <Link href="/properties" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6">
             <ArrowLeft className="w-4 h-4" />
@@ -243,100 +244,21 @@ export default function PropertyDetail() {
               </Card>
             </div>
 
-            {/* Sidebar */}
-            <div className="lg:col-span-1 space-y-6">
-              {/* Schedule Virtual Tour */}
-              <Card className="border-0 shadow-lg">
-                <CardContent className="p-6">
-                  <h4 className="font-semibold mb-4">Schedule Virtual Tour</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Sign in to book a personalized virtual tour with our investment team.
-                  </p>
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-white h-12">
-                    Sign In to Schedule Tour
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Request Information Form */}
-              <Card className="border-0 shadow-lg">
-                <CardContent className="p-6">
-                  <h4 className="font-semibold mb-4">Request Information</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Interested in this property? Fill out the form below and our team will get in touch with you.
-                  </p>
-                  <form className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="firstName" className="sr-only">First Name</label>
-                        <input type="text" id="firstName" placeholder="First Name" className="w-full p-2 border rounded-md" />
-                      </div>
-                      <div>
-                        <label htmlFor="lastName" className="sr-only">Last Name</label>
-                        <input type="text" id="lastName" placeholder="Last Name" className="w-full p-2 border rounded-md" />
-                      </div>
-                    </div>
-                    <div>
-                      <label htmlFor="email" className="sr-only">Email</label>
-                      <input type="email" id="email" placeholder="john@example.com" className="w-full p-2 border rounded-md" />
-                    </div>
-                    <div>
-                      <label htmlFor="phone" className="sr-only">Phone Number</label>
-                      <input type="tel" id="phone" placeholder="+1 (555) 123-4567" className="w-full p-2 border rounded-md" />
-                    </div>
-                    <div>
-                      <label htmlFor="investorType" className="sr-only">Investor Type</label>
-                      <select id="investorType" className="w-full p-2 border rounded-md">
-                        <option>Select Investor Type</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label htmlFor="investmentRange" className="sr-only">Investment Range</label>
-                      <select id="investmentRange" className="w-full p-2 border rounded-md">
-                        <option>Select Investment Range</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label htmlFor="message" className="sr-only">Message</label>
-                      <textarea id="message" placeholder="Tell us about your investment goals and timeline..." rows={3} className="w-full p-2 border rounded-md"></textarea>
-                    </div>
-                    <Button type="submit" className="w-full bg-secondary hover:bg-secondary/90 text-white h-12">
-                      Submit Inquiry
-                    </Button>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      By submitting this form, you agree to be contacted by 3B Solution regarding this property and other investment opportunities.
+            {/* Sidebar - Booking Section */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-24 space-y-6">
+                <Card className="border-0 shadow-lg">
+                  <CardHeader>
+                    <CardTitle>Schedule a Consultation</CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Interested in this property? Connect with our team.
                     </p>
-                  </form>
-                </CardContent>
-              </Card>
-
-              {/* Contact Expert */}
-              <Card className="border-0 shadow-lg">
-                <CardContent className="p-6">
-                  <h4 className="font-semibold mb-4">Contact Expert</h4>
-                  <div className="flex items-center gap-4 mb-4">
-                    <img src="/placeholder-avatar.jpg" alt="Expert Avatar" className="w-12 h-12 rounded-full object-cover" />
-                    <div>
-                      <p className="font-semibold">Georg Blanschek</p>
-                      <p className="text-sm text-muted-foreground">CEO & Founder - Real Estate Expert</p>
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-star w-4 h-4 text-yellow-400"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                        <span>4.9 (127 )</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <input type="text" placeholder="Your Name" className="w-full p-2 border rounded" />
-                    <input type="email" placeholder="Email Address" className="w-full p-2 border rounded" />
-                    <input type="tel" placeholder="Phone Number" className="w-full p-2 border rounded" />
-                    <select className="w-full p-2 border rounded">
-                      <option>Contact Method</option>
-                    </select>
-                    <textarea placeholder="Message (optional)" rows={3} className="w-full p-2 border rounded"></textarea>
-                    <Button className="w-full bg-primary hover:bg-primary/90 text-white h-12">Request Information</Button>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardHeader>
+                  <CardContent>
+                    <BookingSelector />
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </div>
