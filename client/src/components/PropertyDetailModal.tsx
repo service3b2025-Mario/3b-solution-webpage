@@ -544,7 +544,7 @@ export function PropertyDetailModal({
                   <p className="text-sm text-muted-foreground mb-4">
                     Interested in this property? Connect with our team.
                   </p>
-                  <BookingSelector />
+                  <BookingSelector layout="vertical" />
                 </div>
               </div>
             </div>
