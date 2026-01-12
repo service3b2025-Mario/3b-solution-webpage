@@ -346,8 +346,13 @@ export async function updateProperty(id: number, data: Partial<InsertProperty>) 
   
   // Convert empty arrays to null for JSON fields
   if (Array.isArray(sanitizedData.images) && sanitizedData.images.length === 0) {
-    sanitizedData.images = null as any;
+  sanitizedData.images = null as any;
+  // SAFEGUARD: Auto-clear mainImage when all images are deleted
+  // This ensures data consistency even if client doesn't explicitly clear it
+  if (sanitizedData.mainImage === undefined) {
+    sanitizedData.mainImage = null as any;
   }
+}
   if (Array.isArray(sanitizedData.features) && sanitizedData.features.length === 0) {
     sanitizedData.features = null as any;
   }
