@@ -672,7 +672,7 @@ export const appRouter = router({
       const fileKey = `properties/${timestamp}-${randomStr}.${ext}`;
       
       // Upload to S3
-      const result = await storagePut(fileKey, buffer, input.contentType);
+      const result = await storagePut(buffer, input.contentType, fileKey);
       
       return result;
     }),
@@ -692,7 +692,7 @@ export const appRouter = router({
       const fileKey = `properties/videos/${timestamp}-${randomStr}.${ext}`;
       
       // Upload to S3
-      const result = await storagePut(fileKey, buffer, input.contentType);
+      const result = await storagePut(buffer, input.contentType, fileKey);
       
       return result;
     }),
