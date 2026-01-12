@@ -37,26 +37,38 @@ function normalizeKey(key: string): string {
 }
 
 /**
- * Uploads a file to Cloudflare R2 storage.
+ * Creates and returns a configured S3 client for Cloudflare R2.
  */
-export async function storagePut(fileBuffer: Buffer, mimeType: string, relKey: string): Promise<{ key: string; url: string }> {
-  const config = getStorageConfig();
-  const key = normalizeKey(relKey);
-
-  const s3Client = new S3Client({
+function createS3Client(config: StorageConfig): S3Client {
+  return new S3Client({
     region: "auto",
     endpoint: `https://${config.accountId}.r2.cloudflarestorage.com`,
     credentials: {
       accessKeyId: config.accessKeyId,
       secretAccessKey: config.secretAccessKey,
     },
+    forcePathStyle: true,
   } );
+}
+
+/**
+ * Uploads a file to Cloudflare R2 storage.
+ */
+export async function storagePut(fileBuffer: Buffer, mimeType: string, relKey: string): Promise<{ key: string; url: string }> {
+  const config = getStorageConfig();
+  const key = normalizeKey(relKey);
+
+  const s3Client = createS3Client(config);
+
+  // Ensure we have a proper Uint8Array for the Body
+  const body = fileBuffer instanceof Buffer ? new Uint8Array(fileBuffer) : fileBuffer;
 
   const uploadParams = {
     Bucket: config.bucketName,
     Key: key,
-    Body: fileBuffer,
+    Body: body,
     ContentType: mimeType,
+    ContentLength: body.length,
   };
 
   try {
@@ -66,6 +78,7 @@ export async function storagePut(fileBuffer: Buffer, mimeType: string, relKey: s
     return { key, url };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+    console.error(`R2 Upload Error for ${key}:`, error);
     throw new Error(`Storage upload failed for ${key}: ${message}`);
   }
 }
