@@ -869,7 +869,8 @@ function PropertiesSection({ properties }: any) {
                     setEditingProperty({ 
                       ...editingProperty, 
                       images: urls,
-                      mainImage: urls[0] || editingProperty.mainImage
+                      // Clear mainImage when all images are deleted, otherwise use first image
+mainImage: urls.length > 0 ? urls[0] : null
                     });
                   }}
                   onImageCaptionsChange={(captions) => {
