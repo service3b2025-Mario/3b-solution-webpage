@@ -4,11 +4,8 @@
  * Database functions for WhatsApp team account management
  */
 
-import { eq, desc, and, gte, lte, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { getDb } from "../db";
-
-// Note: These tables need to be added to the main schema
-// For now, we'll use raw SQL queries until schema is migrated
 
 export interface WhatsAppAccount {
   id: number;
@@ -44,20 +41,41 @@ export interface WhatsAppClick {
   clickedAt: Date;
 }
 
+// Helper to convert snake_case DB results to camelCase
+function mapAccountFromDb(row: any): WhatsAppAccount {
+  return {
+    id: row.id,
+    name: row.name,
+    role: row.role,
+    title: row.title,
+    phoneNumber: row.phone_number,
+    countryCode: row.country_code,
+    displayOrder: row.display_order,
+    isActive: row.is_active,
+    isVisible: row.is_visible,
+    avatarUrl: row.avatar_url,
+    teamMemberId: row.team_member_id,
+    defaultMessage: row.default_message,
+    visibleOnPages: row.visible_on_pages,
+    totalClicks: row.total_clicks,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
 // Get active WhatsApp accounts for public display
 export async function getActiveAccounts(page?: string): Promise<WhatsAppAccount[]> {
   const db = await getDb();
   if (!db) return [];
 
   try {
-    // Query active and visible accounts
     const result = await db.execute(sql`
       SELECT * FROM whatsapp_accounts 
       WHERE is_active = true AND is_visible = true
       ORDER BY display_order ASC, name ASC
     `);
 
-    let accounts = (result.rows || []) as WhatsAppAccount[];
+    let accounts = (result.rows || []).map(mapAccountFromDb);
 
     // Filter by page if specified
     if (page && accounts.length > 0) {
@@ -88,7 +106,7 @@ export async function getAllAccounts(): Promise<WhatsAppAccount[]> {
       SELECT * FROM whatsapp_accounts 
       ORDER BY display_order ASC, name ASC
     `);
-    return (result.rows || []) as WhatsAppAccount[];
+    return (result.rows || []).map(mapAccountFromDb);
   } catch (error) {
     console.error('[WhatsApp] Error fetching all accounts:', error);
     return [];
@@ -104,7 +122,8 @@ export async function getAccountById(id: number): Promise<WhatsAppAccount | null
     const result = await db.execute(sql`
       SELECT * FROM whatsapp_accounts WHERE id = ${id}
     `);
-    return (result.rows?.[0] as WhatsAppAccount) || null;
+    const row = result.rows?.[0];
+    return row ? mapAccountFromDb(row) : null;
   } catch (error) {
     console.error('[WhatsApp] Error fetching account:', error);
     return null;
@@ -117,28 +136,44 @@ export async function createAccount(data: Partial<WhatsAppAccount>): Promise<Wha
   if (!db) return null;
 
   try {
+    // Prepare values with proper defaults
+    const name = data.name || '';
+    const role = data.role || '';
+    const title = data.title || null;
+    const phoneNumber = data.phoneNumber || '';
+    const countryCode = data.countryCode || '+49';
+    const displayOrder = data.displayOrder || 0;
+    const isActive = data.isActive !== false;
+    const isVisible = data.isVisible !== false;
+    const avatarUrl = data.avatarUrl || null;
+    const teamMemberId = data.teamMemberId || null;
+    const defaultMessage = data.defaultMessage || "Hi! I'm interested in learning more about 3B Solution's real estate investment opportunities.";
+    const visibleOnPages = data.visibleOnPages || '["contact", "team", "about", "property"]';
+
     const result = await db.execute(sql`
       INSERT INTO whatsapp_accounts (
         name, role, title, phone_number, country_code,
         display_order, is_active, is_visible, avatar_url,
         team_member_id, default_message, visible_on_pages
       ) VALUES (
-        ${data.name},
-        ${data.role},
-        ${data.title || null},
-        ${data.phoneNumber},
-        ${data.countryCode || '+49'},
-        ${data.displayOrder || 0},
-        ${data.isActive !== false},
-        ${data.isVisible !== false},
-        ${data.avatarUrl || null},
-        ${data.teamMemberId || null},
-        ${data.defaultMessage || "Hi! I'm interested in learning more about 3B Solution's real estate investment opportunities."},
-        ${data.visibleOnPages || '["contact", "team", "about", "property"]'}
+        ${name},
+        ${role},
+        ${title},
+        ${phoneNumber},
+        ${countryCode},
+        ${displayOrder},
+        ${isActive},
+        ${isVisible},
+        ${avatarUrl},
+        ${teamMemberId},
+        ${defaultMessage},
+        ${visibleOnPages}
       )
       RETURNING *
     `);
-    return (result.rows?.[0] as WhatsAppAccount) || null;
+    
+    const row = result.rows?.[0];
+    return row ? mapAccountFromDb(row) : null;
   } catch (error) {
     console.error('[WhatsApp] Error creating account:', error);
     throw error;
@@ -151,24 +186,25 @@ export async function updateAccount(id: number, data: Partial<WhatsAppAccount>):
   if (!db) return false;
 
   try {
-    // Build dynamic update query
+    // Build dynamic update - using parameterized queries for safety
     const updates: string[] = [];
-    const values: any[] = [];
-
-    if (data.name !== undefined) updates.push(`name = '${data.name}'`);
-    if (data.role !== undefined) updates.push(`role = '${data.role}'`);
-    if (data.title !== undefined) updates.push(`title = '${data.title}'`);
-    if (data.phoneNumber !== undefined) updates.push(`phone_number = '${data.phoneNumber}'`);
-    if (data.countryCode !== undefined) updates.push(`country_code = '${data.countryCode}'`);
+    
+    if (data.name !== undefined) updates.push(`name = '${data.name.replace(/'/g, "''")}'`);
+    if (data.role !== undefined) updates.push(`role = '${data.role.replace(/'/g, "''")}'`);
+    if (data.title !== undefined) updates.push(`title = '${data.title.replace(/'/g, "''")}'`);
+    if (data.phoneNumber !== undefined) updates.push(`phone_number = '${data.phoneNumber.replace(/'/g, "''")}'`);
+    if (data.countryCode !== undefined) updates.push(`country_code = '${data.countryCode.replace(/'/g, "''")}'`);
     if (data.displayOrder !== undefined) updates.push(`display_order = ${data.displayOrder}`);
     if (data.isActive !== undefined) updates.push(`is_active = ${data.isActive}`);
     if (data.isVisible !== undefined) updates.push(`is_visible = ${data.isVisible}`);
-    if (data.avatarUrl !== undefined) updates.push(`avatar_url = '${data.avatarUrl}'`);
+    if (data.avatarUrl !== undefined) updates.push(`avatar_url = '${data.avatarUrl.replace(/'/g, "''")}'`);
     if (data.teamMemberId !== undefined) updates.push(`team_member_id = ${data.teamMemberId}`);
-    if (data.defaultMessage !== undefined) updates.push(`default_message = '${data.defaultMessage}'`);
-    if (data.visibleOnPages !== undefined) updates.push(`visible_on_pages = '${data.visibleOnPages}'`);
+    if (data.defaultMessage !== undefined) updates.push(`default_message = '${data.defaultMessage.replace(/'/g, "''")}'`);
+    if (data.visibleOnPages !== undefined) updates.push(`visible_on_pages = '${data.visibleOnPages.replace(/'/g, "''")}'`);
 
     updates.push(`updated_at = NOW()`);
+
+    if (updates.length === 1) return true; // Only updated_at, nothing to update
 
     await db.execute(sql.raw(`
       UPDATE whatsapp_accounts 
@@ -330,12 +366,7 @@ export async function getClickHistory(filters?: {
     const limit = filters?.limit || 100;
     const offset = filters?.offset || 0;
 
-    let query = sql`
-      SELECT wc.*, wa.name as account_name
-      FROM whatsapp_clicks wc
-      LEFT JOIN whatsapp_accounts wa ON wc.account_id = wa.id
-    `;
-
+    let query;
     if (filters?.accountId) {
       query = sql`
         SELECT wc.*, wa.name as account_name
