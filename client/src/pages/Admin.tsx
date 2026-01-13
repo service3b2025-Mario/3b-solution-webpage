@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { MediaUpload } from "@/components/MediaUpload";
 import { SalesFunnelDashboard } from "@/components/SalesFunnelDashboard";
-import { LeadsSection as NewLeadsSection } from "@/components/LeadsSection";
+import { LeadsManagement } from "@/components/LeadsManagement";
 import { LeadDetailModal } from "@/components/LeadDetailModal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -192,7 +192,7 @@ export default function Admin() {
             />
           )}
           {section === "properties" && <PropertiesSection properties={properties} />}
-          {section === "leads" && <NewLeadsSection />}
+          {section === "leads" && <LeadsManagement />}
           {section === "bookings" && <BookingsSection bookings={bookings} />}
           {section === "downloads" && <DownloadAnalytics />}
           {section === "feedback" && <FeedbackAnalytics />}
