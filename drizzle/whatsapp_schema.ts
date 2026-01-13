@@ -3,13 +3,14 @@
  * 
  * Database schema for managing team WhatsApp accounts
  * with visibility settings and click tracking
+ * 
+ * Uses MySQL/TiDB compatible types
  */
-
-import { pgTable, serial, varchar, text, boolean, timestamp, integer } from "drizzle-orm/pg-core";
+import { int, mysqlTable, text, boolean, timestamp, varchar } from "drizzle-orm/mysql-core";
 
 // WhatsApp Team Accounts Table
-export const whatsappAccounts = pgTable("whatsapp_accounts", {
-  id: serial("id").primaryKey(),
+export const whatsappAccounts = mysqlTable("whatsapp_accounts", {
+  id: int("id").autoincrement().primaryKey(),
   
   // Team member info
   name: varchar("name", { length: 255 }).notNull(),
@@ -21,39 +22,39 @@ export const whatsappAccounts = pgTable("whatsapp_accounts", {
   countryCode: varchar("country_code", { length: 10 }).notNull().default("+49"),
   
   // Display settings
-  displayOrder: integer("display_order").default(0),
+  displayOrder: int("display_order").default(0),
   isActive: boolean("is_active").default(true),
   isVisible: boolean("is_visible").default(true), // Show on website
   
   // Avatar/Photo (optional - can link to team member)
   avatarUrl: text("avatar_url"),
-  teamMemberId: integer("team_member_id"), // Link to existing team members table
+  teamMemberId: int("team_member_id"), // Link to existing team members table
   
   // Default message template
-  defaultMessage: text("default_message").default("Hi! I'm interested in learning more about 3B Solution's real estate investment opportunities."),
+  defaultMessage: text("default_message"),
   
   // Page visibility settings (JSON array of page paths)
-  visibleOnPages: text("visible_on_pages").default('["contact", "team", "about", "property"]'),
+  visibleOnPages: text("visible_on_pages"),
   
   // Tracking
-  totalClicks: integer("total_clicks").default(0),
+  totalClicks: int("total_clicks").default(0),
   
   // Timestamps
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 });
 
 // WhatsApp Click Tracking Table
-export const whatsappClicks = pgTable("whatsapp_clicks", {
-  id: serial("id").primaryKey(),
+export const whatsappClicks = mysqlTable("whatsapp_clicks", {
+  id: int("id").autoincrement().primaryKey(),
   
   // Which account was clicked
-  accountId: integer("account_id").notNull(),
+  accountId: int("account_id").notNull(),
   
   // Click context
   pagePath: varchar("page_path", { length: 255 }),
   pageTitle: varchar("page_title", { length: 255 }),
-  propertyId: integer("property_id"), // If clicked from property page
+  propertyId: int("property_id"), // If clicked from property page
   
   // Visitor info (anonymous)
   visitorId: varchar("visitor_id", { length: 100 }), // Anonymous session ID
@@ -66,7 +67,7 @@ export const whatsappClicks = pgTable("whatsapp_clicks", {
   utmCampaign: varchar("utm_campaign", { length: 100 }),
   
   // Timestamp
-  clickedAt: timestamp("clicked_at").defaultNow(),
+  clickedAt: timestamp("clicked_at").defaultNow().notNull(),
 });
 
 // Type exports
