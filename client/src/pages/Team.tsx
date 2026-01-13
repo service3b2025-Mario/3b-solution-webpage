@@ -7,6 +7,7 @@ import { Mail, Linkedin, MapPin, MessageCircle, Calendar, Users } from "lucide-r
 import { Link, useLocation } from "wouter";
 import { useEffect, useRef, useState } from "react";
 import { trpc } from "@/lib/trpc";
+import { WhatsAppWidget } from "@/components/WhatsAppWidget";
 
 // Using database team member type
 type TeamMember = {
@@ -247,6 +248,14 @@ export default function Team() {
                 ))}
               </div>
             )}
+          </div>
+        </section>
+
+        {/* WhatsApp Contact Section */}
+        <section className="py-12 bg-white">
+          <div className="container max-w-3xl mx-auto">
+            <h2 className="text-2xl font-bold text-center mb-6">Quick Contact via WhatsApp</h2>
+            <WhatsAppWidget page="team" variant="card" />
           </div>
         </section>
 
