@@ -36,6 +36,7 @@ import { CRMDashboard } from "@/components/crm/CRMDashboard";
 import { SalesFunnelAnalytics } from "@/components/crm/SalesFunnelAnalytics";
 import { ChannelPerformance } from "@/components/crm/ChannelPerformance";
 import { CustomerExpansion } from "@/components/crm/CustomerExpansion";
+import { WhatsAppSettings } from "@/components/admin/WhatsAppSettings";
 
 const sidebarItems = [
   { id: "dashboard", label: "Dashboard", icon: BarChart3 },
@@ -52,6 +53,7 @@ const sidebarItems = [
   { id: "content", label: "Content", icon: FileText },
   { id: "analytics", label: "Analytics", icon: TrendingUp },
   { id: "api-credentials", label: "API Credentials", icon: Settings },
+  { id: "whatsapp", label: "WhatsApp", icon: Phone },
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
@@ -213,6 +215,7 @@ export default function Admin() {
           {section === "sales-funnel" && <SalesFunnelAnalytics />}
           {section === "channels" && <ChannelPerformance />}
           {section === "expansion" && <CustomerExpansion />}
+          {section === "whatsapp" && <WhatsAppSettings />}
         </div>
       </main>
     </div>
