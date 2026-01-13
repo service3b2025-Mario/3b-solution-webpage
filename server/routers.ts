@@ -13,6 +13,7 @@ import { sendBookingConfirmation, sendReschedulingNotification } from "./tourNot
 import { notifyOwner } from "./_core/notification";
 import { sendResourceDownloadEmail } from "./emailService";
 import { handleNewLeadNotifications } from "./leadEmailService";
+import { whatsappRouter } from "./whatsapp/whatsappRouters";
 
 // Admin procedure - requires admin role
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -362,7 +363,7 @@ export const appRouter = router({
       utmMedium: z.string().optional(),
       utmCampaign: z.string().optional(),
       propertyId: z.number().optional(),
-           })).mutation(async ({ input }) => {
+    })).mutation(async ({ input }) => {
       // Create the lead in database
       const leadId = await db.createLead(input);
       
@@ -397,7 +398,6 @@ export const appRouter = router({
       
       return leadId;
     }),
-
     list: adminProcedure.input(z.object({
       status: z.string().optional(),
       source: z.string().optional(),
@@ -1015,6 +1015,9 @@ export const appRouter = router({
         };
       }),
   }),
+
+  // WhatsApp Team Accounts
+  whatsapp: whatsappRouter,
 });
 
 export type AppRouter = typeof appRouter;
