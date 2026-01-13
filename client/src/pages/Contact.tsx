@@ -6,6 +6,7 @@ import { Mail, MapPin, Clock, Globe, Linkedin, Check, Users } from "lucide-react
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { BookingSelector } from "@/components/BookingSelector";
 import { Link } from "wouter";
+import { WhatsAppWidget } from "@/components/WhatsAppWidget";
 
 export default function Contact() {
   const { data: experts } = trpc.team.experts.useQuery();
@@ -119,6 +120,11 @@ export default function Contact() {
                 ))}
               </CardContent>
             </Card>
+          </div>
+
+          {/* Row 2.5: WhatsApp Contact */}
+          <div className="mb-8">
+            <WhatsAppWidget page="contact" variant="card" />
           </div>
 
           {/* Row 3: Why Contact Us? - Full Width */}
