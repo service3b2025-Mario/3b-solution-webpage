@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import { 
   Phone, Plus, Edit, Trash2, Eye, EyeOff, 
   BarChart3, MessageCircle, ExternalLink, Save,
-  TrendingUp, Users, MousePointer
+  TrendingUp, Users, MousePointer, Zap
 } from "lucide-react";
 
 interface WhatsAppAccount {
@@ -58,10 +58,42 @@ const COUNTRY_CODES = [
   { code: "+65", country: "Singapore" },
 ];
 
+// Pre-defined team members for Quick Setup
+const TEAM_MEMBERS = [
+  {
+    name: "Georg Blascheck",
+    role: "CEO",
+    title: "Sales",
+    phoneNumber: "17656787896",
+    countryCode: "+49",
+    displayOrder: 1,
+    isActive: true,
+  },
+  {
+    name: "Bibian Pacayra Bock",
+    role: "President",
+    title: "Sales",
+    phoneNumber: "",
+    countryCode: "+63",
+    displayOrder: 2,
+    isActive: false,
+  },
+  {
+    name: "Engela Pacayra",
+    role: "Director",
+    title: "Sales",
+    phoneNumber: "",
+    countryCode: "+63",
+    displayOrder: 3,
+    isActive: false,
+  },
+];
+
 export function WhatsAppSettings() {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<WhatsAppAccount | null>(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   // Fetch accounts
   const { data: accounts, isLoading, refetch } = trpc.whatsapp.list.useQuery();
@@ -72,6 +104,7 @@ export function WhatsAppSettings() {
     onSuccess: () => {
       toast.success("WhatsApp account added successfully");
       setIsAddDialogOpen(false);
+      resetForm();
       refetch();
     },
     onError: (error) => {
@@ -83,6 +116,8 @@ export function WhatsAppSettings() {
     onSuccess: () => {
       toast.success("WhatsApp account updated successfully");
       setEditingAccount(null);
+      setIsEditDialogOpen(false);
+      resetForm();
       refetch();
     },
     onError: (error) => {
@@ -129,19 +164,52 @@ export function WhatsAppSettings() {
     });
   };
 
+  // Clean phone number - remove spaces, dashes, and non-numeric characters
+  const cleanPhoneNumber = (phone: string): string => {
+    return phone.replace(/[\s\-\(\)\.]/g, '');
+  };
+
   const handleSubmit = () => {
+    // Validate required fields
+    if (!formData.name.trim()) {
+      toast.error("Name is required");
+      return;
+    }
+    if (!formData.role.trim()) {
+      toast.error("Role is required");
+      return;
+    }
+    
+    const cleanedPhone = cleanPhoneNumber(formData.phoneNumber);
+    if (!cleanedPhone || cleanedPhone.length < 5) {
+      toast.error("Please enter a valid phone number");
+      return;
+    }
+
+    const submitData = {
+      ...formData,
+      phoneNumber: cleanedPhone,
+    };
+
     if (editingAccount) {
       updateMutation.mutate({
         id: editingAccount.id,
-        data: formData,
+        data: submitData,
       });
     } else {
-      createMutation.mutate(formData);
+      createMutation.mutate(submitData);
     }
   };
 
   const handleEdit = (account: WhatsAppAccount) => {
     setEditingAccount(account);
+    let visiblePages: string[] = [];
+    try {
+      visiblePages = JSON.parse(account.visibleOnPages || '[]');
+    } catch {
+      visiblePages = ["contact", "team", "about", "property"];
+    }
+    
     setFormData({
       name: account.name,
       role: account.role,
@@ -152,8 +220,9 @@ export function WhatsAppSettings() {
       isActive: account.isActive,
       isVisible: account.isVisible,
       defaultMessage: account.defaultMessage,
-      visibleOnPages: JSON.parse(account.visibleOnPages || '[]'),
+      visibleOnPages: visiblePages,
     });
+    setIsEditDialogOpen(true);
   };
 
   const handleDelete = (id: number) => {
@@ -177,6 +246,34 @@ export function WhatsAppSettings() {
     return `https://wa.me/${phone}?text=${message}`;
   };
 
+  // Quick Setup - Add a team member with pre-filled data
+  const handleQuickSetup = (member: typeof TEAM_MEMBERS[0]) => {
+    if (!member.phoneNumber) {
+      toast.error(`Phone number not available for ${member.name}. Please add manually.`);
+      return;
+    }
+
+    const submitData = {
+      name: member.name,
+      role: member.role,
+      title: member.title,
+      phoneNumber: cleanPhoneNumber(member.phoneNumber),
+      countryCode: member.countryCode,
+      displayOrder: member.displayOrder,
+      isActive: member.isActive,
+      isVisible: true,
+      defaultMessage: `Hi ${member.name.split(' ')[0]}! I'm interested in learning more about 3B Solution's real estate investment opportunities.`,
+      visibleOnPages: ["contact", "team", "about", "property"],
+    };
+
+    createMutation.mutate(submitData);
+  };
+
+  // Check if a team member is already added
+  const isTeamMemberAdded = (memberName: string): boolean => {
+    return accounts?.some((a: WhatsAppAccount) => a.name === memberName) || false;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -195,7 +292,10 @@ export function WhatsAppSettings() {
             <BarChart3 className="w-4 h-4 mr-2" />
             {showAnalytics ? "Hide Analytics" : "Show Analytics"}
           </Button>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
+            setIsAddDialogOpen(open);
+            if (!open) resetForm();
+          }}>
             <DialogTrigger asChild>
               <Button onClick={resetForm}>
                 <Plus className="w-4 h-4 mr-2" />
@@ -330,16 +430,27 @@ export function WhatsAppSettings() {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
-                        {JSON.parse(account.visibleOnPages || '[]').slice(0, 2).map((page: string) => (
-                          <Badge key={page} variant="secondary" className="text-xs">
-                            {page}
-                          </Badge>
-                        ))}
-                        {JSON.parse(account.visibleOnPages || '[]').length > 2 && (
-                          <Badge variant="secondary" className="text-xs">
-                            +{JSON.parse(account.visibleOnPages || '[]').length - 2}
-                          </Badge>
-                        )}
+                        {(() => {
+                          try {
+                            const pages = JSON.parse(account.visibleOnPages || '[]');
+                            return (
+                              <>
+                                {pages.slice(0, 2).map((page: string) => (
+                                  <Badge key={page} variant="secondary" className="text-xs">
+                                    {page}
+                                  </Badge>
+                                ))}
+                                {pages.length > 2 && (
+                                  <Badge variant="secondary" className="text-xs">
+                                    +{pages.length - 2}
+                                  </Badge>
+                                )}
+                              </>
+                            );
+                          } catch {
+                            return <Badge variant="secondary" className="text-xs">all</Badge>;
+                          }
+                        })()}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -369,36 +480,13 @@ export function WhatsAppSettings() {
                         >
                           <ExternalLink className="w-4 h-4" />
                         </Button>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleEdit(account)}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-lg">
-                            <DialogHeader>
-                              <DialogTitle>Edit WhatsApp Account</DialogTitle>
-                            </DialogHeader>
-                            <AccountForm
-                              formData={formData}
-                              setFormData={setFormData}
-                              togglePageVisibility={togglePageVisibility}
-                            />
-                            <DialogFooter>
-                              <Button variant="outline" onClick={() => setEditingAccount(null)}>
-                                Cancel
-                              </Button>
-                              <Button onClick={handleSubmit} disabled={updateMutation.isPending}>
-                                <Save className="w-4 h-4 mr-2" />
-                                {updateMutation.isPending ? "Saving..." : "Update Account"}
-                              </Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEdit(account)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -429,32 +517,106 @@ export function WhatsAppSettings() {
         </CardContent>
       </Card>
 
-      {/* Initial Team Setup Hint */}
-      {accounts && accounts.length === 0 && (
-        <Card className="border-dashed">
-          <CardContent className="p-6">
-            <h3 className="font-medium mb-4">Quick Setup: Add Your Team</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div className="p-3 bg-muted rounded-lg">
-                <p className="font-medium">Georg Blascheck</p>
-                <p className="text-muted-foreground">CEO (Sales) • +49 176 567 87896</p>
-              </div>
-              <div className="p-3 bg-muted rounded-lg">
-                <p className="font-medium">Bibian Pacayra Bock</p>
-                <p className="text-muted-foreground">President (Sales) • Number pending</p>
-              </div>
-              <div className="p-3 bg-muted rounded-lg">
-                <p className="font-medium">Engela Pacayra</p>
-                <p className="text-muted-foreground">Director (Sales) • Number pending</p>
-              </div>
-              <div className="p-3 bg-muted rounded-lg opacity-50">
-                <p className="font-medium">Mario Bock</p>
-                <p className="text-muted-foreground">Director (Admin) • Not active</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={(open) => {
+        setIsEditDialogOpen(open);
+        if (!open) {
+          setEditingAccount(null);
+          resetForm();
+        }
+      }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit WhatsApp Account</DialogTitle>
+          </DialogHeader>
+          <AccountForm
+            formData={formData}
+            setFormData={setFormData}
+            togglePageVisibility={togglePageVisibility}
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit} disabled={updateMutation.isPending}>
+              <Save className="w-4 h-4 mr-2" />
+              {updateMutation.isPending ? "Saving..." : "Update Account"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Quick Setup Section - Always visible */}
+      <Card className="border-dashed border-green-500/30 bg-green-500/5">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Zap className="w-5 h-5 text-green-500" />
+            Quick Setup: Add Your Team
+          </CardTitle>
+          <CardDescription>
+            Click on a team member to quickly add them with pre-configured settings
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {TEAM_MEMBERS.map((member) => {
+              const isAdded = isTeamMemberAdded(member.name);
+              const hasPhone = !!member.phoneNumber;
+              
+              return (
+                <div 
+                  key={member.name}
+                  className={`p-4 rounded-lg border transition-all ${
+                    isAdded 
+                      ? 'bg-green-500/10 border-green-500/30' 
+                      : hasPhone
+                        ? 'bg-muted hover:bg-muted/80 cursor-pointer hover:border-primary/50'
+                        : 'bg-muted/50 opacity-60'
+                  }`}
+                  onClick={() => !isAdded && hasPhone && handleQuickSetup(member)}
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-medium">{member.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {member.role} ({member.title})
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {hasPhone 
+                          ? `${member.countryCode} ${member.phoneNumber.replace(/(\d{3})(\d{3})(\d+)/, '$1 $2 $3')}`
+                          : 'Phone number pending'
+                        }
+                      </p>
+                    </div>
+                    {isAdded ? (
+                      <Badge className="bg-green-500">Added</Badge>
+                    ) : hasPhone ? (
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleQuickSetup(member);
+                        }}
+                        disabled={createMutation.isPending}
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        Add
+                      </Button>
+                    ) : (
+                      <Badge variant="secondary">Pending</Badge>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          
+          <p className="text-xs text-muted-foreground mt-4">
+            Note: Mario Bock (Director, Admin) is not included in the sales team widget.
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -547,8 +709,11 @@ function AccountForm({
             id="phoneNumber"
             value={formData.phoneNumber}
             onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-            placeholder="176 567 87896"
+            placeholder="17656787896"
           />
+          <p className="text-xs text-muted-foreground">
+            Enter without country code, spaces or dashes (e.g., 17656787896)
+          </p>
         </div>
       </div>
 
