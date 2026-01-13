@@ -361,7 +361,28 @@ export const appRouter = router({
       utmMedium: z.string().optional(),
       utmCampaign: z.string().optional(),
       propertyId: z.number().optional(),
-    })).mutation(({ input }) => db.createLead(input)),
+        })).mutation(async ({ input }) => {
+      // Create the lead in database
+      const leadId = await db.createLead(input);
+      
+      // Send email notifications
+      try {
+        const fullName = [input.firstName, input.lastName].filter(Boolean).join(' ') || 'Unknown';
+        
+        // Notify 3B Solution team about new lead
+        await notifyOwner({
+          title: `New Lead: ${fullName}`,
+          content: `New information request received:\n\nName: ${fullName}\nEmail: ${input.email}\nPhone: ${input.phone || 'Not provided'}\nCompany: ${input.company || 'Not provided'}\nSource: ${input.source || 'Contact Form'}\n\nMessage:\n${input.message || 'No message provided'}\n\nLead ID: ${leadId}`,
+        });
+        
+        console.log('[Leads] Notification sent for new lead:', input.email);
+      } catch (notifyError) {
+        // Don't fail the lead creation if notification fails
+        console.error('[Leads] Failed to send notification:', notifyError);
+      }
+      
+      return leadId;
+    }),
     list: adminProcedure.input(z.object({
       status: z.string().optional(),
       source: z.string().optional(),
