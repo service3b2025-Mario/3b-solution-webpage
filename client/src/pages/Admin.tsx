@@ -32,9 +32,17 @@ import { TeamMemberEditDialog } from "@/components/TeamMemberEditDialog";
 import { DownloadAnalytics } from "@/components/DownloadAnalytics";
 import { RealPropertyNameWidget } from "@/components/RealPropertyNameWidget";
 import { AdminLoginForm } from "@/components/AdminLoginForm";
+import { CRMDashboard } from "@/components/crm/CRMDashboard";
+import { SalesFunnelAnalytics } from "@/components/crm/SalesFunnelAnalytics";
+import { ChannelPerformance } from "@/components/crm/ChannelPerformance";
+import { CustomerExpansion } from "@/components/crm/CustomerExpansion";
 
 const sidebarItems = [
   { id: "dashboard", label: "Dashboard", icon: BarChart3 },
+  { id: "crm-dashboard", label: "CRM Dashboard", icon: Target },
+  { id: "sales-funnel", label: "Sales Funnel", icon: TrendingUp },
+  { id: "channels", label: "Channels", icon: Globe },
+  { id: "expansion", label: "Customer Expansion", icon: DollarSign },
   { id: "properties", label: "Properties", icon: Building2 },
   { id: "leads", label: "Leads", icon: Mail },
   { id: "bookings", label: "Bookings", icon: Calendar },
@@ -201,6 +209,10 @@ export default function Admin() {
           {section === "analytics" && <AnalyticsSection analytics={analytics} />}
           {section === "api-credentials" && <APICredentials />}
           {section === "settings" && <SettingsSection />}
+          {section === "crm-dashboard" && <CRMDashboard />}
+          {section === "sales-funnel" && <SalesFunnelAnalytics />}
+          {section === "channels" && <ChannelPerformance />}
+          {section === "expansion" && <CustomerExpansion />}
         </div>
       </main>
     </div>
