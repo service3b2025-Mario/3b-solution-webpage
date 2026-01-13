@@ -53,10 +53,10 @@ export const whatsappRouter = router({
   // Admin: Create new WhatsApp account
   create: adminProcedure
     .input(z.object({
-      name: z.string().min(1),
-      role: z.string().min(1),
+      name: z.string().min(1, "Name is required"),
+      role: z.string().min(1, "Role is required"),
       title: z.string().optional(),
-      phoneNumber: z.string().min(1),
+      phoneNumber: z.string().min(5, "Phone number must have at least 5 digits"),
       countryCode: z.string().default("+49"),
       displayOrder: z.number().default(0),
       isActive: z.boolean().default(true),
@@ -67,8 +67,12 @@ export const whatsappRouter = router({
       visibleOnPages: z.array(z.string()).default(["contact", "team", "about", "property"]),
     }))
     .mutation(async ({ input }) => {
+      // Clean phone number - remove any non-numeric characters
+      const cleanedPhone = input.phoneNumber.replace(/[^0-9]/g, '');
+      
       return whatsappDb.createAccount({
         ...input,
+        phoneNumber: cleanedPhone,
         visibleOnPages: JSON.stringify(input.visibleOnPages),
       });
     }),
@@ -78,10 +82,10 @@ export const whatsappRouter = router({
     .input(z.object({
       id: z.number(),
       data: z.object({
-        name: z.string().optional(),
-        role: z.string().optional(),
+        name: z.string().min(1).optional(),
+        role: z.string().min(1).optional(),
         title: z.string().optional(),
-        phoneNumber: z.string().optional(),
+        phoneNumber: z.string().min(5).optional(),
         countryCode: z.string().optional(),
         displayOrder: z.number().optional(),
         isActive: z.boolean().optional(),
@@ -93,8 +97,15 @@ export const whatsappRouter = router({
       }),
     }))
     .mutation(async ({ input }) => {
+      // Clean phone number if provided
+      let cleanedPhone = input.data.phoneNumber;
+      if (cleanedPhone) {
+        cleanedPhone = cleanedPhone.replace(/[^0-9]/g, '');
+      }
+      
       const updateData = {
         ...input.data,
+        phoneNumber: cleanedPhone,
         visibleOnPages: input.data.visibleOnPages 
           ? JSON.stringify(input.data.visibleOnPages) 
           : undefined,
