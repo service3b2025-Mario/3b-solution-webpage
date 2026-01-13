@@ -8,6 +8,7 @@ import { trpc } from "@/lib/trpc";
 import { MapPin, Building2, Calendar, TrendingUp, ArrowLeft, Phone, Mail, ChevronRight, Check } from "lucide-react";
 import InvestmentCalculator from "@/components/InvestmentCalculator";
 import { BookingSelector } from "@/components/BookingSelector";
+import { WhatsAppWidget } from "@/components/WhatsAppWidget";
 
 export default function PropertyDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -256,6 +257,24 @@ export default function PropertyDetail() {
                   </CardHeader>
                   <CardContent>
                     <BookingSelector />
+                  </CardContent>
+                </Card>
+
+                {/* WhatsApp Quick Contact */}
+                <Card className="border-0 shadow-lg">
+                  <CardHeader>
+                    <CardTitle>Quick Contact via WhatsApp</CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Chat directly with our investment specialists
+                    </p>
+                  </CardHeader>
+                  <CardContent>
+                    <WhatsAppWidget 
+                      page="property" 
+                      variant="inline" 
+                      propertyTitle={property.title}
+                      propertyId={property.id}
+                    />
                   </CardContent>
                 </Card>
               </div>
