@@ -12,6 +12,7 @@ import { generateMeetingLink } from "./meetingLinks";
 import { sendBookingConfirmation, sendReschedulingNotification } from "./tourNotifications";
 import { notifyOwner } from "./_core/notification";
 import { sendResourceDownloadEmail } from "./emailService";
+import { handleNewLeadNotifications } from "./leadEmailService";
 
 // Admin procedure - requires admin role
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -361,28 +362,42 @@ export const appRouter = router({
       utmMedium: z.string().optional(),
       utmCampaign: z.string().optional(),
       propertyId: z.number().optional(),
-        })).mutation(async ({ input }) => {
+           })).mutation(async ({ input }) => {
       // Create the lead in database
       const leadId = await db.createLead(input);
       
-      // Send email notifications
+      // Send email notifications to both 3B Solution team AND the lead
       try {
-        const fullName = [input.firstName, input.lastName].filter(Boolean).join(' ') || 'Unknown';
-        
-        // Notify 3B Solution team about new lead
-        await notifyOwner({
-          title: `New Lead: ${fullName}`,
-          content: `New information request received:\n\nName: ${fullName}\nEmail: ${input.email}\nPhone: ${input.phone || 'Not provided'}\nCompany: ${input.company || 'Not provided'}\nSource: ${input.source || 'Contact Form'}\n\nMessage:\n${input.message || 'No message provided'}\n\nLead ID: ${leadId}`,
+        // Use comprehensive notification service
+        const notificationResult = await handleNewLeadNotifications({
+          leadId,
+          firstName: input.firstName,
+          lastName: input.lastName,
+          email: input.email,
+          phone: input.phone,
+          company: input.company,
+          investorType: input.investorType,
+          investmentRange: input.investmentRange,
+          interestedRegions: input.interestedRegions,
+          interestedPropertyTypes: input.interestedPropertyTypes,
+          message: input.message,
+          source: input.source,
+          sourcePage: input.sourcePage,
         });
         
-        console.log('[Leads] Notification sent for new lead:', input.email);
+        console.log('[Leads] Notifications sent:', {
+          email: input.email,
+          teamNotified: notificationResult.teamNotified,
+          confirmationSent: notificationResult.confirmationSent,
+        });
       } catch (notifyError) {
         // Don't fail the lead creation if notification fails
-        console.error('[Leads] Failed to send notification:', notifyError);
+        console.error('[Leads] Failed to send notifications:', notifyError);
       }
       
       return leadId;
     }),
+
     list: adminProcedure.input(z.object({
       status: z.string().optional(),
       source: z.string().optional(),
