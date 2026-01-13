@@ -2,6 +2,7 @@
  * WhatsApp Database Operations
  * 
  * Database functions for WhatsApp team account management
+ * Compatible with MySQL/TiDB
  */
 
 import { sql } from "drizzle-orm";
@@ -51,13 +52,13 @@ function mapAccountFromDb(row: any): WhatsAppAccount {
     phoneNumber: row.phone_number,
     countryCode: row.country_code,
     displayOrder: row.display_order,
-    isActive: row.is_active,
-    isVisible: row.is_visible,
+    isActive: Boolean(row.is_active),
+    isVisible: Boolean(row.is_visible),
     avatarUrl: row.avatar_url,
     teamMemberId: row.team_member_id,
-    defaultMessage: row.default_message,
-    visibleOnPages: row.visible_on_pages,
-    totalClicks: row.total_clicks,
+    defaultMessage: row.default_message || '',
+    visibleOnPages: row.visible_on_pages || '[]',
+    totalClicks: row.total_clicks || 0,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -75,7 +76,7 @@ export async function getActiveAccounts(page?: string): Promise<WhatsAppAccount[
       ORDER BY display_order ASC, name ASC
     `);
 
-    let accounts = (result.rows || []).map(mapAccountFromDb);
+    let accounts = (result.rows || result || []).map(mapAccountFromDb);
 
     // Filter by page if specified
     if (page && accounts.length > 0) {
@@ -106,7 +107,7 @@ export async function getAllAccounts(): Promise<WhatsAppAccount[]> {
       SELECT * FROM whatsapp_accounts 
       ORDER BY display_order ASC, name ASC
     `);
-    return (result.rows || []).map(mapAccountFromDb);
+    return (result.rows || result || []).map(mapAccountFromDb);
   } catch (error) {
     console.error('[WhatsApp] Error fetching all accounts:', error);
     return [];
@@ -122,7 +123,8 @@ export async function getAccountById(id: number): Promise<WhatsAppAccount | null
     const result = await db.execute(sql`
       SELECT * FROM whatsapp_accounts WHERE id = ${id}
     `);
-    const row = result.rows?.[0];
+    const rows = result.rows || result || [];
+    const row = rows[0];
     return row ? mapAccountFromDb(row) : null;
   } catch (error) {
     console.error('[WhatsApp] Error fetching account:', error);
@@ -150,7 +152,8 @@ export async function createAccount(data: Partial<WhatsAppAccount>): Promise<Wha
     const defaultMessage = data.defaultMessage || "Hi! I'm interested in learning more about 3B Solution's real estate investment opportunities.";
     const visibleOnPages = data.visibleOnPages || '["contact", "team", "about", "property"]';
 
-    const result = await db.execute(sql`
+    // MySQL INSERT
+    await db.execute(sql`
       INSERT INTO whatsapp_accounts (
         name, role, title, phone_number, country_code,
         display_order, is_active, is_visible, avatar_url,
@@ -169,11 +172,18 @@ export async function createAccount(data: Partial<WhatsAppAccount>): Promise<Wha
         ${defaultMessage},
         ${visibleOnPages}
       )
-      RETURNING *
     `);
     
-    const row = result.rows?.[0];
-    return row ? mapAccountFromDb(row) : null;
+    // Get the last inserted ID (MySQL way)
+    const lastIdResult = await db.execute(sql`SELECT LAST_INSERT_ID() as id`);
+    const lastIdRows = lastIdResult.rows || lastIdResult || [];
+    const lastId = lastIdRows[0]?.id;
+    
+    if (lastId) {
+      return getAccountById(lastId);
+    }
+    
+    return null;
   } catch (error) {
     console.error('[WhatsApp] Error creating account:', error);
     throw error;
@@ -186,7 +196,7 @@ export async function updateAccount(id: number, data: Partial<WhatsAppAccount>):
   if (!db) return false;
 
   try {
-    // Build dynamic update - using parameterized queries for safety
+    // Build dynamic update - escape single quotes for MySQL
     const updates: string[] = [];
     
     if (data.name !== undefined) updates.push(`name = '${data.name.replace(/'/g, "''")}'`);
@@ -202,9 +212,7 @@ export async function updateAccount(id: number, data: Partial<WhatsAppAccount>):
     if (data.defaultMessage !== undefined) updates.push(`default_message = '${data.defaultMessage.replace(/'/g, "''")}'`);
     if (data.visibleOnPages !== undefined) updates.push(`visible_on_pages = '${data.visibleOnPages.replace(/'/g, "''")}'`);
 
-    updates.push(`updated_at = NOW()`);
-
-    if (updates.length === 1) return true; // Only updated_at, nothing to update
+    if (updates.length === 0) return true; // Nothing to update
 
     await db.execute(sql.raw(`
       UPDATE whatsapp_accounts 
@@ -304,7 +312,7 @@ export async function getClickAnalytics(filters?: {
         COUNT(wc.id) as recent_clicks
       FROM whatsapp_accounts wa
       LEFT JOIN whatsapp_clicks wc ON wa.id = wc.account_id
-        AND wc.clicked_at >= NOW() - INTERVAL '30 days'
+        AND wc.clicked_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
       GROUP BY wa.id, wa.name, wa.role, wa.total_clicks
       ORDER BY wa.total_clicks DESC
     `);
@@ -315,7 +323,7 @@ export async function getClickAnalytics(filters?: {
         page_path,
         COUNT(*) as clicks
       FROM whatsapp_clicks
-      WHERE clicked_at >= NOW() - INTERVAL '30 days'
+      WHERE clicked_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
       GROUP BY page_path
       ORDER BY clicks DESC
       LIMIT 10
@@ -327,7 +335,7 @@ export async function getClickAnalytics(filters?: {
         DATE(clicked_at) as date,
         COUNT(*) as clicks
       FROM whatsapp_clicks
-      WHERE clicked_at >= NOW() - INTERVAL '30 days'
+      WHERE clicked_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
       GROUP BY DATE(clicked_at)
       ORDER BY date ASC
     `);
@@ -338,14 +346,16 @@ export async function getClickAnalytics(filters?: {
         COUNT(*) as total_clicks,
         COUNT(DISTINCT visitor_id) as unique_visitors
       FROM whatsapp_clicks
-      WHERE clicked_at >= NOW() - INTERVAL '30 days'
+      WHERE clicked_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
     `);
 
+    const totalsRows = totals.rows || totals || [];
+
     return {
-      byAccount: byAccount.rows || [],
-      byPage: byPage.rows || [],
-      overTime: overTime.rows || [],
-      totals: totals.rows?.[0] || { total_clicks: 0, unique_visitors: 0 },
+      byAccount: byAccount.rows || byAccount || [],
+      byPage: byPage.rows || byPage || [],
+      overTime: overTime.rows || overTime || [],
+      totals: totalsRows[0] || { total_clicks: 0, unique_visitors: 0 },
     };
   } catch (error) {
     console.error('[WhatsApp] Error fetching analytics:', error);
@@ -366,28 +376,27 @@ export async function getClickHistory(filters?: {
     const limit = filters?.limit || 100;
     const offset = filters?.offset || 0;
 
-    let query;
+    let result;
     if (filters?.accountId) {
-      query = sql`
+      result = await db.execute(sql`
         SELECT wc.*, wa.name as account_name
         FROM whatsapp_clicks wc
         LEFT JOIN whatsapp_accounts wa ON wc.account_id = wa.id
         WHERE wc.account_id = ${filters.accountId}
         ORDER BY wc.clicked_at DESC
         LIMIT ${limit} OFFSET ${offset}
-      `;
+      `);
     } else {
-      query = sql`
+      result = await db.execute(sql`
         SELECT wc.*, wa.name as account_name
         FROM whatsapp_clicks wc
         LEFT JOIN whatsapp_accounts wa ON wc.account_id = wa.id
         ORDER BY wc.clicked_at DESC
         LIMIT ${limit} OFFSET ${offset}
-      `;
+      `);
     }
 
-    const result = await db.execute(query);
-    return (result.rows || []) as WhatsAppClick[];
+    return (result.rows || result || []) as WhatsAppClick[];
   } catch (error) {
     console.error('[WhatsApp] Error fetching click history:', error);
     return [];
