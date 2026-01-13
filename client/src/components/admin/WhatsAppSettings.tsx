@@ -62,7 +62,7 @@ const COUNTRY_CODES = [
 const TEAM_MEMBERS = [
   {
     name: "Georg Blascheck",
-    role: "CEO",
+    role: "CEO & Founder",
     title: "Sales",
     phoneNumber: "17656787896",
     countryCode: "+49",
@@ -85,6 +85,15 @@ const TEAM_MEMBERS = [
     phoneNumber: "",
     countryCode: "+63",
     displayOrder: 3,
+    isActive: false,
+  },
+  {
+    name: "Mario Bock",
+    role: "Director",
+    title: "Admin",
+    phoneNumber: "",
+    countryCode: "+49",
+    displayOrder: 4,
     isActive: false,
   },
 ];
@@ -613,7 +622,7 @@ export function WhatsAppSettings() {
           </div>
           
           <p className="text-xs text-muted-foreground mt-4">
-            Note: Mario Bock (Director, Admin) is not included in the sales team widget.
+            Note: Team members without phone numbers will show as "Pending". Add their phone numbers to enable Quick Setup.
           </p>
         </CardContent>
       </Card>
