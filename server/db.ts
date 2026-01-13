@@ -660,8 +660,24 @@ export async function incrementReportDownloads(id: number) {
 export async function createLead(data: InsertLead) {
   const db = await getDb();
   if (!db) return null;
-  const result = await db.insert(leads).values(data);
-  return result[0].insertId;
+  
+  try {
+    // Insert the lead
+    await db.insert(leads).values(data);
+    
+    // Query the last inserted lead by email and timestamp
+    // This is needed because postgres-js doesn't return insertId like MySQL
+    const [lastInserted] = await db.select({ id: leads.id })
+      .from(leads)
+      .where(eq(leads.email, data.email))
+      .orderBy(desc(leads.createdAt))
+      .limit(1);
+    
+    return lastInserted?.id || null;
+  } catch (error) {
+    console.error('[createLead] Error inserting lead:', error);
+    throw error;
+  }
 }
 
 export async function getLeads(filters?: { status?: string; source?: string; limit?: number; offset?: number }) {
