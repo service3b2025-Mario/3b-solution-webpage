@@ -485,3 +485,45 @@ export const resources = mysqlTable("resources", {
 
 export type Resource = typeof resources.$inferSelect;
 export type InsertResource = typeof resources.$inferInsert;
+
+// WhatsApp Team Accounts Table
+export const whatsappAccounts = mysqlTable("whatsapp_accounts", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  role: varchar("role", { length: 100 }).notNull(),
+  title: varchar("title", { length: 255 }),
+  phoneNumber: varchar("phone_number", { length: 50 }).notNull(),
+  countryCode: varchar("country_code", { length: 10 }).notNull().default("+49"),
+  displayOrder: int("display_order").default(0),
+  isActive: boolean("is_active").default(true),
+  isVisible: boolean("is_visible").default(true),
+  avatarUrl: text("avatar_url"),
+  teamMemberId: int("team_member_id"),
+  defaultMessage: text("default_message"),
+  visibleOnPages: text("visible_on_pages"),
+  totalClicks: int("total_clicks").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+});
+
+export type WhatsAppAccount = typeof whatsappAccounts.$inferSelect;
+export type InsertWhatsAppAccount = typeof whatsappAccounts.$inferInsert;
+
+// WhatsApp Click Tracking Table
+export const whatsappClicks = mysqlTable("whatsapp_clicks", {
+  id: int("id").autoincrement().primaryKey(),
+  accountId: int("account_id").notNull(),
+  pagePath: varchar("page_path", { length: 255 }),
+  pageTitle: varchar("page_title", { length: 255 }),
+  propertyId: int("property_id"),
+  visitorId: varchar("visitor_id", { length: 100 }),
+  userAgent: text("user_agent"),
+  referrer: text("referrer"),
+  utmSource: varchar("utm_source", { length: 100 }),
+  utmMedium: varchar("utm_medium", { length: 100 }),
+  utmCampaign: varchar("utm_campaign", { length: 100 }),
+  clickedAt: timestamp("clicked_at").defaultNow().notNull(),
+});
+
+export type WhatsAppClick = typeof whatsappClicks.$inferSelect;
+export type InsertWhatsAppClick = typeof whatsappClicks.$inferInsert;
