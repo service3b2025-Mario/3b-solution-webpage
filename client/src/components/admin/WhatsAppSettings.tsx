@@ -54,6 +54,7 @@ const COUNTRY_CODES = [
   { code: "+63", country: "Philippines" },
   { code: "+1", country: "USA/Canada" },
   { code: "+44", country: "UK" },
+  { code: "+86", country: "China" },
   { code: "+971", country: "UAE" },
   { code: "+65", country: "Singapore" },
 ];
