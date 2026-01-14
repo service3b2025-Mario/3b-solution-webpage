@@ -6,7 +6,6 @@ import { trpc } from "@/lib/trpc";
 import { Globe, Users, Target, Award, MapPin, Linkedin, Mail, Phone, ArrowRight, MessageCircle, Calendar } from "lucide-react";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { GlobalProjectPortfolio } from "@/components/GlobalProjectPortfolio";
-import { WhatsAppWidget } from "@/components/WhatsAppWidget";
 
 export default function About() {
   const { data: teamMembers } = trpc.team.list.useQuery();
@@ -203,14 +202,6 @@ export default function About() {
                 </Card>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* WhatsApp Contact Section */}
-      <section className="py-12 bg-muted/30">
-        <div className="container max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-6">Connect With Our Team</h2>
-          <WhatsAppWidget page="about" variant="card" />
         </div>
       </section>
 
