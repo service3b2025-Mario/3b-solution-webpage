@@ -2,7 +2,7 @@ import Layout from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
-import { Mail, MapPin, Clock, Globe, Linkedin, Check, Users } from "lucide-react";
+import { Mail, MapPin, Clock, Globe, Linkedin, Check, Users, MessageCircle } from "lucide-react";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { BookingSelector } from "@/components/BookingSelector";
 import { Link } from "wouter";
@@ -97,7 +97,7 @@ export default function Contact() {
                   <div key={expert.id} className="flex items-center gap-3 p-2 bg-white/60 rounded-lg">
                     {expert.photo ? (
                       <img 
-                        src={expert.photo} 
+                        src={expert.photo}
                         alt={expert.name}
                         className="w-10 h-10 rounded-full object-cover object-top"
                       />
@@ -110,11 +110,24 @@ export default function Contact() {
                       <p className="font-medium text-sm">{expert.name}</p>
                       <p className="text-xs text-muted-foreground">{expert.role}</p>
                     </div>
-                    {expert.linkedIn && (
-                      <a href={expert.linkedIn} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-secondary">
-                        <Linkedin className="w-4 h-4" />
-                      </a>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {expert.phone && (
+                        <a 
+                          href={`https://wa.me/${expert.phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(expert.name)}%2C%20I%20would%20like%20to%20discuss%20investment%20opportunities%20with%203B%20Solution.`}
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="text-green-600 hover:text-green-700"
+                          title={`Chat with ${expert.name} on WhatsApp`}
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                        </a>
+                      )}
+                      {expert.linkedIn && (
+                        <a href={expert.linkedIn} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-secondary">
+                          <Linkedin className="w-4 h-4" />
+                        </a>
+                      )}
+                    </div>
                   </div>
                 ))}
               </CardContent>
