@@ -21,21 +21,12 @@ import {
 function KPICard({ 
   title, 
   value, 
-  change, 
-  changeLabel,
   icon: Icon,
-  trend 
 }: { 
   title: string;
   value: string | number;
-  change?: number;
-  changeLabel?: string;
   icon: any;
-  trend?: 'up' | 'down' | 'neutral';
 }) {
-  const trendColor = trend === 'up' ? 'text-green-500' : trend === 'down' ? 'text-red-500' : 'text-gray-500';
-  const TrendIcon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : Activity;
-
   return (
     <Card className="bg-gradient-to-br from-card to-card/80 border-primary/10">
       <CardContent className="p-6">
@@ -43,19 +34,6 @@ function KPICard({
           <div>
             <p className="text-sm font-medium text-muted-foreground">{title}</p>
             <p className="text-3xl font-bold mt-2">{value}</p>
-            {change !== undefined && (
-              <div className={`flex items-center gap-1 mt-2 ${trendColor}`}>
-                <TrendIcon className="w-4 h-4" />
-                <span className="text-sm font-medium">
-                  {change > 0 ? '+' : ''}{change}%
-                </span>
-                {changeLabel && (
-                  <span className="text-xs text-muted-foreground ml-1">
-                    {changeLabel}
-                  </span>
-                )}
-              </div>
-            )}
           </div>
           <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
             <Icon className="w-6 h-6 text-primary" />
@@ -96,45 +74,53 @@ function AlertCard({ alert }: { alert: any }) {
 // Funnel Visualization Component
 function FunnelVisualization({ stages }: { stages: any[] }) {
   const maxCount = Math.max(...stages.map(s => s.count), 1);
+  const totalLeads = stages[0]?.count || 0;
 
   return (
     <div className="space-y-3">
-      {stages.map((stage, index) => (
-        <div key={stage.name} className="relative">
-          <div className="flex items-center gap-4">
-            <div className="w-24 text-sm font-medium text-right">
-              {stage.displayName}
-            </div>
-            <div className="flex-1 relative">
-              <div 
-                className="h-10 rounded-r-lg transition-all duration-500"
-                style={{ 
-                  width: `${(stage.count / maxCount) * 100}%`,
-                  backgroundColor: stage.color || `hsl(${220 - index * 30}, 70%, 50%)`,
-                  minWidth: '40px'
-                }}
-              >
-                <div className="absolute inset-0 flex items-center justify-end pr-3">
-                  <span className="text-sm font-bold text-white drop-shadow">
-                    {stage.count}
-                  </span>
+      {stages.map((stage, index) => {
+        // Calculate actual conversion rate based on data
+        const conversionRate = totalLeads > 0 ? Math.round((stage.count / totalLeads) * 100) : 0;
+        
+        return (
+          <div key={stage.name} className="relative">
+            <div className="flex items-center gap-4">
+              <div className="w-24 text-sm font-medium text-right">
+                {stage.displayName}
+              </div>
+              <div className="flex-1 relative">
+                <div 
+                  className="h-10 rounded-r-lg transition-all duration-500"
+                  style={{ 
+                    width: stage.count > 0 ? `${(stage.count / maxCount) * 100}%` : '0%',
+                    backgroundColor: stage.color || `hsl(${220 - index * 30}, 70%, 50%)`,
+                    minWidth: stage.count > 0 ? '40px' : '0px'
+                  }}
+                >
+                  {stage.count > 0 && (
+                    <div className="absolute inset-0 flex items-center justify-end pr-3">
+                      <span className="text-sm font-bold text-white drop-shadow">
+                        {stage.count}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-            <div className="w-16 text-sm text-muted-foreground">
-              {stage.conversionRate}%
-            </div>
-          </div>
-          {index < stages.length - 1 && (
-            <div className="ml-24 pl-4 py-1">
-              <div className="text-xs text-muted-foreground flex items-center gap-1">
-                <ArrowRight className="w-3 h-3" />
-                {stages[index + 1].conversionRate}% conversion
+              <div className="w-16 text-sm text-muted-foreground">
+                {conversionRate}%
               </div>
             </div>
-          )}
-        </div>
-      ))}
+            {index < stages.length - 1 && stages[index + 1].count > 0 && (
+              <div className="ml-24 pl-4 py-1">
+                <div className="text-xs text-muted-foreground flex items-center gap-1">
+                  <ArrowRight className="w-3 h-3" />
+                  {totalLeads > 0 ? Math.round((stages[index + 1].count / totalLeads) * 100) : 0}% of total
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -257,12 +243,12 @@ export function CRMDashboard() {
   const convertedLeads = leads?.items?.filter((l: any) => l.status === 'converted').length || 0;
   const conversionRate = totalLeads > 0 ? Math.round((convertedLeads / totalLeads) * 100) : 0;
 
-  // Calculate funnel stages
+  // Calculate funnel stages - conversion rates calculated dynamically
   const funnelStages = [
-    { name: 'new', displayName: 'New', count: leads?.items?.filter((l: any) => l.status === 'new').length || 0, color: '#3B82F6', conversionRate: 100 },
-    { name: 'contacted', displayName: 'Contacted', count: leads?.items?.filter((l: any) => l.status === 'contacted').length || 0, color: '#8B5CF6', conversionRate: 65 },
-    { name: 'qualified', displayName: 'Qualified', count: leads?.items?.filter((l: any) => l.status === 'qualified').length || 0, color: '#10B981', conversionRate: 45 },
-    { name: 'converted', displayName: 'Converted', count: convertedLeads, color: '#F59E0B', conversionRate: 20 },
+    { name: 'new', displayName: 'New', count: leads?.items?.filter((l: any) => l.status === 'new').length || 0, color: '#3B82F6' },
+    { name: 'contacted', displayName: 'Contacted', count: leads?.items?.filter((l: any) => l.status === 'contacted').length || 0, color: '#8B5CF6' },
+    { name: 'qualified', displayName: 'Qualified', count: leads?.items?.filter((l: any) => l.status === 'qualified').length || 0, color: '#10B981' },
+    { name: 'converted', displayName: 'Converted', count: convertedLeads, color: '#F59E0B' },
   ];
 
   // Calculate channel performance
@@ -281,7 +267,7 @@ export function CRMDashboard() {
     percentage: totalLeads > 0 ? Math.round((c.leads / totalLeads) * 100) : 0,
   }));
 
-  // Sample alerts
+  // Dynamic alerts based on actual data
   const alerts = [
     ...(newLeads > 5 ? [{
       type: 'warning',
@@ -329,39 +315,27 @@ export function CRMDashboard() {
         </div>
       )}
 
-      {/* KPI Cards */}
+      {/* KPI Cards - No hardcoded change percentages */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <KPICard
           title="Total Leads"
           value={totalLeads}
-          change={12}
-          changeLabel="vs last period"
           icon={Users}
-          trend="up"
         />
         <KPICard
           title="New Leads"
           value={newLeads}
-          change={8}
-          changeLabel="vs last period"
           icon={Target}
-          trend="up"
         />
         <KPICard
           title="Conversion Rate"
           value={`${conversionRate}%`}
-          change={-2}
-          changeLabel="vs last period"
           icon={TrendingUp}
-          trend="down"
         />
         <KPICard
-          title="Pipeline Value"
-          value="$2.4M"
-          change={15}
-          changeLabel="vs last period"
+          title="Converted Leads"
+          value={convertedLeads}
           icon={DollarSign}
-          trend="up"
         />
       </div>
 
@@ -377,7 +351,13 @@ export function CRMDashboard() {
             <CardDescription>Lead progression through stages</CardDescription>
           </CardHeader>
           <CardContent>
-            <FunnelVisualization stages={funnelStages} />
+            {totalLeads > 0 ? (
+              <FunnelVisualization stages={funnelStages} />
+            ) : (
+              <div className="text-center text-muted-foreground py-8">
+                No leads data available
+              </div>
+            )}
           </CardContent>
         </Card>
 
