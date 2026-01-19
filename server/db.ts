@@ -1684,3 +1684,106 @@ export async function incrementResourceDownloadCount(id: number) {
     .set({ downloadCount: sql`${resources.downloadCount} + 1` })
     .where(eq(resources.id, id));
 }
+
+// ========== Admin Data Reset ==========
+
+// Reset all test/demo data - clears leads, bookings, downloads, feedback, analytics
+export async function resetAllTestData() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const results = {
+    leads: 0,
+    bookings: 0,
+    downloads: 0,
+    downloadTagAssignments: 0,
+    tourFeedback: 0,
+    analyticsEvents: 0,
+    whatsappClicks: 0,
+    marketAlerts: 0,
+  };
+  
+  try {
+    // Import whatsapp schema for clicks table
+    const { whatsappClicks } = await import("../drizzle/whatsapp_schema");
+    
+    // Delete all leads
+    const leadsResult = await db.delete(leads);
+    results.leads = leadsResult.rowCount || 0;
+    
+    // Delete all bookings
+    const bookingsResult = await db.delete(bookings);
+    results.bookings = bookingsResult.rowCount || 0;
+    
+    // Delete download tag assignments first (foreign key constraint)
+    const tagAssignmentsResult = await db.delete(downloadTagAssignments);
+    results.downloadTagAssignments = tagAssignmentsResult.rowCount || 0;
+    
+    // Delete all downloads
+    const downloadsResult = await db.delete(downloads);
+    results.downloads = downloadsResult.rowCount || 0;
+    
+    // Delete all tour feedback
+    const feedbackResult = await db.delete(tourFeedback);
+    results.tourFeedback = feedbackResult.rowCount || 0;
+    
+    // Delete all analytics events
+    const analyticsResult = await db.delete(analyticsEvents);
+    results.analyticsEvents = analyticsResult.rowCount || 0;
+    
+    // Delete all whatsapp clicks
+    const whatsappResult = await db.delete(whatsappClicks);
+    results.whatsappClicks = whatsappResult.rowCount || 0;
+    
+    // Delete all market alerts (subscriptions)
+    const alertsResult = await db.delete(marketAlerts);
+    results.marketAlerts = alertsResult.rowCount || 0;
+    
+    console.log("[Admin] Test data reset completed:", results);
+    return results;
+  } catch (error) {
+    console.error("[Admin] Error resetting test data:", error);
+    throw error;
+  }
+}
+
+// Get counts of all data for preview before reset
+export async function getTestDataCounts() {
+  const db = await getDb();
+  if (!db) return null;
+  
+  try {
+    const { whatsappClicks } = await import("../drizzle/whatsapp_schema");
+    
+    const [
+      leadsCount,
+      bookingsCount,
+      downloadsCount,
+      feedbackCount,
+      analyticsCount,
+      whatsappCount,
+      alertsCount,
+    ] = await Promise.all([
+      db.select({ count: sql<number>`count(*)` }).from(leads),
+      db.select({ count: sql<number>`count(*)` }).from(bookings),
+      db.select({ count: sql<number>`count(*)` }).from(downloads),
+      db.select({ count: sql<number>`count(*)` }).from(tourFeedback),
+      db.select({ count: sql<number>`count(*)` }).from(analyticsEvents),
+      db.select({ count: sql<number>`count(*)` }).from(whatsappClicks),
+      db.select({ count: sql<number>`count(*)` }).from(marketAlerts),
+    ]);
+    
+    return {
+      leads: Number(leadsCount[0]?.count || 0),
+      bookings: Number(bookingsCount[0]?.count || 0),
+      downloads: Number(downloadsCount[0]?.count || 0),
+      tourFeedback: Number(feedbackCount[0]?.count || 0),
+      analyticsEvents: Number(analyticsCount[0]?.count || 0),
+      whatsappClicks: Number(whatsappCount[0]?.count || 0),
+      marketAlerts: Number(alertsCount[0]?.count || 0),
+    };
+  } catch (error) {
+    console.error("[Admin] Error getting test data counts:", error);
+    return null;
+  }
+}
