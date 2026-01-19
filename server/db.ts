@@ -1685,75 +1685,89 @@ export async function incrementResourceDownloadCount(id: number) {
     .where(eq(resources.id, id));
 }
 
-// ========== Admin Data Reset ==========
+// ========== Enhanced Admin Data Reset Functions ==========
 
-// Reset all test/demo data - clears leads, bookings, downloads, feedback, analytics
-export async function resetAllTestData() {
-  const db = await getDb();
-  if (!db) throw new Error("Database not available");
+// Time period options for filtering
+export type TimePeriod = 
+  | 'all' 
+  | 'last_day' 
+  | 'last_week' 
+  | 'last_2_weeks' 
+  | 'last_3_weeks' 
+  | 'last_1_month' 
+  | 'last_3_months' 
+  | 'last_6_months' 
+  | 'last_9_months' 
+  | 'last_12_months';
+
+// Data types that can be reset
+export type DataType = 
+  | 'leads' 
+  | 'bookings' 
+  | 'downloads' 
+  | 'tourFeedback' 
+  | 'analyticsEvents' 
+  | 'whatsappClicks' 
+  | 'marketAlerts';
+
+// Helper function to get date threshold based on time period
+function getDateThreshold(period: TimePeriod ): Date | null {
+  if (period === 'all') return null;
   
-  const results = {
-    leads: 0,
-    bookings: 0,
-    downloads: 0,
-    downloadTagAssignments: 0,
-    tourFeedback: 0,
-    analyticsEvents: 0,
-    whatsappClicks: 0,
-    marketAlerts: 0,
-  };
+  const now = new Date();
+  const threshold = new Date(now);
   
-  try {
-    // Import whatsapp schema for clicks table
-    const { whatsappClicks } = await import("../drizzle/whatsapp_schema");
-    
-    // Delete all leads
-    const leadsResult = await db.delete(leads);
-    results.leads = leadsResult.rowCount || 0;
-    
-    // Delete all bookings
-    const bookingsResult = await db.delete(bookings);
-    results.bookings = bookingsResult.rowCount || 0;
-    
-    // Delete download tag assignments first (foreign key constraint)
-    const tagAssignmentsResult = await db.delete(downloadTagAssignments);
-    results.downloadTagAssignments = tagAssignmentsResult.rowCount || 0;
-    
-    // Delete all downloads
-    const downloadsResult = await db.delete(downloads);
-    results.downloads = downloadsResult.rowCount || 0;
-    
-    // Delete all tour feedback
-    const feedbackResult = await db.delete(tourFeedback);
-    results.tourFeedback = feedbackResult.rowCount || 0;
-    
-    // Delete all analytics events
-    const analyticsResult = await db.delete(analyticsEvents);
-    results.analyticsEvents = analyticsResult.rowCount || 0;
-    
-    // Delete all whatsapp clicks
-    const whatsappResult = await db.delete(whatsappClicks);
-    results.whatsappClicks = whatsappResult.rowCount || 0;
-    
-    // Delete all market alerts (subscriptions)
-    const alertsResult = await db.delete(marketAlerts);
-    results.marketAlerts = alertsResult.rowCount || 0;
-    
-    console.log("[Admin] Test data reset completed:", results);
-    return results;
-  } catch (error) {
-    console.error("[Admin] Error resetting test data:", error);
-    throw error;
+  switch (period) {
+    case 'last_day':
+      threshold.setDate(now.getDate() - 1);
+      break;
+    case 'last_week':
+      threshold.setDate(now.getDate() - 7);
+      break;
+    case 'last_2_weeks':
+      threshold.setDate(now.getDate() - 14);
+      break;
+    case 'last_3_weeks':
+      threshold.setDate(now.getDate() - 21);
+      break;
+    case 'last_1_month':
+      threshold.setMonth(now.getMonth() - 1);
+      break;
+    case 'last_3_months':
+      threshold.setMonth(now.getMonth() - 3);
+      break;
+    case 'last_6_months':
+      threshold.setMonth(now.getMonth() - 6);
+      break;
+    case 'last_9_months':
+      threshold.setMonth(now.getMonth() - 9);
+      break;
+    case 'last_12_months':
+      threshold.setMonth(now.getMonth() - 12);
+      break;
   }
+  
+  return threshold;
 }
 
-// Get counts of all data for preview before reset
-export async function getTestDataCounts() {
+// Get counts of data by type and time period
+export async function getTestDataCountsByPeriod(period: TimePeriod = 'all') {
   const db = await getDb();
   if (!db) return null;
   
+  const threshold = getDateThreshold(period);
+  
   try {
     const { whatsappClicks } = await import("../drizzle/whatsapp_schema");
+    
+    // Build queries with optional date filter
+    const dateFilter = threshold ? gte(leads.createdAt, threshold) : undefined;
+    const bookingsDateFilter = threshold ? gte(bookings.createdAt, threshold) : undefined;
+    const downloadsDateFilter = threshold ? gte(downloads.createdAt, threshold) : undefined;
+    const feedbackDateFilter = threshold ? gte(tourFeedback.createdAt, threshold) : undefined;
+    const analyticsDateFilter = threshold ? gte(analyticsEvents.createdAt, threshold) : undefined;
+    const whatsappDateFilter = threshold ? gte(whatsappClicks.createdAt, threshold) : undefined;
+    const alertsDateFilter = threshold ? gte(marketAlerts.createdAt, threshold) : undefined;
     
     const [
       leadsCount,
@@ -1764,13 +1778,27 @@ export async function getTestDataCounts() {
       whatsappCount,
       alertsCount,
     ] = await Promise.all([
-      db.select({ count: sql<number>`count(*)` }).from(leads),
-      db.select({ count: sql<number>`count(*)` }).from(bookings),
-      db.select({ count: sql<number>`count(*)` }).from(downloads),
-      db.select({ count: sql<number>`count(*)` }).from(tourFeedback),
-      db.select({ count: sql<number>`count(*)` }).from(analyticsEvents),
-      db.select({ count: sql<number>`count(*)` }).from(whatsappClicks),
-      db.select({ count: sql<number>`count(*)` }).from(marketAlerts),
+      dateFilter 
+        ? db.select({ count: sql<number>`count(*)` }).from(leads).where(dateFilter)
+        : db.select({ count: sql<number>`count(*)` }).from(leads),
+      bookingsDateFilter
+        ? db.select({ count: sql<number>`count(*)` }).from(bookings).where(bookingsDateFilter)
+        : db.select({ count: sql<number>`count(*)` }).from(bookings),
+      downloadsDateFilter
+        ? db.select({ count: sql<number>`count(*)` }).from(downloads).where(downloadsDateFilter)
+        : db.select({ count: sql<number>`count(*)` }).from(downloads),
+      feedbackDateFilter
+        ? db.select({ count: sql<number>`count(*)` }).from(tourFeedback).where(feedbackDateFilter)
+        : db.select({ count: sql<number>`count(*)` }).from(tourFeedback),
+      analyticsDateFilter
+        ? db.select({ count: sql<number>`count(*)` }).from(analyticsEvents).where(analyticsDateFilter)
+        : db.select({ count: sql<number>`count(*)` }).from(analyticsEvents),
+      whatsappDateFilter
+        ? db.select({ count: sql<number>`count(*)` }).from(whatsappClicks).where(whatsappDateFilter)
+        : db.select({ count: sql<number>`count(*)` }).from(whatsappClicks),
+      alertsDateFilter
+        ? db.select({ count: sql<number>`count(*)` }).from(marketAlerts).where(alertsDateFilter)
+        : db.select({ count: sql<number>`count(*)` }).from(marketAlerts),
     ]);
     
     return {
@@ -1781,9 +1809,145 @@ export async function getTestDataCounts() {
       analyticsEvents: Number(analyticsCount[0]?.count || 0),
       whatsappClicks: Number(whatsappCount[0]?.count || 0),
       marketAlerts: Number(alertsCount[0]?.count || 0),
+      period,
+      threshold: threshold?.toISOString() || null,
     };
   } catch (error) {
     console.error("[Admin] Error getting test data counts:", error);
     return null;
   }
+}
+
+// Reset specific data types with optional time period filter
+export async function resetDataByTypeAndPeriod(
+  dataTypes: DataType[],
+  period: TimePeriod = 'all'
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const threshold = getDateThreshold(period);
+  const results: Record<string, number> = {};
+  
+  try {
+    const { whatsappClicks } = await import("../drizzle/whatsapp_schema");
+    
+    // Reset leads
+    if (dataTypes.includes('leads')) {
+      if (threshold) {
+        const result = await db.delete(leads).where(gte(leads.createdAt, threshold));
+        results.leads = result.rowCount || 0;
+      } else {
+        const result = await db.delete(leads);
+        results.leads = result.rowCount || 0;
+      }
+    }
+    
+    // Reset bookings
+    if (dataTypes.includes('bookings')) {
+      if (threshold) {
+        const result = await db.delete(bookings).where(gte(bookings.createdAt, threshold));
+        results.bookings = result.rowCount || 0;
+      } else {
+        const result = await db.delete(bookings);
+        results.bookings = result.rowCount || 0;
+      }
+    }
+    
+    // Reset downloads (need to delete tag assignments first)
+    if (dataTypes.includes('downloads')) {
+      if (threshold) {
+        // Get download IDs to delete
+        const downloadsToDelete = await db
+          .select({ id: downloads.id })
+          .from(downloads)
+          .where(gte(downloads.createdAt, threshold));
+        
+        const downloadIds = downloadsToDelete.map(d => d.id);
+        
+        if (downloadIds.length > 0) {
+          // Delete tag assignments for these downloads
+          await db.delete(downloadTagAssignments).where(inArray(downloadTagAssignments.downloadId, downloadIds));
+          // Delete downloads
+          const result = await db.delete(downloads).where(inArray(downloads.id, downloadIds));
+          results.downloads = result.rowCount || 0;
+        } else {
+          results.downloads = 0;
+        }
+      } else {
+        // Delete all tag assignments first
+        await db.delete(downloadTagAssignments);
+        const result = await db.delete(downloads);
+        results.downloads = result.rowCount || 0;
+      }
+    }
+    
+    // Reset tour feedback
+    if (dataTypes.includes('tourFeedback')) {
+      if (threshold) {
+        const result = await db.delete(tourFeedback).where(gte(tourFeedback.createdAt, threshold));
+        results.tourFeedback = result.rowCount || 0;
+      } else {
+        const result = await db.delete(tourFeedback);
+        results.tourFeedback = result.rowCount || 0;
+      }
+    }
+    
+    // Reset analytics events
+    if (dataTypes.includes('analyticsEvents')) {
+      if (threshold) {
+        const result = await db.delete(analyticsEvents).where(gte(analyticsEvents.createdAt, threshold));
+        results.analyticsEvents = result.rowCount || 0;
+      } else {
+        const result = await db.delete(analyticsEvents);
+        results.analyticsEvents = result.rowCount || 0;
+      }
+    }
+    
+    // Reset WhatsApp clicks
+    if (dataTypes.includes('whatsappClicks')) {
+      if (threshold) {
+        const result = await db.delete(whatsappClicks).where(gte(whatsappClicks.createdAt, threshold));
+        results.whatsappClicks = result.rowCount || 0;
+      } else {
+        const result = await db.delete(whatsappClicks);
+        results.whatsappClicks = result.rowCount || 0;
+      }
+    }
+    
+    // Reset market alerts
+    if (dataTypes.includes('marketAlerts')) {
+      if (threshold) {
+        const result = await db.delete(marketAlerts).where(gte(marketAlerts.createdAt, threshold));
+        results.marketAlerts = result.rowCount || 0;
+      } else {
+        const result = await db.delete(marketAlerts);
+        results.marketAlerts = result.rowCount || 0;
+      }
+    }
+    
+    console.log("[Admin] Data reset completed:", { dataTypes, period, results });
+    return results;
+  } catch (error) {
+    console.error("[Admin] Error resetting data:", error);
+    throw error;
+  }
+}
+
+// Legacy function for backward compatibility - resets all data
+export async function resetAllTestData() {
+  return resetDataByTypeAndPeriod([
+    'leads',
+    'bookings',
+    'downloads',
+    'tourFeedback',
+    'analyticsEvents',
+    'whatsappClicks',
+    'marketAlerts',
+  ], 'all');
+}
+
+// Legacy function for backward compatibility
+export async function getTestDataCounts() {
+  return getTestDataCountsByPeriod('all');
 }
