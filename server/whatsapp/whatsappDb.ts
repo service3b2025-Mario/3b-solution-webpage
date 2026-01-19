@@ -144,14 +144,17 @@ export async function updateAccount(id: number, data: Partial<InsertWhatsAppAcco
 // Delete WhatsApp account
 export async function deleteAccount(id: number): Promise<boolean> {
   const db = await getDb();
-  if (!db) return false;
+  if (!db) throw new Error('Database connection not available');
 
   try {
+    // First delete any related click records
+    await db.delete(whatsappClicks).where(eq(whatsappClicks.accountId, id));
+    // Then delete the account
     await db.delete(whatsappAccounts).where(eq(whatsappAccounts.id, id));
     return true;
   } catch (error) {
     console.error('[WhatsApp] Error deleting account:', error);
-    return false;
+    throw new Error(`Failed to delete account: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
