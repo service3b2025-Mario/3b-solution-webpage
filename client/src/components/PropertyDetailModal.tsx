@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { toast } from "sonner";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -102,6 +103,90 @@ export function PropertyDetailModal({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [mediaTab, setMediaTab] = useState<'photos' | 'video' | 'tour'>('photos');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+
+  // Check if property is saved on mount
+  useEffect(() => {
+    if (property) {
+      const savedProperties = JSON.parse(localStorage.getItem('savedProperties') || '[]');
+      setIsSaved(savedProperties.some((p: Property) => p.id === property.id));
+    }
+  }, [property]);
+
+  // Handle Save property
+  const handleSave = () => {
+    if (!property) return;
+    
+    const savedProperties = JSON.parse(localStorage.getItem('savedProperties') || '[]');
+    
+    if (isSaved) {
+      // Remove from saved
+      const updated = savedProperties.filter((p: Property) => p.id !== property.id);
+      localStorage.setItem('savedProperties', JSON.stringify(updated));
+      setIsSaved(false);
+      toast.success('Property removed from saved list');
+    } else {
+      // Add to saved
+      savedProperties.push({
+        id: property.id,
+        title: property.title,
+        slug: property.slug,
+        location: property.location,
+        mainImage: property.mainImage,
+        price: property.price,
+        propertyType: property.propertyType,
+        savedAt: new Date().toISOString()
+      });
+      localStorage.setItem('savedProperties', JSON.stringify(savedProperties));
+      setIsSaved(true);
+      toast.success('Property saved! View your saved properties in your profile.');
+    }
+  };
+
+  // Handle Share property
+  const handleShare = async () => {
+    if (!property) return;
+    
+    const shareUrl = `${window.location.origin}/property/${property.slug}`;
+    const shareData = {
+      title: property.title,
+      text: `Check out this property: ${property.title} in ${property.location}`,
+      url: shareUrl
+    };
+
+    // Try native share first (mobile)
+    if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      try {
+        await navigator.share(shareData);
+        toast.success('Shared successfully!');
+      } catch (err) {
+        // User cancelled or error - fall back to clipboard
+        copyToClipboard(shareUrl);
+      }
+    } else {
+      // Desktop - copy to clipboard
+      copyToClipboard(shareUrl);
+    }
+  };
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success('Link copied to clipboard!', {
+        description: 'Share this link with others to show them this property.'
+      });
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      toast.success('Link copied to clipboard!');
+    }
+  };
+
   if (!property) return null;
 
   // Use actual features from property data
@@ -172,10 +257,20 @@ export function PropertyDetailModal({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="h-7 text-xs px-2">
-                  <Heart className="w-3 h-3 mr-1" /> Save
+                <Button 
+                  variant={isSaved ? "default" : "outline"} 
+                  size="sm" 
+                  className={`h-7 text-xs px-2 ${isSaved ? 'bg-red-500 hover:bg-red-600 text-white' : ''}`}
+                  onClick={handleSave}
+                >
+                  <Heart className={`w-3 h-3 mr-1 ${isSaved ? 'fill-current' : ''}`} /> {isSaved ? 'Saved' : 'Save'}
                 </Button>
-                <Button variant="outline" size="sm" className="h-7 text-xs px-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-7 text-xs px-2"
+                  onClick={handleShare}
+                >
                   <Share2 className="w-3 h-3 mr-1" /> Share
                 </Button>
               </div>
