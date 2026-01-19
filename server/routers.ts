@@ -1019,14 +1019,66 @@ export const appRouter = router({
     // WhatsApp Team Accounts
   whatsapp: whatsappRouter,
 
-  // Admin Data Management
+  // Admin Data Management - Enhanced with time periods and data type selection
   adminData: router({
-    // Get counts of all test data before reset
-    getCounts: adminProcedure.query(async () => {
-      return db.getTestDataCounts();
-    }),
+    // Get counts of all test data with optional time period filter
+    getCounts: adminProcedure
+      .input(z.object({
+        period: z.enum([
+          'all',
+          'last_day',
+          'last_week',
+          'last_2_weeks',
+          'last_3_weeks',
+          'last_1_month',
+          'last_3_months',
+          'last_6_months',
+          'last_9_months',
+          'last_12_months',
+        ]).optional().default('all'),
+      }).optional())
+      .query(async ({ input }) => {
+        const period = input?.period || 'all';
+        return db.getTestDataCountsByPeriod(period);
+      }),
     
-    // Reset all test data (leads, bookings, downloads, feedback, analytics)
+    // Reset selected data types with optional time period filter
+    resetByTypeAndPeriod: adminProcedure
+      .input(z.object({
+        dataTypes: z.array(z.enum([
+          'leads',
+          'bookings',
+          'downloads',
+          'tourFeedback',
+          'analyticsEvents',
+          'whatsappClicks',
+          'marketAlerts',
+        ])),
+        period: z.enum([
+          'all',
+          'last_day',
+          'last_week',
+          'last_2_weeks',
+          'last_3_weeks',
+          'last_1_month',
+          'last_3_months',
+          'last_6_months',
+          'last_9_months',
+          'last_12_months',
+        ]).optional().default('all'),
+      }))
+      .mutation(async ({ input }) => {
+        const results = await db.resetDataByTypeAndPeriod(input.dataTypes, input.period);
+        return {
+          success: true,
+          deleted: results,
+          dataTypes: input.dataTypes,
+          period: input.period,
+          message: 'Selected data has been reset successfully',
+        };
+      }),
+    
+    // Legacy endpoint - Reset all test data (for backward compatibility)
     resetAll: adminProcedure.mutation(async () => {
       const results = await db.resetAllTestData();
       return {
