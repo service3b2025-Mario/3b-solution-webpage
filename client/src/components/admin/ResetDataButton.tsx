@@ -20,7 +20,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { AlertTriangle, Trash2, RefreshCw, Loader2 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 type TimePeriod = 
   | 'all' 
@@ -71,7 +71,6 @@ export function ResetDataButton() {
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('all');
   const [selectedTypes, setSelectedTypes] = useState<DataType[]>([]);
   const [confirmText, setConfirmText] = useState('');
-  const { toast } = useToast();
   
   // Fetch counts based on selected period
   const { data: counts, isLoading: countsLoading, refetch: refetchCounts } = trpc.adminData.getCounts.useQuery(
@@ -81,12 +80,13 @@ export function ResetDataButton() {
   
   const resetMutation = trpc.adminData.resetByTypeAndPeriod.useMutation({
     onSuccess: (data) => {
-      toast({
-        title: "Data Reset Successful",
-        description: `Deleted: ${Object.entries(data.deleted)
-          .filter(([_, count]) => count > 0)
-          .map(([type, count]) => `${type}: ${count}`)
-          .join(', ') || 'No records found'}`,
+      const deletedSummary = Object.entries(data.deleted)
+        .filter(([_, count]) => (count as number) > 0)
+        .map(([type, count]) => `${type}: ${count}`)
+        .join(', ') || 'No records found';
+      
+      toast.success("Data Reset Successful", {
+        description: `Deleted: ${deletedSummary}`,
       });
       setOpen(false);
       setSelectedTypes([]);
@@ -94,10 +94,8 @@ export function ResetDataButton() {
       refetchCounts();
     },
     onError: (error) => {
-      toast({
-        title: "Reset Failed",
+      toast.error("Reset Failed", {
         description: error.message,
-        variant: "destructive",
       });
     },
   });
@@ -120,19 +118,15 @@ export function ResetDataButton() {
   
   const handleReset = () => {
     if (selectedTypes.length === 0) {
-      toast({
-        title: "No Data Selected",
+      toast.error("No Data Selected", {
         description: "Please select at least one data type to reset.",
-        variant: "destructive",
       });
       return;
     }
     
     if (confirmText !== 'DELETE') {
-      toast({
-        title: "Confirmation Required",
+      toast.error("Confirmation Required", {
         description: "Please type DELETE to confirm.",
-        variant: "destructive",
       });
       return;
     }
@@ -276,7 +270,7 @@ export function ResetDataButton() {
                   value={confirmText}
                   onChange={(e) => setConfirmText(e.target.value.toUpperCase())}
                   placeholder="Type DELETE"
-                  className="w-full px-3 py-2 border rounded-md text-sm font-mono uppercase"
+                  className="w-full px-3 py-2 border rounded-md text-sm font-mono uppercase bg-background"
                 />
               </div>
             </div>
