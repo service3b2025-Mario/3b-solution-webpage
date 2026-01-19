@@ -1,8 +1,8 @@
 /**
- * 3B Solution Channel Performance Analytics
+ * 3B Solution Channel Performance
  * 
- * Multi-channel marketing performance tracking with
- * leads by source, cost analysis, and ROI comparison
+ * Marketing channel analysis with performance metrics,
+ * comparison charts, and attribution tracking
  */
 
 import { useState } from "react";
@@ -49,9 +49,6 @@ const channelColors: Record<string, string> = {
 function ChannelCard({ channel }: { channel: any }) {
   const Icon = channelIcons[channel.name] || Globe;
   const color = channelColors[channel.name] || '#6B7280';
-  const trend = channel.trend || 0;
-  const TrendIcon = trend >= 0 ? TrendingUp : TrendingDown;
-  const trendColor = trend >= 0 ? 'text-green-500' : 'text-red-500';
 
   return (
     <Card className="hover:border-primary/50 transition-colors cursor-pointer">
@@ -63,14 +60,8 @@ function ChannelCard({ channel }: { channel: any }) {
           >
             <Icon className="w-5 h-5" style={{ color }} />
           </div>
-          <div className={`flex items-center gap-1 ${trendColor}`}>
-            <TrendIcon className="w-4 h-4" />
-            <span className="text-sm font-medium">{Math.abs(trend)}%</span>
-          </div>
         </div>
-
         <h3 className="font-semibold mb-3">{channel.name}</h3>
-
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div>
             <div className="text-muted-foreground">Leads</div>
@@ -79,16 +70,6 @@ function ChannelCard({ channel }: { channel: any }) {
           <div>
             <div className="text-muted-foreground">Conv. Rate</div>
             <div className="font-bold text-lg">{channel.conversionRate}%</div>
-          </div>
-          <div>
-            <div className="text-muted-foreground">CPL</div>
-            <div className="font-bold">${channel.costPerLead}</div>
-          </div>
-          <div>
-            <div className="text-muted-foreground">ROI</div>
-            <div className={`font-bold ${channel.roi >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-              {channel.roi}%
-            </div>
           </div>
         </div>
       </CardContent>
@@ -102,14 +83,12 @@ function ChannelComparisonChart({
   metric 
 }: { 
   data: any[];
-  metric: 'leads' | 'conversions' | 'cost' | 'roi';
+  metric: 'leads' | 'conversions';
 }) {
   const getValue = (channel: any) => {
     switch (metric) {
       case 'leads': return channel.leads;
       case 'conversions': return channel.conversions;
-      case 'cost': return channel.spend;
-      case 'roi': return channel.roi;
       default: return channel.leads;
     }
   };
@@ -117,13 +96,20 @@ function ChannelComparisonChart({
   const maxValue = Math.max(...data.map(d => Math.abs(getValue(d))), 1);
   const sortedData = [...data].sort((a, b) => getValue(b) - getValue(a));
 
+  if (sortedData.length === 0) {
+    return (
+      <div className="text-center text-muted-foreground py-8">
+        No channel data available
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-3">
       {sortedData.map((channel) => {
         const value = getValue(channel);
         const Icon = channelIcons[channel.name] || Globe;
         const color = channelColors[channel.name] || '#6B7280';
-        const isNegative = value < 0;
 
         return (
           <div key={channel.name} className="flex items-center gap-3">
@@ -136,14 +122,14 @@ function ChannelComparisonChart({
             <div className="w-24 text-sm font-medium truncate">{channel.name}</div>
             <div className="flex-1 h-8 bg-muted rounded-lg overflow-hidden relative">
               <div 
-                className={`h-full rounded-lg transition-all duration-500 ${isNegative ? 'bg-red-500' : ''}`}
+                className="h-full rounded-lg transition-all duration-500"
                 style={{ 
                   width: `${(Math.abs(value) / maxValue) * 100}%`,
-                  backgroundColor: isNegative ? undefined : color,
+                  backgroundColor: color,
                 }}
               />
               <span className="absolute inset-0 flex items-center justify-end pr-3 text-sm font-bold">
-                {metric === 'cost' && '$'}{value}{metric === 'roi' && '%'}
+                {value}
               </span>
             </div>
           </div>
@@ -157,6 +143,14 @@ function ChannelComparisonChart({
 function AttributionFlow({ data }: { data: any[] }) {
   const stages = ['Awareness', 'Interest', 'Consideration', 'Conversion'];
   
+  if (data.length === 0) {
+    return (
+      <div className="text-center text-muted-foreground py-8">
+        No attribution data available
+      </div>
+    );
+  }
+
   return (
     <div className="relative overflow-x-auto">
       <div className="min-w-[600px]">
@@ -209,68 +203,24 @@ function AttributionFlow({ data }: { data: any[] }) {
   );
 }
 
-// Top Campaigns Table
-function TopCampaignsTable({ campaigns }: { campaigns: any[] }) {
-  return (
-    <div className="overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b">
-            <th className="text-left py-3 px-4 text-sm font-medium">Campaign</th>
-            <th className="text-left py-3 px-4 text-sm font-medium">Channel</th>
-            <th className="text-right py-3 px-4 text-sm font-medium">Leads</th>
-            <th className="text-right py-3 px-4 text-sm font-medium">Conv.</th>
-            <th className="text-right py-3 px-4 text-sm font-medium">Spend</th>
-            <th className="text-right py-3 px-4 text-sm font-medium">ROI</th>
-          </tr>
-        </thead>
-        <tbody>
-          {campaigns.map((campaign, index) => (
-            <tr key={index} className="border-b hover:bg-muted/50">
-              <td className="py-3 px-4">
-                <div className="font-medium">{campaign.name}</div>
-              </td>
-              <td className="py-3 px-4">
-                <Badge variant="outline">{campaign.channel}</Badge>
-              </td>
-              <td className="py-3 px-4 text-right">{campaign.leads}</td>
-              <td className="py-3 px-4 text-right">{campaign.conversions}</td>
-              <td className="py-3 px-4 text-right">${campaign.spend}</td>
-              <td className="py-3 px-4 text-right">
-                <span className={campaign.roi >= 0 ? 'text-green-500' : 'text-red-500'}>
-                  {campaign.roi}%
-                </span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
 // Main Channel Performance Component
 export function ChannelPerformance() {
   const [period, setPeriod] = useState<string>('30d');
-  const [comparisonMetric, setComparisonMetric] = useState<'leads' | 'conversions' | 'cost' | 'roi'>('leads');
+  const [comparisonMetric, setComparisonMetric] = useState<'leads' | 'conversions'>('leads');
 
   // Fetch leads data
   const { data: leads } = trpc.leads.list.useQuery({});
   const leadsArray = leads?.items || [];
 
-  // Calculate channel data from leads
+  // Calculate channel data from leads - all values calculated from actual data
   const channelData = leadsArray.reduce((acc: any, lead: any) => {
     const source = lead.source || 'Direct';
     if (!acc[source]) {
-      acc[source] = {
-        name: source,
-        leads: 0,
+      acc[source] = { 
+        name: source, 
+        leads: 0, 
         conversions: 0,
         conversionRate: 0,
-        costPerLead: Math.floor(Math.random() * 50) + 5,
-        spend: 0,
-        roi: Math.floor(Math.random() * 400) - 50,
-        trend: Math.floor(Math.random() * 40) - 10,
       };
     }
     acc[source].leads++;
@@ -280,30 +230,18 @@ export function ChannelPerformance() {
     return acc;
   }, {});
 
-  // Calculate conversion rates and spend
+  // Calculate conversion rates
   Object.values(channelData).forEach((channel: any) => {
     channel.conversionRate = channel.leads > 0 
       ? Math.round((channel.conversions / channel.leads) * 100) 
       : 0;
-    channel.spend = channel.leads * channel.costPerLead;
   });
 
   const channels = Object.values(channelData).sort((a: any, b: any) => b.leads - a.leads);
 
-  // Sample campaigns data
-  const topCampaigns = [
-    { name: 'Summer Investment Drive', channel: 'LinkedIn', leads: 45, conversions: 8, spend: 2500, roi: 320 },
-    { name: 'Property Showcase', channel: 'Facebook', leads: 38, conversions: 5, spend: 1800, roi: 180 },
-    { name: 'Email Newsletter', channel: 'Email', leads: 25, conversions: 6, spend: 500, roi: 450 },
-    { name: 'Referral Program', channel: 'Referral', leads: 20, conversions: 5, spend: 1000, roi: 280 },
-    { name: 'TikTok Awareness', channel: 'TikTok', leads: 15, conversions: 1, spend: 800, roi: -20 },
-  ];
-
-  // Summary stats
+  // Summary stats - calculated from actual data
   const totalLeads = channels.reduce((sum: number, c: any) => sum + c.leads, 0);
   const totalConversions = channels.reduce((sum: number, c: any) => sum + c.conversions, 0);
-  const totalSpend = channels.reduce((sum: number, c: any) => sum + c.spend, 0);
-  const avgCPL = totalLeads > 0 ? Math.round(totalSpend / totalLeads) : 0;
 
   return (
     <div className="space-y-6">
@@ -328,7 +266,7 @@ export function ChannelPerformance() {
         </div>
       </div>
 
-      {/* Summary Stats */}
+      {/* Summary Stats - calculated from actual data */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4">
@@ -345,23 +283,31 @@ export function ChannelPerformance() {
         <Card>
           <CardContent className="p-4">
             <div className="text-sm text-muted-foreground">Total Spend</div>
-            <div className="text-2xl font-bold">${totalSpend.toLocaleString()}</div>
+            <div className="text-2xl font-bold">$0</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4">
             <div className="text-sm text-muted-foreground">Avg. CPL</div>
-            <div className="text-2xl font-bold">${avgCPL}</div>
+            <div className="text-2xl font-bold">$0</div>
           </CardContent>
         </Card>
       </div>
 
       {/* Channel Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        {(channels as any[]).slice(0, 5).map((channel) => (
-          <ChannelCard key={channel.name} channel={channel} />
-        ))}
-      </div>
+      {channels.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          {(channels as any[]).slice(0, 5).map((channel) => (
+            <ChannelCard key={channel.name} channel={channel} />
+          ))}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="p-8 text-center text-muted-foreground">
+            No channel data available. Leads will appear here once they are added.
+          </CardContent>
+        </Card>
+      )}
 
       {/* Detailed Analysis */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -377,8 +323,6 @@ export function ChannelPerformance() {
                 <SelectContent>
                   <SelectItem value="leads">Leads</SelectItem>
                   <SelectItem value="conversions">Conversions</SelectItem>
-                  <SelectItem value="cost">Spend</SelectItem>
-                  <SelectItem value="roi">ROI</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -400,14 +344,16 @@ export function ChannelPerformance() {
         </Card>
       </div>
 
-      {/* Top Campaigns */}
+      {/* Top Campaigns - Show empty state instead of hardcoded data */}
       <Card>
         <CardHeader>
           <CardTitle>Top Campaigns</CardTitle>
           <CardDescription>Best performing marketing campaigns</CardDescription>
         </CardHeader>
         <CardContent>
-          <TopCampaignsTable campaigns={topCampaigns} />
+          <div className="text-center text-muted-foreground py-8">
+            No campaign data available. Campaign tracking is not yet configured.
+          </div>
         </CardContent>
       </Card>
     </div>
