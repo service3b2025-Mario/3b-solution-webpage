@@ -37,6 +37,7 @@ import { SalesFunnelAnalytics } from "@/components/crm/SalesFunnelAnalytics";
 import { ChannelPerformance } from "@/components/crm/ChannelPerformance";
 import { CustomerExpansion } from "@/components/crm/CustomerExpansion";
 import { WhatsAppSettings } from "@/components/admin/WhatsAppSettings";
+import { ResetDataButton } from "@/components/admin/ResetDataButton";
 
 const sidebarItems = [
   { id: "dashboard", label: "Dashboard", icon: BarChart3 },
@@ -1681,6 +1682,22 @@ function SettingsSection() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Data Management Section */}
+      <Card className="border-0 shadow-lg border-destructive/20">
+        <CardHeader>
+          <CardTitle className="text-destructive">Data Management</CardTitle>
+          <CardDescription>Reset test data and manage database</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-muted-foreground text-sm">
+            Use this section to reset all test/demo data. This will clear all leads, bookings, 
+            downloads, feedback, analytics events, and WhatsApp click tracking data. 
+            <strong className="text-destructive"> This action cannot be undone.</strong>
+          </p>
+          <ResetDataButton />
+        </CardContent>
+      </Card>
     </div>
   );
 }
