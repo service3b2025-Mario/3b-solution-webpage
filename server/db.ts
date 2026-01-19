@@ -24,7 +24,8 @@ import {
   downloads, Download, InsertDownload,
   downloadTags, DownloadTag, InsertDownloadTag,
   downloadTagAssignments, DownloadTagAssignment, InsertDownloadTagAssignment,
-  resources, Resource, InsertResource
+  resources, Resource, InsertResource,
+  whatsappClicks
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1758,7 +1759,6 @@ export async function getTestDataCountsByPeriod(period: TimePeriod = 'all') {
   const threshold = getDateThreshold(period);
   
   try {
-    const { whatsappClicks } = await import("../drizzle/whatsapp_schema");
     
     // Build queries with optional date filter
     const dateFilter = threshold ? gte(leads.createdAt, threshold) : undefined;
@@ -1830,7 +1830,6 @@ export async function resetDataByTypeAndPeriod(
   const results: Record<string, number> = {};
   
   try {
-    const { whatsappClicks } = await import("../drizzle/whatsapp_schema");
     
     // Reset leads
     if (dataTypes.includes('leads')) {
