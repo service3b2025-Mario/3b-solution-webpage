@@ -1016,8 +1016,28 @@ export const appRouter = router({
       }),
   }),
 
-  // WhatsApp Team Accounts
+    // WhatsApp Team Accounts
   whatsapp: whatsappRouter,
+
+  // Admin Data Management
+  adminData: router({
+    // Get counts of all test data before reset
+    getCounts: adminProcedure.query(async () => {
+      return db.getTestDataCounts();
+    }),
+    
+    // Reset all test data (leads, bookings, downloads, feedback, analytics)
+    resetAll: adminProcedure.mutation(async () => {
+      const results = await db.resetAllTestData();
+      return {
+        success: true,
+        deleted: results,
+        message: 'All test data has been reset successfully',
+      };
+    }),
+  }),
+});
+
 });
 
 export type AppRouter = typeof appRouter;
