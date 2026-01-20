@@ -58,7 +58,7 @@ export function Header() {
         <div className={`flex items-center justify-between transition-all duration-300 ${
             isScrolled ? "h-16" : "h-20"
           }`}>
-          {/* Logo - OPTIMIZED with dimensions */}
+          {/* Logo - OPTIMIZED with dimensions for CLS prevention */}
           <Link href="/" className="flex items-center">
             <img 
               src="/3b-logo.png" 
@@ -72,7 +72,7 @@ export function Header() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1" role="navigation" aria-label="Main navigation">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
                 <span
@@ -95,7 +95,7 @@ export function Header() {
                 <DropdownMenuTrigger asChild>
                   {/* FIXED: Added aria-label for accessibility */}
                   <Button variant="ghost" size="icon" className="rounded-full" aria-label="Open user menu">
-                    <User className="h-5 w-5" />
+                    <User className="h-5 w-5" aria-hidden="true" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
@@ -108,19 +108,19 @@ export function Header() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link href="/my-wishlist" className="flex items-center cursor-pointer">
-                      <Heart className="mr-2 h-4 w-4" />
+                      <Heart className="mr-2 h-4 w-4" aria-hidden="true" />
                       <span>My Wishlist</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/my-saved-searches" className="flex items-center cursor-pointer">
-                      <Bookmark className="mr-2 h-4 w-4" />
+                      <Bookmark className="mr-2 h-4 w-4" aria-hidden="true" />
                       <span>My Saved Searches</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/my-tours" className="flex items-center cursor-pointer">
-                      <Calendar className="mr-2 h-4 w-4" />
+                      <Calendar className="mr-2 h-4 w-4" aria-hidden="true" />
                       <span>My Tours</span>
                     </Link>
                   </DropdownMenuItem>
@@ -136,7 +136,7 @@ export function Header() {
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
-                    <LogOut className="mr-2 h-4 w-4" />
+                    <LogOut className="mr-2 h-4 w-4" aria-hidden="true" />
                     <span>Sign Out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -144,7 +144,7 @@ export function Header() {
             ) : (
               <a href="/admin" className="hidden md:block">
                 <Button variant="outline" size="sm">
-                  <User className="mr-2 h-4 w-4" />
+                  <User className="mr-2 h-4 w-4" aria-hidden="true" />
                   Sign In
                 </Button>
               </a>
@@ -160,12 +160,12 @@ export function Header() {
               <SheetTrigger asChild className="lg:hidden">
                 {/* FIXED: Added aria-label for accessibility */}
                 <Button variant="ghost" size="icon" aria-label="Open navigation menu">
-                  <Menu className="h-6 w-6" />
+                  <Menu className="h-6 w-6" aria-hidden="true" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-80">
                 <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-                <nav className="flex flex-col gap-2 mt-8">
+                <nav className="flex flex-col gap-2 mt-8" role="navigation" aria-label="Mobile navigation">
                   {navLinks.map((link) => {
                     const IconComponent = link.icon;
                     return (
@@ -177,7 +177,7 @@ export function Header() {
                               : "text-foreground/70 hover:text-foreground hover:bg-muted"
                           }`}
                         >
-                          <IconComponent className="w-5 h-5" />
+                          <IconComponent className="w-5 h-5" aria-hidden="true" />
                           {link.label}
                         </span>
                       </Link>
@@ -215,13 +215,14 @@ export function Footer() {
   const tiktokUrl = getSocialLink("social_tiktok");
 
   return (
-    <footer className="bg-primary text-primary-foreground">
+    <footer className="bg-primary text-primary-foreground" role="contentinfo">
       {/* CTA Section */}
       <div className="bg-secondary py-12">
         <div className="container text-center">
-          <h3 className="text-2xl md:text-3xl font-semibold text-white mb-4">
+          {/* FIXED: Changed from h3 to h2 for proper heading hierarchy */}
+          <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4">
             Ready to Start Your Investment Journey?
-          </h3>
+          </h2>
           <p className="text-white/80 mb-6 max-w-2xl mx-auto">
             Connect with our expert team for personalized investment guidance and exclusive property access.
           </p>
@@ -240,7 +241,7 @@ export function Footer() {
             {/* Company Info */}
             <div>
               <div className="mb-6">
-                {/* OPTIMIZED: Added dimensions to footer logo */}
+                {/* OPTIMIZED: Added dimensions and lazy loading to footer logo */}
                 <img 
                   src="/3b-logo.png" 
                   alt="3B Solution" 
@@ -256,23 +257,23 @@ export function Footer() {
               </p>
               <div className="flex gap-4">
                 {linkedinUrl && (
-                  <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
-                    <Linkedin className="w-5 h-5" />
+                  <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label="Follow us on LinkedIn" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+                    <Linkedin className="w-5 h-5" aria-hidden="true" />
                   </a>
                 )}
                 {facebookUrl && (
-                  <a href={facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
-                    <Facebook className="w-5 h-5" />
+                  <a href={facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+                    <Facebook className="w-5 h-5" aria-hidden="true" />
                   </a>
                 )}
                 {instagramUrl && (
-                  <a href={instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
-                    <Instagram className="w-5 h-5" />
+                  <a href={instagramUrl} target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+                    <Instagram className="w-5 h-5" aria-hidden="true" />
                   </a>
                 )}
                 {tiktokUrl && (
-                  <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
-                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <a href={tiktokUrl} target="_blank" rel="noopener noreferrer" aria-label="Follow us on TikTok" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                       <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
                     </svg>
                   </a>
@@ -280,13 +281,13 @@ export function Footer() {
                 {/* Show placeholder icons if no social links are configured */}
                 {!linkedinUrl && !facebookUrl && !instagramUrl && !tiktokUrl && (
                   <>
-                    <span className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center opacity-50">
+                    <span className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center opacity-50" aria-hidden="true">
                       <Linkedin className="w-5 h-5" />
                     </span>
-                    <span className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center opacity-50">
+                    <span className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center opacity-50" aria-hidden="true">
                       <Facebook className="w-5 h-5" />
                     </span>
-                    <span className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center opacity-50">
+                    <span className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center opacity-50" aria-hidden="true">
                       <Instagram className="w-5 h-5" />
                     </span>
                   </>
@@ -296,7 +297,8 @@ export function Footer() {
 
             {/* Quick Links */}
             <div>
-              <h4 className="font-semibold mb-6">Quick Links</h4>
+              {/* FIXED: Changed from h4 to h3 for proper heading hierarchy */}
+              <h3 className="font-semibold mb-6">Quick Links</h3>
               <ul className="space-y-3">
                 {navLinks.map((link) => (
                   <li key={link.href}>
@@ -310,7 +312,7 @@ export function Footer() {
 
             {/* Services */}
             <div>
-              <h4 className="font-semibold mb-6">Our Services</h4>
+              <h3 className="font-semibold mb-6">Our Services</h3>
               <ul className="space-y-3">
                 <li><Link href="/services" className="text-primary-foreground/70 hover:text-white transition-colors text-sm">Investment Advisory</Link></li>
                 <li><Link href="/services" className="text-primary-foreground/70 hover:text-white transition-colors text-sm">Property Acquisition</Link></li>
@@ -322,32 +324,32 @@ export function Footer() {
 
             {/* Contact */}
             <div>
-              <h4 className="font-semibold mb-6">Contact Us</h4>
+              <h3 className="font-semibold mb-6">Contact Us</h3>
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-secondary mt-0.5 flex-shrink-0" />
-                  <div className="text-primary-foreground/70 text-sm">
+                  <MapPin className="w-5 h-5 text-secondary mt-0.5 flex-shrink-0" aria-hidden="true" />
+                  <address className="text-primary-foreground/70 text-sm not-italic">
                     <p className="font-medium text-white">3B SolutionPH Corp.</p>
                     <p>7th Floor Unit 710, High Street South Corporate Plaza, Tower 2</p>
                     <p>26th Street Corner 11th Ave., Bonifacio Global City</p>
                     <p>1630 Taguig City, Philippines</p>
-                  </div>
+                  </address>
                 </li>
                 <li className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-secondary mt-0.5 flex-shrink-0" />
-                  <div className="text-primary-foreground/70 text-sm">
+                  <MapPin className="w-5 h-5 text-secondary mt-0.5 flex-shrink-0" aria-hidden="true" />
+                  <address className="text-primary-foreground/70 text-sm not-italic">
                     <p className="font-medium text-white">3B SolutionDE</p>
                     <p>Weidenweg 17, 15806 Zossen, Germany</p>
-                  </div>
+                  </address>
                 </li>
                 <li className="flex items-center gap-3">
-                  <Mail className="w-5 h-5 text-secondary flex-shrink-0" />
+                  <Mail className="w-5 h-5 text-secondary flex-shrink-0" aria-hidden="true" />
                   <a href="mailto:info@3bsolution.de" className="text-primary-foreground/70 hover:text-white text-sm">
                     info@3bsolution.de
                   </a>
                 </li>
                 <li className="flex items-center gap-3">
-                  <span className="w-5 h-5 text-secondary flex-shrink-0 flex items-center justify-center text-xs font-bold">www</span>
+                  <Globe className="w-5 h-5 text-secondary flex-shrink-0" aria-hidden="true" />
                   <a href="https://www.3bsolution.com" target="_blank" rel="noopener noreferrer" className="text-primary-foreground/70 hover:text-white text-sm">
                     www.3bsolution.com
                   </a>
@@ -363,7 +365,7 @@ export function Footer() {
         <div className="container">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-foreground/60">
             <p>© {new Date().getFullYear()} 3B Solution. All rights reserved.</p>
-            <div className="flex items-center gap-6">
+            <nav className="flex items-center gap-6" aria-label="Legal navigation">
               <Link href="/legal/terms-of-service" className="hover:text-white transition-colors">
                 Terms of Service
               </Link>
@@ -373,7 +375,7 @@ export function Footer() {
               <Link href="/legal/imprint" className="hover:text-white transition-colors">
                 Imprint
               </Link>
-            </div>
+            </nav>
           </div>
           <p className="text-center text-xs text-primary-foreground/50 mt-4">
             Investment involves risk. Past performance is not indicative of future results. 
