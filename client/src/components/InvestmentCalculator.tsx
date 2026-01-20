@@ -181,18 +181,19 @@ export default function InvestmentCalculator() {
         <Card className="border-0 shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Calculator className="w-5 h-5 text-secondary" />
+              <Calculator className="w-5 h-5 text-secondary" aria-hidden="true" />
               Configure Your Investment
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-8">
             {/* Currency Selection */}
             <div>
-              <label className="text-sm font-medium text-foreground mb-2 block">
+              {/* FIXED: Added proper label with htmlFor and id for accessibility */}
+              <label htmlFor="currency-select" className="text-sm font-medium text-foreground mb-2 block">
                 Select Currency
               </label>
               <Select value={currency} onValueChange={setCurrency}>
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full" id="currency-select" aria-label="Select currency">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -206,7 +207,7 @@ export default function InvestmentCalculator() {
               <div className="flex items-center gap-2 mt-2">
                 {isLoadingRates ? (
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <RefreshCw className="w-3 h-3 animate-spin" />
+                    <RefreshCw className="w-3 h-3 animate-spin" aria-hidden="true" />
                     <span>Loading live rates...</span>
                   </div>
                 ) : (
@@ -232,16 +233,19 @@ export default function InvestmentCalculator() {
             {/* Investment Amount */}
             <div>
               <div className="flex justify-between items-start mb-2">
-                <label className="text-sm font-medium text-foreground">Investment Amount</label>
+                {/* FIXED: Added proper label with htmlFor for accessibility */}
+                <label htmlFor="investment-amount" className="text-sm font-medium text-foreground">Investment Amount</label>
                 <div className="flex flex-col items-end gap-2">
                   {/* Blue display - shows formatted currency amount */}
-                  <span className="text-lg font-bold text-primary">{formatCurrency(displayedInvestmentAmount)}</span>
+                  <span className="text-lg font-bold text-primary" aria-live="polite">{formatCurrency(displayedInvestmentAmount)}</span>
                   {/* Green input field - Direct Input Field - Right Aligned */}
                   <div className="relative w-64">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-base">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-base" aria-hidden="true">
                       {selectedCurrency.symbol}
                     </span>
+                    {/* FIXED: Added id and aria-label for accessibility */}
                     <Input
+                      id="investment-amount"
                       type="text"
                       value={inputValue}
                       onChange={handleInputChange}
@@ -249,6 +253,7 @@ export default function InvestmentCalculator() {
                       onKeyDown={handleInputKeyDown}
                       className="pl-8 pr-3 text-right text-base font-semibold h-10"
                       placeholder="Enter amount"
+                      aria-label={`Investment amount in ${selectedCurrency.name}`}
                     />
                   </div>
                 </div>
@@ -257,7 +262,7 @@ export default function InvestmentCalculator() {
                 Enter amount or use slider below
               </p>
 
-              {/* Red slider - Slider */}
+              {/* FIXED: Added aria-label to slider for accessibility */}
               <Slider
                 value={[investmentAmountUSD]}
                 onValueChange={handleSliderChange}
@@ -265,6 +270,7 @@ export default function InvestmentCalculator() {
                 max={100000000}
                 step={50000}
                 className="w-full"
+                aria-label="Investment amount slider"
               />
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
                 <span>{formatCurrency(convertAndRoundAmount(100000))}</span>
@@ -275,9 +281,10 @@ export default function InvestmentCalculator() {
             {/* Timeline */}
             <div>
               <div className="flex justify-between mb-2">
-                <label className="text-sm font-medium text-foreground">Investment Timeline</label>
-                <span className="text-lg font-bold text-primary">{timeline} Years</span>
+                <label htmlFor="timeline-slider" className="text-sm font-medium text-foreground">Investment Timeline</label>
+                <span className="text-lg font-bold text-primary" aria-live="polite">{timeline} Years</span>
               </div>
+              {/* FIXED: Added aria-label to slider for accessibility */}
               <Slider
                 value={[timeline]}
                 onValueChange={(v) => setTimeline(v[0])}
@@ -285,6 +292,7 @@ export default function InvestmentCalculator() {
                 max={15}
                 step={1}
                 className="w-full"
+                aria-label="Investment timeline in years"
               />
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
                 <span>1 Year</span>
@@ -295,9 +303,10 @@ export default function InvestmentCalculator() {
             {/* Expected Return */}
             <div>
               <div className="flex justify-between mb-2">
-                <label className="text-sm font-medium text-foreground">Expected Annual Return</label>
-                <span className="text-lg font-bold text-secondary">{expectedReturn}%</span>
+                <label htmlFor="return-slider" className="text-sm font-medium text-foreground">Expected Annual Return</label>
+                <span className="text-lg font-bold text-secondary" aria-live="polite">{expectedReturn}%</span>
               </div>
+              {/* FIXED: Added aria-label to slider for accessibility */}
               <Slider
                 value={[expectedReturn]}
                 onValueChange={(v) => setExpectedReturn(v[0])}
@@ -305,6 +314,7 @@ export default function InvestmentCalculator() {
                 max={30}
                 step={1}
                 className="w-full"
+                aria-label="Expected annual return percentage"
               />
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
                 <span>10%</span>
@@ -328,19 +338,19 @@ export default function InvestmentCalculator() {
             <Card className="border-0 shadow-lg bg-gradient-to-br from-primary to-primary/90">
               <CardContent className="p-6 text-primary-foreground">
                 <div className="flex items-center gap-2 mb-2">
-                  <DollarSign className="w-5 h-5 opacity-70" />
+                  <DollarSign className="w-5 h-5 opacity-70" aria-hidden="true" />
                   <span className="text-sm opacity-70">Projected Value</span>
                 </div>
-                <div className="text-2xl md:text-3xl font-bold">{formatCurrency(finalValue)}</div>
+                <div className="text-2xl md:text-3xl font-bold" aria-live="polite">{formatCurrency(finalValue)}</div>
               </CardContent>
             </Card>
             <Card className="border-0 shadow-lg bg-gradient-to-br from-secondary to-secondary/90">
               <CardContent className="p-6 text-white">
                 <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="w-5 h-5 opacity-70" />
+                  <TrendingUp className="w-5 h-5 opacity-70" aria-hidden="true" />
                   <span className="text-sm opacity-70">Total Return</span>
                 </div>
-                <div className="text-2xl md:text-3xl font-bold">+{percentageGain}%</div>
+                <div className="text-2xl md:text-3xl font-bold" aria-live="polite">+{percentageGain}%</div>
               </CardContent>
             </Card>
           </div>
@@ -351,7 +361,7 @@ export default function InvestmentCalculator() {
               <CardTitle className="text-lg">Investment Projection</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64">
+              <div className="h-64" role="img" aria-label="Investment projection chart showing growth over time">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={projectionData}>
                     <defs>
@@ -408,11 +418,11 @@ export default function InvestmentCalculator() {
               </div>
               <div className="flex items-center justify-center gap-6 mt-4 text-sm">
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-1 bg-secondary rounded"></div>
+                  <div className="w-4 h-1 bg-secondary rounded" aria-hidden="true"></div>
                   <span className="text-muted-foreground">3B Solution</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-1 bg-muted-foreground rounded" style={{ backgroundImage: 'repeating-linear-gradient(90deg, currentColor 0, currentColor 2px, transparent 2px, transparent 5px)' }}></div>
+                  <div className="w-4 h-1 bg-muted-foreground rounded" style={{ backgroundImage: 'repeating-linear-gradient(90deg, currentColor 0, currentColor 2px, transparent 2px, transparent 5px)' }} aria-hidden="true"></div>
                   <span className="text-muted-foreground">Traditional (3%)</span>
                 </div>
               </div>
@@ -422,7 +432,8 @@ export default function InvestmentCalculator() {
           {/* CTA */}
           <Card className="border-0 shadow-lg bg-gradient-to-br from-secondary to-secondary/90 text-white">
             <CardContent className="p-6 text-center">
-              <h3 className="text-xl font-bold mb-2">Schedule Consultation to Learn More</h3>
+              {/* FIXED: Changed from h3 to h2 for proper heading hierarchy */}
+              <h2 className="text-xl font-bold mb-2">Schedule Consultation to Learn More</h2>
               <p className="text-sm opacity-90 mb-4">
                 Speak with our investment advisors to explore opportunities tailored to your goals
               </p>
