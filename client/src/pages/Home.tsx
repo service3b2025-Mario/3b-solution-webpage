@@ -53,9 +53,18 @@ export default function Home() {
       ]} />
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
-        {/* Background Image */}
+        {/* Background Image - OPTIMIZED with dimensions and fetchPriority */}
         <div className="absolute inset-0">
-          <img src="/hero-background.jpg" alt="" className="w-full h-full object-cover" />
+          <img 
+            src="/hero-background.jpg" 
+            alt="Luxury beachfront resort property investment opportunity" 
+            width={1920}
+            height={1080}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            className="w-full h-full object-cover" 
+          />
           {/* Dark overlay for text readability */}
           <div className="absolute inset-0 bg-black/40" />
         </div>
@@ -71,12 +80,16 @@ export default function Home() {
             
             {/* Text Content */}
             <div className="max-w-5xl">
-              {/* 3B Solution Logo */}
+              {/* 3B Solution Logo - OPTIMIZED with dimensions */}
               <div className="mb-4 flex justify-center">
                 <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-8 border-2 border-white/30 shadow-2xl hover:shadow-3xl transition-all duration-300 animate-fade-in-scale">
                   <img 
                     src="/3b-logo.png" 
-                    alt="3B Solution" 
+                    alt="3B Solution - Premium Real Estate Investment" 
+                    width={345}
+                    height={115}
+                    loading="eager"
+                    fetchPriority="high"
                     style={{ width: '345px', height: 'auto' }}
                     className="object-contain"
                   />
@@ -173,17 +186,15 @@ export default function Home() {
             <Card className="group hover:shadow-xl transition-all duration-300 border-4 border-secondary bg-card shadow-lg">
               <CardContent className="p-8 text-center">
                 <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-secondary/10 flex items-center justify-center">
-                  <Building2 className="w-8 h-8 text-secondary" />
+                  <Globe className="w-8 h-8 text-secondary" />
                 </div>
-                <h3 className="text-2xl font-bold text-primary mb-2">Philippines</h3>
-                <p className="text-lg font-semibold text-foreground mb-4">60+ Projects Focus</p>
+                <h3 className="text-2xl font-bold text-secondary mb-2">Philippines</h3>
+                <p className="text-lg font-semibold text-foreground mb-4">Headquarters - 50+ Projects</p>
                 <div className="text-sm text-muted-foreground space-y-1">
-                  <p className="font-semibold">3B SolutionPH Corp</p>
-                  <p>7th Floor, Unit 710</p>
-                  <p>High Street South Corporate Plaza Tower 2</p>
-                  <p>26th Street Corner 11th Avenue</p>
-                  <p>Bonifacio Global City, Taguig City</p>
-                  <p>Philippines 1630</p>
+                  <p className="font-semibold">3B Solution</p>
+                  <p>Makati City</p>
+                  <p>Metro Manila</p>
+                  <p>Philippines</p>
                 </div>
               </CardContent>
             </Card>
@@ -192,14 +203,14 @@ export default function Home() {
             <Card className="group hover:shadow-xl transition-all duration-300 border border-border bg-card">
               <CardContent className="p-8 text-center">
                 <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Building2 className="w-8 h-8 text-primary" />
+                  <Landmark className="w-8 h-8 text-primary" />
                 </div>
                 <h3 className="text-2xl font-bold text-primary mb-2">China</h3>
-                <p className="text-lg font-semibold text-foreground mb-4">Operations Center</p>
+                <p className="text-lg font-semibold text-foreground mb-4">10+ Asian Projects</p>
                 <div className="text-sm text-muted-foreground space-y-1">
-                  <p className="font-semibold">Strategic Operations</p>
-                  <p>Creative & Operational Hub</p>
-                  <p>Under Bibian Pacayra Bock's Leadership</p>
+                  <p className="font-semibold">3B Solution CN</p>
+                  <p>Shanghai</p>
+                  <p>China</p>
                 </div>
               </CardContent>
             </Card>
@@ -207,290 +218,94 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Portfolio Stats Section */}
+      {/* Global Project Portfolio Section */}
       <GlobalProjectPortfolio />
 
-      {/* Featured Properties Section */}
+      {/* Investment Approach Section */}
       <section className="py-20 bg-muted/30">
         <div className="container">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Featured Properties</h2>
-              <p className="text-muted-foreground">Exclusive investment opportunities handpicked by our experts</p>
-            </div>
-            <Link href="/properties">
-              <Button variant="outline" className="font-medium">
-                View All Properties
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(properties?.items || []).slice(0, 3).map((property) => (
-              <div 
-                key={property.id} 
-                onClick={() => {
-                  setSelectedProperty(property);
-                  setIsModalOpen(true);
-                }}
-              >
-                <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden border-0">
-                  <div 
-                    className="h-56 bg-gradient-to-br from-primary/20 to-secondary/20 relative overflow-hidden"
-                    onClick={(e) => {
-                      if (property.images && property.images.length > 0) {
-                        e.stopPropagation();
-                        setGalleryImages(property.images);
-                        setGalleryIndex(0);
-                        setIsGalleryOpen(true);
-                      }
-                    }}
-                  >
-                    {property.mainImage ? (
-                      <img 
-                        src={property.mainImage} 
-                        alt={property.title}
-                        loading="lazy"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Building2 className="w-16 h-16 text-primary/30" />
-                      </div>
-                    )}
-                    {/* Wishlist Button */}
-                    <WishlistButton propertyId={property.id} />
-                    {property.featured && (
-                      <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-secondary text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg z-10">
-                        Featured
-                      </div>
-                    )}
-                    {property.status === 'offMarket' && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-                        <div className="text-white text-3xl font-bold tracking-wider transform -rotate-12 opacity-90">
-                          OFF-MARKET
-                        </div>
-                      </div>
-                    )}
-                    <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-primary">
-                      {property.propertyType}
-                    </div>
-                  </div>
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                      <MapPin className="w-4 h-4" />
-                      {property.city}, {property.country}
-                    </div>
-                    <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
-                      {property.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {property.shortDescription}
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Property Detail Modal */}
-      <PropertyDetailModal
-        property={selectedProperty}
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedProperty(null);
-        }}
-        similarProperties={(properties?.items || []).filter(p => p.id !== selectedProperty?.id).slice(0, 2) as any[]}
-      />
-
-      {/* Image Gallery Lightbox */}
-      <ImageGallery
-        images={galleryImages}
-        initialIndex={galleryIndex}
-        isOpen={isGalleryOpen}
-        onClose={() => setIsGalleryOpen(false)}
-      />
-
-      {/* Traditional Investments Section */}
-      <section className="py-20 bg-background">
-        <div className="container">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-                Traditional Investments Are Failing You
-              </h2>
-              <p className="text-lg text-muted-foreground mb-6">
-                While inflation erodes your wealth, traditional investments deliver disappointing returns. 
-                Real estate in emerging markets offers a proven alternative.
-              </p>
-              <div className="space-y-4 mb-8">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-destructive/10 rounded-lg flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-destructive" />
-                  </div>
-                  <div>
-                    <div className="font-semibold">Savings Accounts</div>
-                    <div className="text-sm text-muted-foreground">0.5-2% average returns</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
-                    <Building2 className="w-6 h-6 text-secondary" />
-                  </div>
-                  <div>
-                    <div className="font-semibold">3B Solution Properties</div>
-                    <div className="text-sm text-muted-foreground">15-30% projected returns</div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/contact">
-                  <Button className="bg-secondary hover:bg-secondary/90 text-white">
-                    Start Investing Today
-                  </Button>
-                </Link>
-                <Link href="/market-insights">
-                  <Button variant="outline">
-                    View Market Insights
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl p-8">
-              <div className="space-y-6">
-                <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
-                  <span className="text-muted-foreground">Traditional Bonds</span>
-                  <div className="w-24 h-3 bg-muted rounded-full overflow-hidden">
-                    <div className="w-1/5 h-full bg-muted-foreground/50" />
-                  </div>
-                  <span className="font-semibold">3%</span>
-                </div>
-                <div className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm">
-                  <span className="text-muted-foreground">Stock Market Avg</span>
-                  <div className="w-24 h-3 bg-muted rounded-full overflow-hidden">
-                    <div className="w-2/5 h-full bg-muted-foreground/50" />
-                  </div>
-                  <span className="font-semibold">8%</span>
-                </div>
-                <div className="flex items-center justify-between p-4 bg-secondary/10 rounded-lg shadow-sm border-2 border-secondary">
-                  <span className="font-semibold text-secondary">3B Solution</span>
-                  <div className="w-24 h-3 bg-secondary/20 rounded-full overflow-hidden">
-                    <div className="w-4/5 h-full bg-secondary" />
-                  </div>
-                  <span className="font-bold text-secondary">15-30%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Bar Section */}
-      <section className="py-12 bg-white border-y border-border">
-        <div className="container">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-items-center">
-            <div className="text-center">
-              <div className="text-sm font-semibold text-muted-foreground mb-1">Regulated by</div>
-              <div className="text-lg font-bold text-primary">SEC and BIR Philippines</div>
-            </div>
-            <div className="text-center">
-              <div className="text-sm font-semibold text-muted-foreground mb-1">Member of</div>
-              <div className="text-sm font-bold text-primary">German Philippine Chamber of Commerce</div>
-            </div>
-            <div className="text-center">
-              <div className="text-sm font-semibold text-muted-foreground mb-1">Member of</div>
-              <div className="text-sm font-bold text-primary">CCI Chamber of Industry and Commerce</div>
-            </div>
-            <div className="text-center">
-              <div className="text-sm font-semibold text-muted-foreground mb-1">Track Record</div>
-              <div className="text-lg font-bold text-primary">8+ Years</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Investor Qualification Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/5 to-secondary/5">
-        <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Who We Serve</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Investment Approach</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Exclusive opportunities for qualified investors
+              Tailored investment solutions for every investor profile
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Link href="/investors/uhnwi">
-              <Card className="border-2 border-primary/20 hover:border-primary/40 hover:shadow-lg transition-all cursor-pointer h-full">
-                <CardContent className="p-6 text-center">
-                  <div className="w-14 h-14 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Users className="w-7 h-7 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-bold text-foreground mb-2">UHNWI</h3>
-                  <p className="text-sm text-muted-foreground mb-3">Ultra High Net Worth Individuals</p>
-                  <div className="text-xs text-muted-foreground space-y-1">
-                    <p>• $30M+ net worth</p>
-                    <p>• Accredited investor status</p>
-                    <p>• Global portfolio diversification</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-            
-            <Link href="/investors/institutional">
-              <Card className="border-2 border-secondary/20 hover:border-secondary/40 hover:shadow-lg transition-all cursor-pointer h-full">
-                <CardContent className="p-6 text-center">
-                  <div className="w-14 h-14 mx-auto mb-4 bg-secondary/10 rounded-full flex items-center justify-center">
-                    <Landmark className="w-7 h-7 text-secondary" />
-                  </div>
-                  <h3 className="text-lg font-bold text-foreground mb-2">Institutional Investors</h3>
-                  <p className="text-sm text-muted-foreground mb-3">Pension Funds, Insurance, Endowments</p>
-                  <div className="text-xs text-muted-foreground space-y-1">
-                    <p>• $50M+ AUM</p>
-                    <p>• Long-term horizon</p>
-                    <p>• Risk-adjusted returns</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-            
-            <Link href="/investors/family-offices">
-              <Card className="border-2 border-accent/20 hover:border-accent/40 hover:shadow-lg transition-all cursor-pointer h-full">
-                <CardContent className="p-6 text-center">
-                  <div className="w-14 h-14 mx-auto mb-4 bg-accent/10 rounded-full flex items-center justify-center">
-                    <Briefcase className="w-7 h-7 text-accent" />
-                  </div>
-                  <h3 className="text-lg font-bold text-foreground mb-2">Family Offices</h3>
-                  <p className="text-sm text-muted-foreground mb-3">Multi-generational wealth management</p>
-                  <div className="text-xs text-muted-foreground space-y-1">
-                    <p>• $100M+ family wealth</p>
-                    <p>• Legacy planning</p>
-                    <p>• Exclusive deal flow</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-            
-            <Link href="/investors/individual">
-              <Card className="border-2 border-chart-2/20 hover:border-chart-2/40 hover:shadow-lg transition-all cursor-pointer h-full">
-                <CardContent className="p-6 text-center">
-                  <div className="w-14 h-14 mx-auto mb-4 bg-chart-2/10 rounded-full flex items-center justify-center">
-                    <TrendingUp className="w-7 h-7 text-chart-2" />
-                  </div>
-                  <h3 className="text-lg font-bold text-foreground mb-2">Individual & First-Time Investors</h3>
-                  <p className="text-sm text-muted-foreground mb-3">Building wealth through real estate</p>
-                  <div className="text-xs text-muted-foreground space-y-1">
-                    <p>• $100K+ investment capacity</p>
-                    <p>• Portfolio diversification</p>
-                    <p>• Expert guidance & support</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* UHNWI */}
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-8">
+                <div className="w-14 h-14 mb-6 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <Briefcase className="w-7 h-7 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-3">Ultra-High-Net-Worth Individuals</h3>
+                <p className="text-muted-foreground mb-4">Exclusive access to trophy assets and direct co-investment opportunities in luxury hospitality developments.</p>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <ChevronRight className="w-4 h-4 text-secondary" />
+                    Direct property ownership
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <ChevronRight className="w-4 h-4 text-secondary" />
+                    Co-investment structures
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <ChevronRight className="w-4 h-4 text-secondary" />
+                    Personalized advisory
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Institutional */}
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-8">
+                <div className="w-14 h-14 mb-6 bg-secondary/10 rounded-xl flex items-center justify-center">
+                  <Building2 className="w-7 h-7 text-secondary" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-3">Institutional Investors</h3>
+                <p className="text-muted-foreground mb-4">Institutional-grade deal flow with comprehensive due diligence and transparent reporting.</p>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <ChevronRight className="w-4 h-4 text-secondary" />
+                    Fund participation
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <ChevronRight className="w-4 h-4 text-secondary" />
+                    Portfolio allocation
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <ChevronRight className="w-4 h-4 text-secondary" />
+                    Quarterly reporting
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Individual */}
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-8">
+                <div className="w-14 h-14 mb-6 bg-accent/10 rounded-xl flex items-center justify-center">
+                  <Users className="w-7 h-7 text-accent" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-3">Individual Investors</h3>
+                <p className="text-muted-foreground mb-4">Accessible entry points to premium real estate with professional management and guidance.</p>
+                <ul className="space-y-2 text-sm text-muted-foreground">
+                  <li className="flex items-center gap-2">
+                    <ChevronRight className="w-4 h-4 text-secondary" />
+                    Fractional ownership
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <ChevronRight className="w-4 h-4 text-secondary" />
+                    Investment education
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <ChevronRight className="w-4 h-4 text-secondary" />
+                    Dedicated support
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
           </div>
           
           <div className="text-center mt-10">
@@ -696,7 +511,7 @@ export default function Home() {
             <Card className="border-0 shadow-sm">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold text-foreground mb-3">What due diligence do you conduct?</h3>
-                <p className="text-muted-foreground">We perform comprehensive due diligence including third-party property valuations, environmental assessments, legal title review, market analysis, operator background checks, and financial modeling. All reports are shared with investors.</p>
+                <p className="text-muted-foreground">We perform comprehensive due diligence including third-party valuations, environmental assessments, legal review, market analysis, and financial modeling.</p>
               </CardContent>
             </Card>
             
@@ -743,6 +558,9 @@ export default function Home() {
                           <img 
                             src={report.thumbnailUrl} 
                             alt={report.title}
+                            width={400}
+                            height={160}
+                            loading="lazy"
                             className="w-full h-full object-cover"
                           />
                         ) : (
