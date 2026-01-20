@@ -58,11 +58,13 @@ export function Header() {
         <div className={`flex items-center justify-between transition-all duration-300 ${
             isScrolled ? "h-16" : "h-20"
           }`}>
-          {/* Logo */}
+          {/* Logo - OPTIMIZED with dimensions */}
           <Link href="/" className="flex items-center">
             <img 
               src="/3b-logo.png" 
               alt="3B Solution - Premium Real Estate" 
+              width={140}
+              height={40}
               className={`w-auto object-contain transition-all duration-300 ${
                 isScrolled ? "h-10" : "h-14"
               }`}
@@ -91,7 +93,8 @@ export function Header() {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full">
+                  {/* FIXED: Added aria-label for accessibility */}
+                  <Button variant="ghost" size="icon" className="rounded-full" aria-label="Open user menu">
                     <User className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -155,7 +158,8 @@ export function Header() {
             {/* Mobile Menu */}
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild className="lg:hidden">
-                <Button variant="ghost" size="icon">
+                {/* FIXED: Added aria-label for accessibility */}
+                <Button variant="ghost" size="icon" aria-label="Open navigation menu">
                   <Menu className="h-6 w-6" />
                 </Button>
               </SheetTrigger>
@@ -236,9 +240,13 @@ export function Footer() {
             {/* Company Info */}
             <div>
               <div className="mb-6">
+                {/* OPTIMIZED: Added dimensions to footer logo */}
                 <img 
                   src="/3b-logo.png" 
                   alt="3B Solution" 
+                  width={120}
+                  height={40}
+                  loading="lazy"
                   className="h-12 w-auto object-contain"
                 />
               </div>
