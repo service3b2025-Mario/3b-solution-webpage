@@ -55,16 +55,23 @@ export default function Home() {
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         {/* Background Image - OPTIMIZED with dimensions and fetchPriority */}
         <div className="absolute inset-0">
-          <img 
-            src="/hero-background.jpg" 
-            alt="Luxury beachfront resort property investment opportunity" 
-            width={1920}
-            height={1080}
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-            className="w-full h-full object-cover" 
-          />
+          <picture>
+            <source 
+              media="(max-width: 768px)" 
+              srcSet="/hero-background-mobile.webp"
+              type="image/webp"
+            />
+            <img 
+              src="/hero-background.webp" 
+              alt="Luxury beachfront resort property investment opportunity" 
+              width={1920}
+              height={1080}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              className="w-full h-full object-cover" 
+            />
+          </picture>
           {/* Dark overlay for text readability */}
           <div className="absolute inset-0 bg-black/40" />
         </div>
@@ -84,7 +91,7 @@ export default function Home() {
               <div className="mb-4 flex justify-center">
                 <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-8 border-2 border-white/30 shadow-2xl hover:shadow-3xl transition-all duration-300 animate-fade-in-scale">
                   <img 
-                    src="/3b-logo.png" 
+                    src="/3b-logo.webp" 
                     alt="3B Solution - Premium Real Estate Investment" 
                     width={345}
                     height={115}
