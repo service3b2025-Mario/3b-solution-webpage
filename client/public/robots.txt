@@ -1,3 +1,6 @@
+# robots.txt for 3B Solution
+# https://www.3bsolution.com/
+
 # Allow all search engines to crawl the site
 User-agent: *
 Allow: /
@@ -8,5 +11,31 @@ Disallow: /my-wishlist
 Disallow: /my-saved-searches
 Disallow: /my-tours
 
+# Crawl-delay for polite crawling (optional)
+Crawl-delay: 1
+
 # Sitemap location
 Sitemap: https://www.3bsolution.com/sitemap.xml
+
+# Additional directives for specific bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# Block AI training bots (optional - keeps Content-Signal intent but uses standard format)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
