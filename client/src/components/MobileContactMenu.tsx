@@ -63,12 +63,14 @@ export function MobileContactMenu() {
     <>
       {/* Mobile Contact Button - Only visible on mobile */}
       <div className="md:hidden fixed bottom-24 right-6 z-40 flex flex-col gap-3">
+        {/* FIXED: Added aria-label for accessibility */}
         <Button
           onClick={() => setIsOpen(true)}
           size="lg"
           className="rounded-full shadow-2xl bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 h-14 w-14 p-0"
+          aria-label="Open contact menu"
         >
-          <Phone className="h-6 w-6" />
+          <Phone className="h-6 w-6" aria-hidden="true" />
         </Button>
       </div>
 
@@ -92,11 +94,11 @@ export function MobileContactMenu() {
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="font-semibold text-lg flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-blue-600" />
+                      <MapPin className="h-4 w-4 text-blue-600" aria-hidden="true" />
                       {region.name}
                     </h3>
                     <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
+                      <Clock className="h-3 w-3" aria-hidden="true" />
                       {region.hours}
                     </p>
                     <p className="text-xs text-muted-foreground">
@@ -116,16 +118,18 @@ export function MobileContactMenu() {
                     onClick={() => handleCall(region.phone, region.country)}
                     className="flex-1 bg-blue-600 hover:bg-blue-700"
                     size="lg"
+                    aria-label={`Call ${region.name} at ${region.phone}`}
                   >
-                    <Phone className="h-4 w-4 mr-2" />
+                    <Phone className="h-4 w-4 mr-2" aria-hidden="true" />
                     Call Now
                   </Button>
                   <Button
                     onClick={() => handleWhatsApp(region.whatsapp, region.country)}
                     className="flex-1 bg-green-600 hover:bg-green-700"
                     size="lg"
+                    aria-label={`Message ${region.name} on WhatsApp`}
                   >
-                    <MessageCircle className="h-4 w-4 mr-2" />
+                    <MessageCircle className="h-4 w-4 mr-2" aria-hidden="true" />
                     WhatsApp
                   </Button>
                 </div>
