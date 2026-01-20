@@ -11,7 +11,8 @@
     </script>
     
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <!-- FIXED: Removed maximum-scale=1 for accessibility (allows zoom) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Google Search Console Verification -->
     <!-- www.3bsolution.com -->
@@ -67,6 +68,17 @@
     <!-- Preload critical images for faster initial render -->
     <link rel="preload" as="image" href="/hero-background.jpg" fetchpriority="high">
     <link rel="preload" as="image" href="/3b-logo.png" fetchpriority="high">
+    
+    <!-- ADDED: Critical CSS for above-the-fold content (reduces CLS) -->
+    <style>
+      /* Critical CSS - prevents layout shift */
+      body { margin: 0; font-family: system-ui, -apple-system, sans-serif; }
+      #root { min-height: 100vh; }
+      /* Hero section placeholder to prevent CLS */
+      .hero-placeholder { min-height: 90vh; background: #003366; }
+      /* Header placeholder */
+      header { height: 80px; position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: rgba(255,255,255,0.95); }
+    </style>
   </head>
   <body>
     <div id="root"></div>
@@ -75,6 +87,17 @@
       defer
       src="%VITE_ANALYTICS_ENDPOINT%/umami"
       data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
-    <script src="//code.tidio.co/cvpvxh6l67b1ohzzgthjoesvluguc84c.js" async></script>
+    <!-- FIXED: Delay Tidio chat loading for better performance -->
+    <script>
+      // Load Tidio after page is fully loaded (improves LCP)
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          var tidioScript = document.createElement('script');
+          tidioScript.src = '//code.tidio.co/cvpvxh6l67b1ohzzgthjoesvluguc84c.js';
+          tidioScript.async = true;
+          document.body.appendChild(tidioScript);
+        }, 3000); // 3 second delay after page load
+      });
+    </script>
   </body>
 </html>
