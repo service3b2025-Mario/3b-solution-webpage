@@ -30,7 +30,7 @@ function ReportSchema({ report }: { report: any }) {
       "name": "3B Solution",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://www.3bsolution.com/3b-logo.png"
+        "url": "https://cdn.3bsolution.com/assets/3b-logo.webp"
       }
     },
     "about": {
