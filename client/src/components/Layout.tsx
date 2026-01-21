@@ -61,7 +61,7 @@ export function Header() {
           {/* Logo - OPTIMIZED with dimensions for CLS prevention */}
           <Link href="/" className="flex items-center">
             <img 
-              src="/3b-logo.png" 
+              src="https://cdn.3bsolution.com/assets/3b-logo.webp" 
               alt="3B Solution - Premium Real Estate" 
               width={140}
               height={40}
@@ -243,7 +243,7 @@ export function Footer() {
               <div className="mb-6">
                 {/* OPTIMIZED: Added dimensions and lazy loading to footer logo */}
                 <img 
-                  src="/3b-logo.png" 
+                  src="https://cdn.3bsolution.com/assets/3b-logo.webp" 
                   alt="3B Solution" 
                   width={120}
                   height={40}
