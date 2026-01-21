@@ -19,7 +19,7 @@ export default function SoutheastAsia() {
         description="Invest in premium hospitality real estate across Southeast Asia. Focus on Philippines with 21+ projects. 15-30% returns. UHNWI and institutional investors."
         keywords="Southeast Asia real estate investment, Philippines hotel investment, Thailand resort investment, Vietnam property investment, ASEAN hospitality real estate, luxury hotel Southeast Asia"
         canonical="https://www.3bsolution.com/investments/southeast-asia"
-        ogImage="https://www.3bsolution.com/hero-background.jpg"
+        ogImage="https://cdn.3bsolution.com/assets/hero-background.webp"
       />
       
       {/* Hero Section */}
