@@ -58,11 +58,11 @@ export default function Home() {
           <picture>
             <source 
               media="(max-width: 768px)" 
-              srcSet="/hero-background-mobile.webp"
+              srcSet="https://cdn.3bsolution.com/assets/hero-background-mobile.webp"
               type="image/webp"
             />
             <img 
-              src="/hero-background.webp" 
+              src="https://cdn.3bsolution.com/assets/hero-background.webp" 
               alt="Luxury beachfront resort property investment opportunity" 
               width={1920}
               height={1080}
@@ -91,7 +91,7 @@ export default function Home() {
               <div className="mb-4 flex justify-center">
                 <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-8 border-2 border-white/30 shadow-2xl hover:shadow-3xl transition-all duration-300 animate-fade-in-scale">
                   <img 
-                    src="/3b-logo.webp" 
+                    src="https://cdn.3bsolution.com/assets/3b-logo.webp" 
                     alt="3B Solution - Premium Real Estate Investment" 
                     width={345}
                     height={115}
