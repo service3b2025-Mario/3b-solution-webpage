@@ -52,7 +52,7 @@ export default function Home() {
         { question: "How do I get started?", answer: "Schedule a private consultation with our investment team to discuss your objectives and complete the investor qualification process." }
       ]} />
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center overflow-hidden">
         {/* Background Image - OPTIMIZED with dimensions and fetchPriority */}
         <div className="absolute inset-0">
           <picture>
@@ -69,7 +69,7 @@ export default function Home() {
               loading="eager"
               fetchPriority="high"
               decoding="async"
-              className="w-full h-full object-cover" 
+              className="w-full h-full object-cover min-h-screen" 
             />
           </picture>
           {/* Dark overlay for text readability */}
