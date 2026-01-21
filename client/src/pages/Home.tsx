@@ -35,7 +35,7 @@ export default function Home() {
         description="Premium real estate investment opportunities in 5-star hotels, luxury resorts, and commercial properties across Southeast Asia, Maldives, Europe, USA. UHNWI & institutional investors. $750M+ portfolio."
         keywords="luxury real estate investment, 5-star hotel investment, resort investment, UHNWI real estate, institutional investors, Southeast Asia property, Maldives resort, hospitality real estate"
         canonical="https://www.3bsolution.com/"
-        ogImage="https://www.3bsolution.com/hero-background.jpg"
+        ogImage="https://cdn.3bsolution.com/assets/hero-background.webp"
       />
       <OrganizationSchema />
       <InvestmentProductSchema />
