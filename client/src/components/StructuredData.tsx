@@ -7,8 +7,8 @@ export function OrganizationSchema() {
     "name": "3B Solution",
     "description": "Premium real estate investment solutions specializing in luxury hospitality and commercial properties",
     "url": "https://www.3bsolution.com",
-    "logo": "https://www.3bsolution.com/3b-logo.png",
-    "image": "https://www.3bsolution.com/hero-background.jpg",
+    "logo": "https://cdn.3bsolution.com/assets/3b-logo.webp",
+    "image": "https://cdn.3bsolution.com/assets/hero-background.webp",
     "telephone": "+63-xxx-xxxx",
     "email": "info@3bsolution.de",
     "address": {
