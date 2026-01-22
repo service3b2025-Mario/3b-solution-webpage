@@ -77,7 +77,7 @@ export default function Home() {
         </div>
         
         <div className="container relative z-10">
-          <div className="flex flex-col items-center text-center pb-32">
+          <div className="flex flex-col items-center text-center pb-8 md:pb-32">
             {/* Investor Badge */}
             <div className="mb-6">
               <div className="inline-flex items-center gap-2 px-6 py-3 bg-secondary/20 backdrop-blur-sm border-2 border-secondary/40 rounded-full">
