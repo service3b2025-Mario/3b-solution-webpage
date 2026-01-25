@@ -51,11 +51,189 @@
     <!-- Silktide Cookie Consent CSS - Load early for no flash of unstyled content -->
     <link rel="stylesheet" href="https://cdn.3bsolution.com/assets/silktide-consent-manager.css">
     
+    <!-- Custom Brand Styling for Cookie Consent -->
+    <style>
+      /* 3B Solution Exact Brand Colors for Cookie Consent Banner */
+      #stcm-wrapper {
+        /* Exact Brand Colors */
+        --primaryColor: #D78F00;         /* Exact Orange - RGB(215, 143, 0) */
+        --backgroundColor: #132A4B;      /* Exact Blue - RGB(19, 42, 75) */
+        --textColor: #FFFFFF;            /* White text for contrast */
+        --fontFamily: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        
+        /* Button styling */
+        --boxShadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        
+        /* Backdrop */
+        --backdropBackgroundColor: rgba(0, 0, 0, 0.5);
+        --backdropBackgroundBlur: 5px;
+        
+        /* Cookie icon - HIDE IT */
+        --iconColor: transparent;
+        --iconBackgroundColor: transparent;
+      }
+
+      /* CENTER the banner PERFECTLY and make it SMALLER */
+      #stcm-wrapper .stcm-prompt {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        bottom: auto !important;
+        right: auto !important;
+        max-width: 550px !important;
+        width: 85% !important;
+        padding: 2rem !important;
+        border-radius: 12px !important;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
+        margin: 0 auto !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Ensure content is properly contained */
+      #stcm-wrapper .stcm-prompt > * {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Adjust text size */
+      #stcm-wrapper .stcm-prompt p {
+        font-size: 0.95rem !important;
+        line-height: 1.6 !important;
+        margin-bottom: 1.25rem !important;
+        padding: 0 !important;
+      }
+
+      /* Make buttons container flex and wrap properly */
+      #stcm-wrapper .stcm-prompt .stcm-buttons {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 0.75rem !important;
+        margin-top: 1.25rem !important;
+        justify-content: center !important;
+        align-items: center !important;
+      }
+
+      /* Make buttons more compact */
+      #stcm-wrapper .stcm-prompt button {
+        padding: 0.7rem 1.5rem !important;
+        font-size: 0.9rem !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+      }
+
+      /* Put "Manage preferences" link below buttons, centered */
+      #stcm-wrapper .stcm-prompt a[data-stcm-action="preferences"],
+      #stcm-wrapper .stcm-prompt button[data-stcm-action="preferences"] {
+        display: block !important;
+        width: 100% !important;
+        text-align: center !important;
+        margin-top: 1rem !important;
+        font-size: 0.85rem !important;
+        padding: 0.5rem !important;
+      }
+
+      /* HIDE the Silktide logo/icon completely */
+      #stcm-wrapper .stcm-icon,
+      #stcm-wrapper [class*="icon"],
+      #stcm-wrapper svg {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+      }
+
+      /* Additional custom styling for buttons */
+      #stcm-wrapper button {
+        font-weight: 600;
+        letter-spacing: 0.025em;
+        transition: all 0.2s ease-in-out;
+      }
+
+      #stcm-wrapper button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      /* Primary button (Accept all) - Orange */
+      #stcm-wrapper button[data-stcm-action="accept-all"] {
+        background-color: #D78F00 !important;
+        color: #FFFFFF !important;
+        border: none !important;
+      }
+
+      #stcm-wrapper button[data-stcm-action="accept-all"]:hover {
+        background-color: #C17F00 !important;
+      }
+
+      /* Secondary button (Reject non-essential) - Orange outlined */
+      #stcm-wrapper button[data-stcm-action="reject-all"] {
+        background-color: transparent !important;
+        color: #D78F00 !important;
+        border: 2px solid #D78F00 !important;
+      }
+
+      #stcm-wrapper button[data-stcm-action="reject-all"]:hover {
+        background-color: rgba(215, 143, 0, 0.1) !important;
+      }
+
+      /* Preferences link - Orange */
+      #stcm-wrapper a,
+      #stcm-wrapper button[data-stcm-action="preferences"] {
+        color: #D78F00 !important;
+      }
+
+      #stcm-wrapper a:hover,
+      #stcm-wrapper button[data-stcm-action="preferences"]:hover {
+        color: #E79F10 !important;
+        text-decoration: underline;
+      }
+
+      /* Modal styling - Blue background */
+      #stcm-wrapper .stcm-modal {
+        background-color: #132A4B !important;
+        color: #FFFFFF !important;
+        max-width: 600px !important;
+        margin: 0 auto !important;
+      }
+
+      /* Toggle switches - Orange when checked */
+      #stcm-wrapper input[type="checkbox"]:checked {
+        background-color: #D78F00 !important;
+        border-color: #D78F00 !important;
+      }
+
+      /* Mobile responsive */
+      @media (max-width: 640px) {
+        #stcm-wrapper .stcm-prompt {
+          max-width: 90% !important;
+          width: 90% !important;
+          padding: 1.5rem !important;
+        }
+        
+        #stcm-wrapper .stcm-prompt p {
+          font-size: 0.875rem !important;
+        }
+        
+        #stcm-wrapper .stcm-prompt button {
+          padding: 0.6rem 1.25rem !important;
+          font-size: 0.875rem !important;
+        }
+        
+        #stcm-wrapper .stcm-buttons {
+          flex-direction: column !important;
+        }
+        
+        #stcm-wrapper .stcm-buttons button {
+          width: 100% !important;
+        }
+      }
+    </style>
+    
     <!-- Google Analytics - Loads after consent -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag( ){dataLayer.push(arguments);}
+      function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-XXXXXXXXXX');
     </script>
@@ -83,7 +261,7 @@
             description: 'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.',
             defaultValue: false,
             gtag: 'analytics_storage',
-            onAccept: function( ) {
+            onAccept: function() {
               console.log('Analytics cookies accepted');
             },
             onReject: function() {
@@ -123,14 +301,15 @@
           }
         },
         
-        // Prompt position
+        // Prompt position - will be overridden by CSS to center
         prompt: {
           position: 'bottomCenter'
         },
         
-        // Icon position (appears after initial consent)
+        // Icon position - DISABLED (hidden via CSS)
         icon: {
-          position: 'bottomLeft'
+          position: 'bottomLeft',
+          show: false  // Disable icon
         },
         
         // Show backdrop
