@@ -973,8 +973,8 @@ export default function Properties() {
                     </p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {(properties?.items || []).slice(0, 6).map((property) => (
-                      <div key={property.id} onClick={(e) => handlePropertyClick(property, e)}>
+                    {(properties?.items || []).slice(0, 6).map((property, index) => (
+                    <div key={property.id} onClick={(e) => handlePropertyClick(property, e)}>
                         <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden border-0 h-full">
                           <div 
                             className="h-48 bg-gradient-to-br from-primary/20 to-secondary/20 relative overflow-hidden"
@@ -1055,7 +1055,7 @@ export default function Properties() {
             />
           ) : viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {(properties?.items || []).map((property) => (
+              {(properties?.items || []).map((property, index) => (
                 <div key={property.id} onClick={(e) => handlePropertyClick(property, e)}>
                   <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden border-0 h-full">
                     <div 
@@ -1143,7 +1143,7 @@ export default function Properties() {
             </div>
           ) : (
             <div className="space-y-4">
-              {(properties?.items || []).map((property) => (
+              {(properties?.items || []).map((property, index) => (
                 <div key={property.id} onClick={(e) => handlePropertyClick(property, e)}>
                   <Card className="group cursor-pointer hover:shadow-lg transition-all duration-300 overflow-hidden border-0">
                     <div className="flex flex-col md:flex-row">
