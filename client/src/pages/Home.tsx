@@ -247,14 +247,23 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {(properties?.items || []).slice(0, 3).map((property, index) => (
-              <Card 
+              <div
                 key={property.id}
-                className="group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden border-0"
+                className="cursor-pointer"
                 onClick={() => {
                   setSelectedProperty(property);
                   setIsModalOpen(true);
                 }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setSelectedProperty(property);
+                    setIsModalOpen(true);
+                  }
+                }}
               >
+                <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden border-0">
                   <div 
                     className="h-56 bg-gradient-to-br from-primary/20 to-secondary/20 relative overflow-hidden"
                     onClick={(e) => {
@@ -309,6 +318,7 @@ export default function Home() {
                     </p>
                   </CardContent>
                 </Card>
+              </div>
             ))}
           </div>
         </div>
