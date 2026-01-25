@@ -991,7 +991,7 @@ export default function Properties() {
                               <img 
                                 src={property.mainImage} 
                                 alt={property.title}
-                                loading="lazy"
+                                loading={index < 6 ? "eager" : "lazy"}
                                 className="w-full h-full object-cover"
                               />
                             ) : (
@@ -1086,7 +1086,7 @@ export default function Properties() {
                         <img 
                           src={property.mainImage} 
                           alt={property.title}
-                          loading="lazy"
+                          loading={index < 6 ? "eager" : "lazy"}
                           className="w-full h-full object-cover"
                         />
                       ) : (
@@ -1162,7 +1162,7 @@ export default function Properties() {
                           <img 
                             src={property.mainImage} 
                             alt={property.title}
-                            loading="lazy"
+                            loading={index < 6 ? "eager" : "lazy"}
                             className="w-full h-full object-cover"
                           />
                         ) : (
