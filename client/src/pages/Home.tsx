@@ -227,7 +227,93 @@ export default function Home() {
 
       {/* Global Project Portfolio Section */}
       <GlobalProjectPortfolio />
-
+      
+      {/* Featured Properties Section */}
+      <section className="py-20 bg-muted/30">
+        <div className="container">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Featured Properties</h2>
+              <p className="text-muted-foreground">Exclusive investment opportunities handpicked by our experts</p>
+            </div>
+            <Link href="/properties">
+              <Button variant="outline" className="font-medium">
+                View All Properties
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {(properties?.items || []).slice(0, 3).map((property, index) => (
+              <div 
+                key={property.id} 
+                onClick={() => {
+                  setSelectedProperty(property);
+                  setIsModalOpen(true);
+                }}
+              >
+                <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden border-0">
+                  <div 
+                    className="h-56 bg-gradient-to-br from-primary/20 to-secondary/20 relative overflow-hidden"
+                    onClick={(e) => {
+                      if (property.images && property.images.length > 0) {
+                        e.stopPropagation();
+                        setGalleryImages(property.images);
+                        setGalleryIndex(0);
+                        setIsGalleryOpen(true);
+                      }
+                    }}
+                  >
+                    {property.mainImage ? (
+                      <img 
+                        src={property.mainImage} 
+                        alt={property.title}
+                        loading={index < 3 ? "eager" : "lazy"}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Building2 className="w-16 h-16 text-primary/30" />
+                      </div>
+                    )}
+                    {/* Wishlist Button */}
+                    <WishlistButton propertyId={property.id} />
+                    {property.featured && (
+                      <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-secondary text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg z-10">
+                        Featured
+                      </div>
+                    )}
+                    {property.status === 'offMarket' && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                        <div className="text-white text-3xl font-bold tracking-wider transform -rotate-12 opacity-90">
+                          OFF-MARKET
+                        </div>
+                      </div>
+                    )}
+                    <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium text-primary">
+                      {property.propertyType}
+                    </div>
+                  </div>
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                      <MapPin className="w-4 h-4" />
+                      {property.city}, {property.country}
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
+                      {property.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {property.shortDescription}
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      
       {/* Investment Approach Section */}
       <section className="py-20 bg-muted/30">
         <div className="container">
