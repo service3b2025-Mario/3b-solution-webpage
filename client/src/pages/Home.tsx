@@ -227,7 +227,8 @@ export default function Home() {
 
       {/* Global Project Portfolio Section */}
       <GlobalProjectPortfolio />
-      
+
+
       {/* Featured Properties Section */}
       <section className="py-20 bg-muted/30">
         <div className="container">
@@ -313,7 +314,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-      
       {/* Investment Approach Section */}
       <section className="py-20 bg-muted/30">
         <div className="container">
@@ -768,6 +768,21 @@ export default function Home() {
       <DownloadResourceModal
         open={guideModalOpen}
         onOpenChange={setGuideModalOpen}
+      />
+
+      {/* Property Detail Modal */}
+      <PropertyDetailModal
+        property={selectedProperty}
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+      />
+
+      {/* Image Gallery */}
+      <ImageGallery
+        images={galleryImages}
+        initialIndex={galleryIndex}
+        open={isGalleryOpen}
+        onOpenChange={setIsGalleryOpen}
       />
     </Layout>
   );
