@@ -1,7 +1,20 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- OPTIMIZED: Move Google Analytics to load after page content (non-blocking) -->
+    <!-- Google Consent Mode V2 - MUST be loaded FIRST before any analytics -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      
+      // Set default consent to denied (GDPR compliant)
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'wait_for_update': 500
+      });
+    </script>
     
     <meta charset="UTF-8" />
     <!-- FIXED: Removed maximum-scale=1 for accessibility (allows zoom) -->
@@ -71,7 +84,7 @@
       #root{min-height:100vh}
       
       /* Header skeleton to prevent CLS */
-      header{height:80px;position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+      header{height:80px;position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(255,255,255,0.95 );backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
       
       /* Hero section placeholder to prevent CLS */
       .hero-section{min-height:100vh;background:linear-gradient(135deg,#003366 0%,#004080 100%)}
@@ -88,36 +101,163 @@
       /* Focus visible for accessibility */
       :focus-visible{outline:2px solid #003366;outline-offset:2px}
     </style>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
     
-    <!-- OPTIMIZED: Load Google Analytics after page is interactive -->
+    <!-- Google Analytics with Consent Mode -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KL93ZTPFCF"></script>
     <script>
-      // Defer GA4 loading to improve performance
-      window.addEventListener('load', function() {
-        setTimeout(function() {
-          var gaScript = document.createElement('script');
-          gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-KL93ZTPFCF';
-          gaScript.async = true;
-          document.head.appendChild(gaScript);
-          
-          gaScript.onload = function() {
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-KL93ZTPFCF');
-          };
-        }, 1000);
+      window.dataLayer = window.dataLayer || [];
+      function gtag( ){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KL93ZTPFCF', {
+        'anonymize_ip': true,
+        'cookie_flags': 'SameSite=None;Secure'
       });
     </script>
+  </head>
+  <body>
+    <!-- Silktide Cookie Consent Banner -->
+    <script src="https://cdn.jsdelivr.net/npm/@silktide/cookieconsent@1/dist/cookieconsent.umd.js"></script>
+    <script>
+    window.addEventListener('load', function( ) {
+      window.CookieConsent.init({
+        // Basic Configuration
+        modalMainTextMoreLink: null,
+        barTimeout: 1000,
+        theme: {
+          barColor: '#2C3E50',
+          barTextColor: '#FFFFFF',
+          barMainButtonColor: '#F39C12',
+          barMainButtonTextColor: '#FFFFFF',
+          modalMainButtonColor: '#F39C12',
+          modalMainButtonTextColor: '#FFFFFF',
+        },
+        language: {
+          current: 'en',
+          locale: {
+            en: {
+              barMainText: 'We use cookies to improve your experience on our website. By browsing this website, you agree to our use of cookies.',
+              barLinkSetting: 'Cookie Settings',
+              barBtnAcceptAll: 'Accept All',
+              modalMainTitle: 'Cookie Settings',
+              modalMainText: 'We use cookies to enhance your browsing experience and analyze our traffic. You can choose which cookies you allow.',
+              modalBtnSave: 'Save Settings',
+              modalBtnAcceptAll: 'Accept All',
+              modalAffectedSolutions: 'Affected services:',
+              learnMore: 'Learn More',
+              on: 'On',
+              off: 'Off',
+            }
+          }
+        },
+        categories: {
+          necessary: {
+            needed: true,
+            wanted: true,
+            checked: true,
+            language: {
+              locale: {
+                en: {
+                  name: 'Strictly Necessary Cookies',
+                  description: 'These cookies are essential for the website to function properly.',
+                }
+              }
+            }
+          },
+          analytics: {
+            needed: false,
+            wanted: false,
+            checked: false,
+            language: {
+              locale: {
+                en: {
+                  name: 'Analytics Cookies',
+                  description: 'These cookies help us understand how visitors interact with our website.',
+                }
+              }
+            },
+            onAccept: function() {
+              // Update Google Consent Mode when analytics accepted
+              gtag('consent', 'update', {
+                'analytics_storage': 'granted'
+              });
+            },
+            onRevoke: function() {
+              // Revoke consent
+              gtag('consent', 'update', {
+                'analytics_storage': 'denied'
+              });
+            }
+          },
+          advertising: {
+            needed: false,
+            wanted: false,
+            checked: false,
+            language: {
+              locale: {
+                en: {
+                  name: 'Advertising Cookies',
+                  description: 'These cookies are used to show you relevant advertisements.',
+                }
+              }
+            },
+            onAccept: function() {
+              gtag('consent', 'update', {
+                'ad_storage': 'granted',
+                'ad_user_data': 'granted',
+                'ad_personalization': 'granted'
+              });
+            },
+            onRevoke: function() {
+              gtag('consent', 'update', {
+                'ad_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied'
+              });
+            }
+          }
+        },
+        services: {
+          analytics: {
+            category: 'analytics',
+            type: 'dynamic-script',
+            search: 'analytics',
+            cookies: [
+              {
+                name: /^_ga/,
+                domain: `.${window.location.hostname}`
+              },
+              {
+                name: '_gid',
+                domain: `.${window.location.hostname}`
+              }
+            ],
+            language: {
+              locale: {
+                en: {
+                  name: 'Google Analytics'
+                }
+              }
+            }
+          },
+          cloudflare: {
+            category: 'analytics',
+            type: 'dynamic-script',
+            search: 'cloudflare',
+            language: {
+              locale: {
+                en: {
+                  name: 'Cloudflare Analytics'
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+    </script>
     
-    <!-- Umami Analytics (deferred) -->
-    <script
-      defer
-      src="%VITE_ANALYTICS_ENDPOINT%/umami"
-      data-website-id="%VITE_ANALYTICS_WEBSITE_ID%"></script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
     
     <!-- OPTIMIZED: Delay Tidio chat loading by 5 seconds for better LCP/TBT -->
     <script>
