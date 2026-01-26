@@ -249,7 +249,7 @@ export default function Home() {
             {(properties?.items || []).slice(0, 3).map((property, index) => (
               <Link
                 key={property.id}
-                href={`/properties/${property.id}`}
+                href={`/properties/${property.slug}`}
                 className="block"
               >
                 <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden border-0">
