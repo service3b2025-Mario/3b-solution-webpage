@@ -247,13 +247,34 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {(properties?.items || []).slice(0, 3).map((property, index) => (
-              <Link
+              <div
                 key={property.id}
-                href={`/properties/${property.slug}`}
-                className="block"
+                className="cursor-pointer"
+                onClick={() => {
+                  setSelectedProperty(property);
+                  setIsModalOpen(true);
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    setSelectedProperty(property);
+                    setIsModalOpen(true);
+                  }
+                }}
               >
-                <Card className="group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden border-0">
-                  <div className="h-56 bg-gradient-to-br from-primary/20 to-secondary/20 relative overflow-hidden">
+                <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden border-0">
+                  <div 
+                    className="h-56 bg-gradient-to-br from-primary/20 to-secondary/20 relative overflow-hidden"
+                    onClick={(e) => {
+                      if (property.images && property.images.length > 0) {
+                        e.stopPropagation();
+                        setGalleryImages(property.images);
+                        setGalleryIndex(0);
+                        setIsGalleryOpen(true);
+                      }
+                    }}
+                  >
                     {property.mainImage ? (
                       <img 
                         src={property.mainImage} 
@@ -267,9 +288,7 @@ export default function Home() {
                       </div>
                     )}
                     {/* Wishlist Button */}
-                    <div onClick={(e) => e.preventDefault()}>
-                      <WishlistButton propertyId={property.id} />
-                    </div>
+                    <WishlistButton propertyId={property.id} />
                     {property.featured && (
                       <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-secondary text-white px-3 py-1 rounded-full text-xs font-medium shadow-lg z-10">
                         Featured
@@ -299,7 +318,7 @@ export default function Home() {
                     </p>
                   </CardContent>
                 </Card>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
@@ -763,8 +782,8 @@ export default function Home() {
       {/* Property Detail Modal */}
       <PropertyDetailModal
         property={selectedProperty}
-        open={isModalOpen}
-        onOpenChange={setIsModalOpen}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
 
       {/* Image Gallery */}
