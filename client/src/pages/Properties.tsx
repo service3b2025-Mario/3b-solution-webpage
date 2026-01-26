@@ -217,7 +217,10 @@ export default function Properties() {
       // Determine location type based on region value
       if (regionParam === 'Philippines' || regionParam === 'Maldives') {
         setLocationType('country');
-      } else if (regionParam === 'NorthAmerica' || regionParam === 'SouthEastAsia' || regionParam === 'Caribbean' || regionParam === 'Europe') {
+      } else if (regionParam === 'Europe') {
+        // Europe is a continent, not a region - use 'continent' type for proper filtering
+        setLocationType('continent');
+      } else if (regionParam === 'NorthAmerica' || regionParam === 'SouthEastAsia' || regionParam === 'Caribbean') {
         setLocationType('region');
       }
     }
