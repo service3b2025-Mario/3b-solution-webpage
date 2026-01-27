@@ -6,7 +6,8 @@
  * - Property performance metrics
  * - Conversion funnel visualization
  * - Traffic source breakdown
- * - Geographic insights (placeholder for future GA integration)
+ * - Google Analytics integration (real-time data)
+ * - Cloudflare analytics integration (CDN metrics)
  */
 
 import { useState, useMemo } from "react";
@@ -23,7 +24,8 @@ import {
 import {
   Eye, Users, Mail, Calendar, TrendingUp, TrendingDown, Target,
   Building2, Globe, Smartphone, Monitor, ArrowUpRight, ArrowDownRight,
-  RefreshCw, Download, Filter, BarChart3, PieChart as PieChartIcon
+  RefreshCw, Download, Filter, BarChart3, PieChart as PieChartIcon,
+  Shield, Zap, Clock, Activity, AlertCircle, CheckCircle2
 } from "lucide-react";
 
 // Color palette for charts
@@ -35,6 +37,38 @@ const COLORS = {
   danger: "#EF4444",
   chart: ["#3B82F6", "#8B5CF6", "#10B981", "#F59E0B", "#EF4444", "#EC4899", "#06B6D4"]
 };
+
+// Helper functions
+function formatNumber(num: number): string {
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+  return num.toLocaleString();
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes >= 1073741824) return (bytes / 1073741824).toFixed(2) + ' GB';
+  if (bytes >= 1048576) return (bytes / 1048576).toFixed(2) + ' MB';
+  if (bytes >= 1024) return (bytes / 1024).toFixed(2) + ' KB';
+  return bytes + ' B';
+}
+
+function formatDuration(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}m ${secs}s`;
+}
+
+function getDateRange(range: string): { startDate: string; endDate: string } {
+  const days = range === "7d" ? 7 : range === "30d" ? 30 : range === "90d" ? 90 : 365;
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+  
+  return {
+    startDate: startDate.toISOString().split('T')[0],
+    endDate: endDate.toISOString().split('T')[0],
+  };
+}
 
 // KPI Card Component
 function KPICard({ 
@@ -135,12 +169,33 @@ export function EnhancedAnalyticsDashboard() {
   const [timeRange, setTimeRange] = useState("30d");
   const [activeTab, setActiveTab] = useState("overview");
   
-  // Fetch data
+  // Calculate date range for external analytics
+  const { startDate, endDate } = getDateRange(timeRange);
+  
+  // Fetch internal data
   const { data: analytics, isLoading: analyticsLoading } = trpc.analytics.summary.useQuery({});
   const { data: funnelStats } = trpc.analytics.salesFunnel.useQuery();
   const { data: leads } = trpc.leads.list.useQuery({});
   const { data: properties } = trpc.properties.list.useQuery({});
   const { data: bookings } = trpc.bookings.list.useQuery();
+  
+  // Fetch external analytics (Google Analytics + Cloudflare)
+  const { 
+    data: externalData, 
+    isLoading: externalLoading, 
+    error: externalError,
+    refetch: refetchExternal
+  } = trpc.analytics.external.useQuery(
+    { startDate, endDate },
+    { 
+      refetchOnWindowFocus: false,
+      retry: 1,
+    }
+  );
+  
+  const ga = externalData?.googleAnalytics;
+  const cf = externalData?.cloudflare;
+  const hasExternalData = ga || cf;
   
   // Calculate metrics
   const totalViews = funnelStats?.totalVisitors || 0;
@@ -154,6 +209,31 @@ export function EnhancedAnalyticsDashboard() {
     generateTimeSeriesData(days, totalViews, totalLeads, totalBookings),
     [days, totalViews, totalLeads, totalBookings]
   );
+  
+  // Format GA time series data
+  const gaTimeSeriesData = useMemo(() => {
+    if (!ga?.timeSeries) return [];
+    return ga.timeSeries.map(item => ({
+      date: item.date.replace(/(\d{4})-(\d{2})-(\d{2})/, (_, y, m, d) => {
+        const date = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      }),
+      users: item.users,
+      sessions: item.sessions,
+      pageViews: item.pageViews,
+    }));
+  }, [ga?.timeSeries]);
+  
+  // Format CF time series data
+  const cfTimeSeriesData = useMemo(() => {
+    if (!cf?.timeSeries) return [];
+    return cf.timeSeries.map(item => ({
+      date: item.date,
+      requests: item.requests,
+      pageViews: item.pageViews,
+      visitors: item.uniqueVisitors,
+    }));
+  }, [cf?.timeSeries]);
   
   // Calculate lead sources
   const leadSources = useMemo(() => {
@@ -190,6 +270,15 @@ export function EnhancedAnalyticsDashboard() {
     { stage: 'Inquiries', count: funnelStats?.inquiries || 0, color: COLORS.chart[3] },
     { stage: 'Bookings', count: funnelStats?.bookings || 0, color: COLORS.chart[4] },
   ];
+  
+  // Device data from GA
+  const deviceData = useMemo(() => {
+    if (!ga?.devices) return [];
+    return ga.devices.map(d => ({
+      name: d.deviceCategory,
+      value: d.users,
+    }));
+  }, [ga?.devices]);
 
   return (
     <div className="space-y-6">
@@ -201,21 +290,54 @@ export function EnhancedAnalyticsDashboard() {
         </div>
         <div className="flex items-center gap-3">
           <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
-          <Button variant="outline" size="icon">
-            <RefreshCw className="w-4 h-4" />
+          <Button variant="outline" size="icon" onClick={() => refetchExternal()}>
+            <RefreshCw className={`w-4 h-4 ${externalLoading ? 'animate-spin' : ''}`} />
           </Button>
         </div>
       </div>
+
+      {/* External Analytics Status Banner */}
+      {externalError && (
+        <Card className="border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20">
+          <CardContent className="p-4 flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-yellow-600" />
+            <div>
+              <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                External analytics unavailable
+              </p>
+              <p className="text-xs text-yellow-700 dark:text-yellow-300">
+                Please verify Google Analytics and Cloudflare API credentials in environment variables.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {hasExternalData && (
+        <Card className="border-green-200 bg-green-50 dark:bg-green-900/20">
+          <CardContent className="p-4 flex items-center gap-3">
+            <CheckCircle2 className="w-5 h-5 text-green-600" />
+            <div>
+              <p className="text-sm font-medium text-green-800 dark:text-green-200">
+                External analytics connected
+              </p>
+              <p className="text-xs text-green-700 dark:text-green-300">
+                {ga ? 'Google Analytics' : ''}{ga && cf ? ' + ' : ''}{cf ? 'Cloudflare' : ''} data is being displayed.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard
           title="Total Visitors"
-          value={totalViews}
+          value={ga?.metrics?.totalUsers || totalViews}
           change={12}
           changeType="increase"
           icon={Eye}
-          subtitle="Unique sessions"
+          subtitle={ga ? "From Google Analytics" : "Unique sessions"}
         />
         <KPICard
           title="Total Leads"
@@ -245,14 +367,18 @@ export function EnhancedAnalyticsDashboard() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+        <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <BarChart3 className="w-4 h-4" />
             Overview
           </TabsTrigger>
-          <TabsTrigger value="traffic" className="flex items-center gap-2">
-            <Globe className="w-4 h-4" />
-            Traffic
+          <TabsTrigger value="google" className="flex items-center gap-2">
+            <Activity className="w-4 h-4" />
+            Google Analytics
+          </TabsTrigger>
+          <TabsTrigger value="cloudflare" className="flex items-center gap-2">
+            <Shield className="w-4 h-4" />
+            Cloudflare
           </TabsTrigger>
           <TabsTrigger value="properties" className="flex items-center gap-2">
             <Building2 className="w-4 h-4" />
@@ -270,12 +396,14 @@ export function EnhancedAnalyticsDashboard() {
           <Card className="border-0 shadow-lg">
             <CardHeader>
               <CardTitle>Performance Over Time</CardTitle>
-              <CardDescription>Views, leads, and bookings trend</CardDescription>
+              <CardDescription>
+                {ga ? "Real data from Google Analytics" : "Views, leads, and bookings trend"}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-[350px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={timeSeriesData}>
+                  <AreaChart data={gaTimeSeriesData.length > 0 ? gaTimeSeriesData : timeSeriesData}>
                     <defs>
                       <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor={COLORS.chart[0]} stopOpacity={0.3}/>
@@ -306,30 +434,61 @@ export function EnhancedAnalyticsDashboard() {
                       }}
                     />
                     <Legend />
-                    <Area 
-                      type="monotone" 
-                      dataKey="views" 
-                      stroke={COLORS.chart[0]} 
-                      fillOpacity={1} 
-                      fill="url(#colorViews)"
-                      name="Views"
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="leads" 
-                      stroke={COLORS.chart[2]} 
-                      fillOpacity={1} 
-                      fill="url(#colorLeads)"
-                      name="Leads"
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="bookings" 
-                      stroke={COLORS.chart[3]} 
-                      strokeWidth={2}
-                      dot={false}
-                      name="Bookings"
-                    />
+                    {gaTimeSeriesData.length > 0 ? (
+                      <>
+                        <Area 
+                          type="monotone" 
+                          dataKey="users" 
+                          stroke={COLORS.chart[0]} 
+                          fillOpacity={1} 
+                          fill="url(#colorViews)"
+                          name="Users"
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey="sessions" 
+                          stroke={COLORS.chart[2]} 
+                          fillOpacity={1} 
+                          fill="url(#colorLeads)"
+                          name="Sessions"
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="pageViews" 
+                          stroke={COLORS.chart[3]} 
+                          strokeWidth={2}
+                          dot={false}
+                          name="Page Views"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <Area 
+                          type="monotone" 
+                          dataKey="views" 
+                          stroke={COLORS.chart[0]} 
+                          fillOpacity={1} 
+                          fill="url(#colorViews)"
+                          name="Views"
+                        />
+                        <Area 
+                          type="monotone" 
+                          dataKey="leads" 
+                          stroke={COLORS.chart[2]} 
+                          fillOpacity={1} 
+                          fill="url(#colorLeads)"
+                          name="Leads"
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="bookings" 
+                          stroke={COLORS.chart[3]} 
+                          strokeWidth={2}
+                          dot={false}
+                          name="Bookings"
+                        />
+                      </>
+                    )}
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
@@ -338,150 +497,436 @@ export function EnhancedAnalyticsDashboard() {
 
           {/* Two Column Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Lead Sources */}
-            <Card className="border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle>Lead Sources</CardTitle>
-                <CardDescription>Where your leads come from</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-[250px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={leadSources}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={90}
-                        paddingAngle={2}
-                        dataKey="value"
-                        nameKey="name"
-                      >
-                        {leadSources.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS.chart[index % COLORS.chart.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="mt-4 space-y-2">
-                  {leadSources.slice(0, 5).map((source, index) => (
-                    <div key={source.name} className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div 
-                          className="w-3 h-3 rounded-full" 
-                          style={{ backgroundColor: COLORS.chart[index % COLORS.chart.length] }}
-                        />
-                        <span className="text-sm">{source.name}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">{source.value}</span>
-                        <Badge variant="secondary" className="text-xs">{source.percentage}%</Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quick Stats */}
-            <Card className="border-0 shadow-lg">
-              <CardHeader>
-                <CardTitle>Engagement Metrics</CardTitle>
-                <CardDescription>User engagement indicators</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-muted/50 rounded-lg">
-                    <p className="text-sm text-muted-foreground">Wishlist Actions</p>
-                    <p className="text-2xl font-bold">{funnelStats?.wishlistActions || 0}</p>
-                  </div>
-                  <div className="p-4 bg-muted/50 rounded-lg">
-                    <p className="text-sm text-muted-foreground">Saved Searches</p>
-                    <p className="text-2xl font-bold">{funnelStats?.savedSearches || 0}</p>
-                  </div>
-                  <div className="p-4 bg-muted/50 rounded-lg">
-                    <p className="text-sm text-muted-foreground">Registered Users</p>
-                    <p className="text-2xl font-bold">{funnelStats?.registeredUsers || 0}</p>
-                  </div>
-                  <div className="p-4 bg-muted/50 rounded-lg">
-                    <p className="text-sm text-muted-foreground">Engaged Users</p>
-                    <p className="text-2xl font-bold">{funnelStats?.engagedUsers || 0}</p>
-                  </div>
-                </div>
-                
-                {/* Placeholder for External Analytics */}
-                <div className="p-4 border border-dashed border-primary/30 rounded-lg bg-primary/5">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Globe className="w-4 h-4 text-primary" />
-                    <span className="text-sm font-medium text-primary">External Analytics</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Google Analytics and Cloudflare data will appear here once configured.
-                    Go to Settings → API Credentials to set up integrations.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Traffic Tab */}
-        <TabsContent value="traffic" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Traffic by Source */}
+            {/* Traffic Sources from GA */}
             <Card className="border-0 shadow-lg">
               <CardHeader>
                 <CardTitle>Traffic Sources</CardTitle>
-                <CardDescription>How visitors find your site</CardDescription>
+                <CardDescription>
+                  {ga?.trafficSources?.length ? "From Google Analytics" : "Where your leads come from"}
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={leadSources} layout="vertical">
-                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                      <XAxis type="number" />
-                      <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12 }} />
-                      <Tooltip />
-                      <Bar dataKey="value" fill={COLORS.primary} radius={[0, 4, 4, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
+                {ga?.trafficSources?.length ? (
+                  <div className="space-y-3">
+                    {ga.trafficSources.slice(0, 8).map((source, index) => (
+                      <div key={`${source.source}-${source.medium}`} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div 
+                            className="w-3 h-3 rounded-full" 
+                            style={{ backgroundColor: COLORS.chart[index % COLORS.chart.length] }}
+                          />
+                          <span className="text-sm truncate max-w-[150px]">
+                            {source.source}/{source.medium}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">{formatNumber(source.sessions)}</span>
+                          <Badge variant="secondary" className="text-xs">{source.users} users</Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    <div className="h-[250px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={leadSources}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={60}
+                            outerRadius={90}
+                            paddingAngle={2}
+                            dataKey="value"
+                            nameKey="name"
+                          >
+                            {leadSources.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={COLORS.chart[index % COLORS.chart.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                          <Legend />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="mt-4 space-y-2">
+                      {leadSources.slice(0, 5).map((source, index) => (
+                        <div key={source.name} className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div 
+                              className="w-3 h-3 rounded-full" 
+                              style={{ backgroundColor: COLORS.chart[index % COLORS.chart.length] }}
+                            />
+                            <span className="text-sm">{source.name}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">{source.value}</span>
+                            <Badge variant="secondary" className="text-xs">{source.percentage}%</Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
               </CardContent>
             </Card>
 
-            {/* Device Breakdown - Placeholder */}
+            {/* Device Breakdown */}
             <Card className="border-0 shadow-lg">
               <CardHeader>
                 <CardTitle>Device Breakdown</CardTitle>
-                <CardDescription>Visitor devices (requires Google Analytics)</CardDescription>
+                <CardDescription>
+                  {deviceData.length ? "From Google Analytics" : "Visitor devices"}
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[300px] flex items-center justify-center">
-                  <div className="text-center space-y-4">
-                    <div className="flex justify-center gap-8">
-                      <div className="text-center">
-                        <Monitor className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">Desktop</p>
-                        <p className="text-lg font-bold">--</p>
-                      </div>
-                      <div className="text-center">
-                        <Smartphone className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">Mobile</p>
-                        <p className="text-lg font-bold">--</p>
-                      </div>
+                {deviceData.length > 0 ? (
+                  <>
+                    <div className="h-[200px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={deviceData}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={50}
+                            outerRadius={80}
+                            paddingAngle={2}
+                            dataKey="value"
+                            nameKey="name"
+                          >
+                            {deviceData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={COLORS.chart[index % COLORS.chart.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                          <Legend />
+                        </PieChart>
+                      </ResponsiveContainer>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      Connect Google Analytics to see device breakdown
-                    </p>
+                    <div className="mt-4 grid grid-cols-3 gap-4">
+                      {deviceData.map((device, index) => (
+                        <div key={device.name} className="text-center">
+                          {device.name.toLowerCase() === 'desktop' && <Monitor className="w-8 h-8 mx-auto mb-1 text-muted-foreground" />}
+                          {device.name.toLowerCase() === 'mobile' && <Smartphone className="w-8 h-8 mx-auto mb-1 text-muted-foreground" />}
+                          {device.name.toLowerCase() === 'tablet' && <Monitor className="w-8 h-8 mx-auto mb-1 text-muted-foreground" />}
+                          <p className="text-sm text-muted-foreground">{device.name}</p>
+                          <p className="text-lg font-bold">{formatNumber(device.value)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div className="h-[300px] flex items-center justify-center">
+                    <div className="text-center space-y-4">
+                      <div className="flex justify-center gap-8">
+                        <div className="text-center">
+                          <Monitor className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
+                          <p className="text-sm text-muted-foreground">Desktop</p>
+                          <p className="text-lg font-bold">--</p>
+                        </div>
+                        <div className="text-center">
+                          <Smartphone className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
+                          <p className="text-sm text-muted-foreground">Mobile</p>
+                          <p className="text-lg font-bold">--</p>
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Connect Google Analytics to see device breakdown
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </div>
+
+          {/* Quick Stats */}
+          <Card className="border-0 shadow-lg">
+            <CardHeader>
+              <CardTitle>Engagement Metrics</CardTitle>
+              <CardDescription>User engagement indicators</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <p className="text-sm text-muted-foreground">Wishlist Actions</p>
+                  <p className="text-2xl font-bold">{funnelStats?.wishlistActions || 0}</p>
+                </div>
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <p className="text-sm text-muted-foreground">Saved Searches</p>
+                  <p className="text-2xl font-bold">{funnelStats?.savedSearches || 0}</p>
+                </div>
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <p className="text-sm text-muted-foreground">Registered Users</p>
+                  <p className="text-2xl font-bold">{funnelStats?.registeredUsers || 0}</p>
+                </div>
+                <div className="p-4 bg-muted/50 rounded-lg">
+                  <p className="text-sm text-muted-foreground">Engaged Users</p>
+                  <p className="text-2xl font-bold">{funnelStats?.engagedUsers || 0}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Google Analytics Tab */}
+        <TabsContent value="google" className="space-y-6">
+          {ga ? (
+            <>
+              {/* GA KPIs */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <KPICard
+                  title="Total Users"
+                  value={formatNumber(ga.metrics.totalUsers)}
+                  icon={Users}
+                  subtitle={`${formatNumber(ga.metrics.newUsers)} new users`}
+                />
+                <KPICard
+                  title="Sessions"
+                  value={formatNumber(ga.metrics.sessions)}
+                  icon={Activity}
+                />
+                <KPICard
+                  title="Page Views"
+                  value={formatNumber(ga.metrics.pageViews)}
+                  icon={Eye}
+                />
+                <KPICard
+                  title="Avg. Session Duration"
+                  value={formatDuration(ga.metrics.avgSessionDuration)}
+                  icon={Clock}
+                  subtitle={`${(ga.metrics.bounceRate * 100).toFixed(1)}% bounce rate`}
+                />
+              </div>
+
+              {/* GA Time Series */}
+              <Card className="border-0 shadow-lg">
+                <CardHeader>
+                  <CardTitle>Traffic Over Time</CardTitle>
+                  <CardDescription>Users, sessions, and page views from Google Analytics</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[350px]">
+                    {gaTimeSeriesData.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={gaTimeSeriesData}>
+                          <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                          <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                          <YAxis tick={{ fontSize: 12 }} />
+                          <Tooltip />
+                          <Legend />
+                          <Area type="monotone" dataKey="users" stackId="1" stroke={COLORS.chart[0]} fill={COLORS.chart[0]} name="Users" />
+                          <Area type="monotone" dataKey="sessions" stackId="2" stroke={COLORS.chart[2]} fill={COLORS.chart[2]} name="Sessions" />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-muted-foreground">
+                        No time series data available
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Top Pages & Countries */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Top Pages */}
+                <Card className="border-0 shadow-lg">
+                  <CardHeader>
+                    <CardTitle>Top Pages</CardTitle>
+                    <CardDescription>Most viewed pages</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {ga.topPages?.slice(0, 8).map((page, index) => (
+                        <div key={page.pagePath} className="flex items-center justify-between border-b pb-2 last:border-0">
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <span className="text-sm font-medium text-muted-foreground w-5">{index + 1}</span>
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-medium truncate">{page.pageTitle || page.pagePath}</p>
+                              <p className="text-xs text-muted-foreground truncate">{page.pagePath}</p>
+                            </div>
+                          </div>
+                          <Badge variant="secondary">{formatNumber(page.views)}</Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Top Countries */}
+                <Card className="border-0 shadow-lg">
+                  <CardHeader>
+                    <CardTitle>Top Countries</CardTitle>
+                    <CardDescription>Users by geographic location</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {ga.countries?.slice(0, 8).map((country, index) => (
+                        <div key={country.country} className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-muted-foreground w-5">{index + 1}</span>
+                            <Globe className="w-4 h-4 text-muted-foreground" />
+                            <span className="text-sm font-medium">{country.country}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground">{formatNumber(country.sessions)} sessions</span>
+                            <Badge variant="secondary">{formatNumber(country.users)}</Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </>
+          ) : (
+            <Card className="border-0 shadow-lg">
+              <CardContent className="p-12 text-center">
+                <Activity className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Google Analytics Not Connected</h3>
+                <p className="text-muted-foreground mb-4">
+                  Configure your Google Analytics credentials to see real-time traffic data.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Required environment variables: GA_PROPERTY_ID, GOOGLE_APPLICATION_CREDENTIALS_JSON
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* Cloudflare Tab */}
+        <TabsContent value="cloudflare" className="space-y-6">
+          {cf ? (
+            <>
+              {/* CF KPIs */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <KPICard
+                  title="Total Requests"
+                  value={formatNumber(cf.metrics.requests)}
+                  icon={Zap}
+                />
+                <KPICard
+                  title="Unique Visitors"
+                  value={formatNumber(cf.metrics.uniqueVisitors)}
+                  icon={Users}
+                />
+                <KPICard
+                  title="Bandwidth"
+                  value={formatBytes(cf.metrics.bandwidth)}
+                  icon={Activity}
+                  subtitle={`${formatBytes(cf.metrics.cachedBandwidth)} cached`}
+                />
+                <KPICard
+                  title="Threats Blocked"
+                  value={formatNumber(cf.metrics.threats)}
+                  icon={Shield}
+                />
+              </div>
+
+              {/* Cache Performance */}
+              <Card className="border-0 shadow-lg">
+                <CardHeader>
+                  <CardTitle>Cache Performance</CardTitle>
+                  <CardDescription>CDN caching efficiency</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="text-center p-6 bg-muted/50 rounded-lg">
+                      <p className="text-4xl font-bold text-primary">
+                        {cf.metrics.requests > 0 
+                          ? ((cf.metrics.cachedRequests / cf.metrics.requests) * 100).toFixed(1) 
+                          : 0}%
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-2">Request Cache Hit Rate</p>
+                    </div>
+                    <div className="text-center p-6 bg-muted/50 rounded-lg">
+                      <p className="text-4xl font-bold text-green-500">
+                        {formatNumber(cf.metrics.cachedRequests)}
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-2">Cached Requests</p>
+                    </div>
+                    <div className="text-center p-6 bg-muted/50 rounded-lg">
+                      <p className="text-4xl font-bold text-blue-500">
+                        {formatBytes(cf.metrics.cachedBandwidth)}
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-2">Bandwidth Saved</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* CF Time Series */}
+              <Card className="border-0 shadow-lg">
+                <CardHeader>
+                  <CardTitle>Request Volume</CardTitle>
+                  <CardDescription>HTTP requests over time</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    {cfTimeSeriesData.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={cfTimeSeriesData}>
+                          <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                          <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                          <YAxis tick={{ fontSize: 12 }} />
+                          <Tooltip />
+                          <Legend />
+                          <Area type="monotone" dataKey="requests" stroke={COLORS.chart[0]} fill={COLORS.chart[0]} name="Requests" />
+                          <Area type="monotone" dataKey="visitors" stroke={COLORS.chart[2]} fill={COLORS.chart[2]} name="Unique Visitors" />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-muted-foreground">
+                        No time series data available
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* CF Countries */}
+              <Card className="border-0 shadow-lg">
+                <CardHeader>
+                  <CardTitle>Traffic by Country</CardTitle>
+                  <CardDescription>Request distribution by country</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {cf.countries?.map((country, index) => (
+                      <div key={country.country} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-muted-foreground w-5">{index + 1}</span>
+                          <Globe className="w-4 h-4 text-muted-foreground" />
+                          <span className="text-sm font-medium">{country.country}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-muted-foreground">{formatBytes(country.bandwidth)}</span>
+                          <Badge variant="secondary">{formatNumber(country.requests)} requests</Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </>
+          ) : (
+            <Card className="border-0 shadow-lg">
+              <CardContent className="p-12 text-center">
+                <Shield className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Cloudflare Analytics Not Connected</h3>
+                <p className="text-muted-foreground mb-4">
+                  Configure your Cloudflare credentials to see CDN and security metrics.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Required environment variables: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ZONE_ID
+                </p>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         {/* Properties Tab */}
