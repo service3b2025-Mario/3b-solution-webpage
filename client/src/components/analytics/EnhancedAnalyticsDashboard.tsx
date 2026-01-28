@@ -255,8 +255,8 @@ export function EnhancedAnalyticsDashboard() {
     return properties.items.slice(0, 10).map((prop: any, index: number) => ({
       id: prop.id,
       name: prop.title?.substring(0, 30) + (prop.title?.length > 30 ? '...' : '') || `Property ${prop.id}`,
-      location: prop.location || 'Unknown',
-      views: Math.floor(Math.random() * 500) + 50, // Simulated - will be replaced with real data
+      location: [prop.city, prop.country].filter(Boolean).join(', ') || prop.region || 'Unknown',
+      views: prop.views || Math.floor(Math.random() * 500) + 50, // Simulated - will be replaced with real data
       inquiries: Math.floor(Math.random() * 20) + 1,
       conversionRate: (Math.random() * 10 + 1).toFixed(1),
     }));
