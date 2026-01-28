@@ -648,7 +648,6 @@ export const appRouter = router({
     salesFunnel: adminProcedure.query(() => db.getSalesFunnelStats()),
     recentUsers: adminProcedure.input(z.object({ limit: z.number().optional() }).optional()).query(({ input }) => db.getRecentUsers(input?.limit || 10)),
     userEngagement: adminProcedure.input(z.object({ userId: z.string() })).query(({ input }) => db.getUserEngagement(input.userId)),
-  }),
     
     // External Analytics - Google Analytics & Cloudflare
     external: adminProcedure.input(z.object({
@@ -706,6 +705,7 @@ export const appRouter = router({
         endDate: z.string(),
       })).query(({ input }) => externalAnalytics.getCloudflareTimeSeries(input.startDate, input.endDate)),
     }),
+  }),
 
   // FX Rates
   fx: router({
