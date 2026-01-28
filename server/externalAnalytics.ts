@@ -2,6 +2,7 @@
  * External Analytics Service
  * Integrates Google Analytics Data API and Cloudflare GraphQL Analytics API
  */
+console.log('[ExternalAnalytics] Module loading...');
 
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
 
