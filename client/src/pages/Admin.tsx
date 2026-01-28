@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+  import { useState, useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,7 @@ import { ChannelPerformance } from "@/components/crm/ChannelPerformance";
 import { CustomerExpansion } from "@/components/crm/CustomerExpansion";
 import { WhatsAppSettings } from "@/components/admin/WhatsAppSettings";
 import { ResetDataButton } from "@/components/admin/ResetDataButton";
+import { EnhancedAnalyticsDashboard } from "@/components/analytics/EnhancedAnalyticsDashboard";
 
 const sidebarItems = [
   { id: "dashboard", label: "Dashboard", icon: BarChart3 },
@@ -209,7 +210,7 @@ export default function Admin() {
           {section === "feedback" && <FeedbackAnalytics />}
           {section === "team" && <TeamSection teamMembers={teamMembers} />}
           {section === "content" && <ContentManagement />}
-          {section === "analytics" && <AnalyticsSection analytics={analytics} />}
+          {section === "analytics" && <EnhancedAnalyticsDashboard />}
           {section === "api-credentials" && <APICredentials />}
           {section === "settings" && <SettingsSection />}
           {section === "crm-dashboard" && <CRMDashboard />}
@@ -2039,4 +2040,4 @@ function LegalPagesTab() {
       )}
     </>
   );
-}
+}  

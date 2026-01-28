@@ -325,8 +325,8 @@ export async function createProperty(data: InsertProperty) {
   });
   
   try {
-    const result = await db.insert(properties).values(sanitizedData);
-    return result[0].insertId;
+        const result = await db.insert(properties).values(sanitizedData).returning({ id: properties.id });
+    return result[0]?.id ?? null;
   } catch (error: any) {
     console.error('[createProperty] Database insertion failed:');
     console.error('Error message:', error.message);

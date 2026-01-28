@@ -14,6 +14,7 @@ import { notifyOwner } from "./_core/notification";
 import { sendResourceDownloadEmail } from "./emailService";
 import { handleNewLeadNotifications } from "./leadEmailService";
 import { whatsappRouter } from "./whatsapp/whatsappRouters";
+import * as externalAnalytics from "./externalAnalytics";
 
 // Admin procedure - requires admin role
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -647,6 +648,63 @@ export const appRouter = router({
     salesFunnel: adminProcedure.query(() => db.getSalesFunnelStats()),
     recentUsers: adminProcedure.input(z.object({ limit: z.number().optional() }).optional()).query(({ input }) => db.getRecentUsers(input?.limit || 10)),
     userEngagement: adminProcedure.input(z.object({ userId: z.string() })).query(({ input }) => db.getUserEngagement(input.userId)),
+    
+    // External Analytics - Google Analytics & Cloudflare
+    external: adminProcedure.input(z.object({
+      startDate: z.string(),
+      endDate: z.string(),
+    })).query(async ({ input }) => {
+      return externalAnalytics.getCombinedAnalytics(input.startDate, input.endDate);
+    }),
+    
+    googleAnalytics: router({
+      metrics: adminProcedure.input(z.object({
+        startDate: z.string(),
+        endDate: z.string(),
+      })).query(({ input }) => externalAnalytics.getGAMetrics(input.startDate, input.endDate)),
+      
+      trafficSources: adminProcedure.input(z.object({
+        startDate: z.string(),
+        endDate: z.string(),
+      })).query(({ input }) => externalAnalytics.getGATrafficSources(input.startDate, input.endDate)),
+      
+      topPages: adminProcedure.input(z.object({
+        startDate: z.string(),
+        endDate: z.string(),
+      })).query(({ input }) => externalAnalytics.getGATopPages(input.startDate, input.endDate)),
+      
+      countries: adminProcedure.input(z.object({
+        startDate: z.string(),
+        endDate: z.string(),
+      })).query(({ input }) => externalAnalytics.getGACountryData(input.startDate, input.endDate)),
+      
+      devices: adminProcedure.input(z.object({
+        startDate: z.string(),
+        endDate: z.string(),
+      })).query(({ input }) => externalAnalytics.getGADeviceData(input.startDate, input.endDate)),
+      
+      timeSeries: adminProcedure.input(z.object({
+        startDate: z.string(),
+        endDate: z.string(),
+      })).query(({ input }) => externalAnalytics.getGATimeSeries(input.startDate, input.endDate)),
+    }),
+    
+    cloudflare: router({
+      metrics: adminProcedure.input(z.object({
+        startDate: z.string(),
+        endDate: z.string(),
+      })).query(({ input }) => externalAnalytics.getCloudflareMetrics(input.startDate, input.endDate)),
+      
+      countries: adminProcedure.input(z.object({
+        startDate: z.string(),
+        endDate: z.string(),
+      })).query(({ input }) => externalAnalytics.getCloudflareCountryData(input.startDate, input.endDate)),
+      
+      timeSeries: adminProcedure.input(z.object({
+        startDate: z.string(),
+        endDate: z.string(),
+      })).query(({ input }) => externalAnalytics.getCloudflareTimeSeries(input.startDate, input.endDate)),
+    }),
   }),
 
   // FX Rates
