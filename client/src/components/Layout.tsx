@@ -237,7 +237,7 @@ export function Footer() {
       {/* Main Footer */}
       <div className="py-16">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Company Info */}
             <div>
               <div className="mb-6">
@@ -296,7 +296,7 @@ export function Footer() {
               </div>
               
               {/* Legal Links - Below Social Media Icons, Highlighted */}
-              <div className="flex flex-wrap gap-3 pt-2 border-t border-white/10">
+              <div className="flex flex-wrap gap-3 pt-4 border-t border-white/10">
                 <Link href="/legal/terms-of-service" className="text-secondary hover:text-secondary/80 text-sm font-medium transition-colors">
                   Terms
                 </Link>
@@ -380,25 +380,11 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Bottom Bar */}
+      {/* Bottom Bar - REMOVED legal links, only copyright and disclaimer */}
       <div className="border-t border-white/10 py-6">
         <div className="container">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-foreground/60">
+          <div className="flex flex-col items-center gap-4 text-sm text-primary-foreground/60">
             <p>© {new Date().getFullYear()} 3B Solution. All rights reserved.</p>
-            <nav className="flex items-center gap-6" aria-label="Legal navigation">
-              <Link href="/legal/terms-of-service" className="hover:text-white transition-colors">
-                Terms of Service
-              </Link>
-              <Link href="/legal/privacy-policy" className="hover:text-white transition-colors">
-                Privacy
-              </Link>
-              <Link href="/legal/cookie-policy" className="hover:text-white transition-colors">
-                Cookies
-              </Link>
-              <Link href="/legal/imprint" className="hover:text-white transition-colors">
-                Imprint
-              </Link>
-            </nav>
           </div>
           <p className="text-center text-xs text-primary-foreground/50 mt-4">
             Investment involves risk. Past performance is not indicative of future results. 
