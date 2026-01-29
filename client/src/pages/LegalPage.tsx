@@ -41,7 +41,7 @@ export default function LegalPage() {
 
       {/* Content Section with Legal Page Styles */}
       <section className="py-16 bg-background">
-        <div className="container max-w-4xl">
+        <div className="container">
           {/* Custom styles for legal page content */}
           <style dangerouslySetInnerHTML={{ __html: `
             .legal-content {
