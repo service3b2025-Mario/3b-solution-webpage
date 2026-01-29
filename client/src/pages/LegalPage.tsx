@@ -45,7 +45,8 @@ export default function LegalPage() {
   const { data: page, isLoading, error } = trpc.legalPages.getBySlug.useQuery(params.slug || "");
   
   // Fetch site settings for placeholders (if available)
-  const { data: settings } = trpc.settings?.getAll?.useQuery?.() ?? { data: null };
+  // Settings will be added later - for now use empty object
+const settings: Record<string, string> | null = null;
   
   // Default placeholders - these can be overridden by admin settings
   const defaultPlaceholders: Record<string, string> = {
