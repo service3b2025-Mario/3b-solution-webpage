@@ -50,51 +50,48 @@ const settings: Record<string, string> | null = null;
   
   // Default placeholders - these can be overridden by admin settings
   const defaultPlaceholders: Record<string, string> = {
+      // Default placeholders - hardcoded for now, will be dynamic later
+  const defaultPlaceholders: Record<string, string> = {
     // Contact Information
-    PHONE: settings?.phone || "[PHONE NUMBER]",
-    FAX: settings?.fax || "[FAX NUMBER - OPTIONAL]",
-    EMAIL: settings?.email || "info@3bsolution.de",
+    PHONE: "[PHONE NUMBER]",
+    FAX: "[FAX NUMBER - OPTIONAL]",
+    EMAIL: "info@3bsolution.de",
     PRIVACY_EMAIL: "privacy@3bsolution.de",
     
     // Business Registration
-    GEWERBEAMT_CITY: settings?.gewerbeamtCity || "[CITY]",
-    GEWERBESCHEIN_NUMBER: settings?.gewerbescheinNumber || "[REGISTRATION NUMBER]",
-    REGISTRATION_DATE: settings?.registrationDate || "[DATE]",
+    GEWERBEAMT_CITY: "[CITY]",
+    GEWERBESCHEIN_NUMBER: "[REGISTRATION NUMBER]",
+    REGISTRATION_DATE: "[DATE]",
     
     // IHK Information
-    IHK_REGION: settings?.ihkRegion || "[IHK REGION/CITY]",
-    IHK_NUMBER: settings?.ihkNumber || "[IHK MEMBERSHIP NUMBER]",
+    IHK_REGION: "[IHK REGION/CITY]",
+    IHK_NUMBER: "[IHK MEMBERSHIP NUMBER]",
     
     // Tax Information
-    FINANZAMT_CITY: settings?.finanzamtCity || "[CITY]",
-    STEUERNUMMER: settings?.steuernummer || "[TAX NUMBER]",
-    UST_IDNR: settings?.ustIdNr || "[VAT ID - IF APPLICABLE]",
+    FINANZAMT_CITY: "[CITY]",
+    STEUERNUMMER: "[TAX NUMBER]",
+    UST_IDNR: "[VAT ID - IF APPLICABLE]",
     
     // Insurance
-    INSURANCE_COMPANY: settings?.insuranceCompany || "[INSURANCE COMPANY]",
-    POLICY_NUMBER: settings?.policyNumber || "[POLICY NUMBER]",
-    COVERAGE_AMOUNT: settings?.coverageAmount || "[COVERAGE AMOUNT]",
-    INSURANCE_VALID_UNTIL: settings?.insuranceValidUntil || "[EXPIRY DATE]",
+    INSURANCE_COMPANY: "[INSURANCE COMPANY]",
+    POLICY_NUMBER: "[POLICY NUMBER]",
+    COVERAGE_AMOUNT: "[COVERAGE AMOUNT]",
+    INSURANCE_VALID_UNTIL: "[EXPIRY DATE]",
     
     // Licensing
-    LICENSE_34C_DATE: settings?.license34cDate || "[LICENSE DATE]",
-    LICENSE_34C_VALID_UNTIL: settings?.license34cValidUntil || "[EXPIRY DATE]",
-    LICENSE_34F_NUMBER: settings?.license34fNumber || "[REGISTRATION NUMBER]",
+    LICENSE_34C_DATE: "[LICENSE DATE]",
+    LICENSE_34C_VALID_UNTIL: "[EXPIRY DATE]",
+    LICENSE_34F_NUMBER: "[REGISTRATION NUMBER]",
     
     // DPO Information
     DPO_NAME: "Mario Bock",
     DPO_PHONE: "+8613701368354",
     
-    // Dates (auto-filled)
+    // Dates (auto-filled )
     CURRENT_DATE: formatDate(new Date()),
     LAST_UPDATED: page?.updatedAt ? formatDate(page.updatedAt) : formatDate(new Date()),
   };
-  
-  // Process content with placeholders
-  const processedContent = useMemo(() => {
-    return replacePlaceholders(page?.content || "", defaultPlaceholders);
-  }, [page?.content, defaultPlaceholders]);
-  
+
   // PDF Export function using browser print
   const handlePrintPDF = useCallback(() => {
     window.print();
