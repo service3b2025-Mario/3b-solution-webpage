@@ -2,10 +2,100 @@ import { useParams } from "wouter";
 import { trpc } from "@/lib/trpc";
 import Layout from "@/components/Layout";
 import { Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+
+type Language = "en" | "de" | "zh" | "both";
+
+// Detect user's country based on timezone/locale
+function detectUserCountry(): string {
+  try {
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const locale = navigator.language || navigator.languages?.[0] || "en";
+    
+    // Check for Germany
+    if (timezone.includes("Berlin") || timezone.includes("Europe/Berlin") || 
+        locale.startsWith("de")) {
+      return "DE";
+    }
+    
+    // Check for China
+    if (timezone.includes("Shanghai") || timezone.includes("Asia/Shanghai") ||
+        timezone.includes("Beijing") || timezone.includes("Chongqing") ||
+        locale.startsWith("zh")) {
+      return "CN";
+    }
+    
+    return "OTHER";
+  } catch {
+    return "OTHER";
+  }
+}
+
+// Get default language based on country
+function getDefaultLanguage(country: string, slug: string): Language {
+  // Cookie policy has special geo-based rules
+  if (slug === "cookie-policy") {
+    if (country === "DE") return "de";
+    if (country === "CN") return "zh";
+    return "en";
+  }
+  
+  // Other pages default to English
+  return "en";
+}
 
 export default function LegalPage() {
   const params = useParams<{ slug: string }>();
   const { data: page, isLoading, error } = trpc.legalPages.getBySlug.useQuery(params.slug || "");
+  
+  const [userCountry, setUserCountry] = useState<string>("OTHER");
+  const [language, setLanguage] = useState<Language>("en");
+  const [initialized, setInitialized] = useState(false);
+
+  // Detect country and set default language on mount
+  useEffect(() => {
+    const country = detectUserCountry();
+    setUserCountry(country);
+    
+    if (params.slug && !initialized) {
+      const defaultLang = getDefaultLanguage(country, params.slug);
+      setLanguage(defaultLang);
+      setInitialized(true);
+    }
+  }, [params.slug, initialized]);
+
+  // Get content based on selected language
+  const getContent = () => {
+    if (!page) return "";
+    
+    switch (language) {
+      case "de":
+        return page.contentDe || page.content || "";
+      case "zh":
+        return page.contentZh || page.content || "";
+      case "both":
+        // Show English first, then German
+        const enContent = page.content || "";
+        const deContent = page.contentDe || "";
+        if (enContent && deContent) {
+          return `
+            <div class="language-section">
+              <h2 class="language-header">🇬🇧 English Version</h2>
+              ${enContent}
+            </div>
+            <hr class="language-divider" />
+            <div class="language-section">
+              <h2 class="language-header">🇩🇪 Deutsche Version</h2>
+              ${deContent}
+            </div>
+          `;
+        }
+        return enContent || deContent;
+      default:
+        return page.content || "";
+    }
+  };
 
   if (isLoading) {
     return (
@@ -30,6 +120,11 @@ export default function LegalPage() {
     );
   }
 
+  // Check if page has multiple languages
+  const hasGerman = !!page.contentDe;
+  const hasChinese = !!page.contentZh;
+  const hasMultipleLanguages = hasGerman || hasChinese;
+
   return (
     <Layout>
       {/* Hero Section */}
@@ -42,6 +137,55 @@ export default function LegalPage() {
       {/* Content Section with Legal Page Styles */}
       <section className="py-16 bg-background">
         <div className="container">
+          {/* Language Switcher */}
+          {hasMultipleLanguages && (
+            <div className="flex items-center justify-center gap-4 mb-8 pb-6 border-b">
+              <span className="text-sm text-muted-foreground font-medium">
+                Language / Sprache:
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  variant={language === "en" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLanguage("en")}
+                  className={language === "en" ? "bg-secondary hover:bg-secondary/90" : ""}
+                >
+                  English
+                </Button>
+                {hasGerman && (
+                  <Button
+                    variant={language === "de" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setLanguage("de")}
+                    className={language === "de" ? "bg-primary hover:bg-primary/90" : ""}
+                  >
+                    Deutsch
+                  </Button>
+                )}
+                {hasChinese && (
+                  <Button
+                    variant={language === "zh" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setLanguage("zh")}
+                    className={language === "zh" ? "bg-red-600 hover:bg-red-700" : ""}
+                  >
+                    中文
+                  </Button>
+                )}
+                {hasGerman && (
+                  <Button
+                    variant={language === "both" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setLanguage("both")}
+                    className={language === "both" ? "bg-gray-700 hover:bg-gray-800" : ""}
+                  >
+                    Both / Beide
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Custom styles for legal page content */}
           <style dangerouslySetInnerHTML={{ __html: `
             .legal-content {
@@ -144,10 +288,25 @@ export default function LegalPage() {
               font-size: 0.9em;
               color: #666;
             }
+            .legal-content .language-header {
+              background: #f8f9fa;
+              padding: 10px 15px;
+              border-radius: 4px;
+              margin-bottom: 20px;
+              font-size: 1.2rem;
+            }
+            .legal-content .language-divider {
+              margin: 40px 0;
+              border: none;
+              border-top: 3px solid #f4a261;
+            }
+            .legal-content .language-section {
+              margin-bottom: 20px;
+            }
           `}} />
           <div 
             className="legal-content prose prose-lg max-w-none"
-            dangerouslySetInnerHTML={{ __html: page.content || "" }}
+            dangerouslySetInnerHTML={{ __html: getContent() }}
           />
         </div>
       </section>
