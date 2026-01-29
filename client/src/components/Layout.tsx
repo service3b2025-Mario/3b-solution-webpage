@@ -255,7 +255,8 @@ export function Footer() {
                 Premium real estate investment solutions anchored in the Philippines, diversified globally. 
                 Delivering 15-30% annual returns backed by global expertise.
               </p>
-              <div className="flex gap-4">
+              {/* Social Media Icons */}
+              <div className="flex gap-4 mb-4">
                 {linkedinUrl && (
                   <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label="Follow us on LinkedIn" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
                     <Linkedin className="w-5 h-5" aria-hidden="true" />
@@ -292,6 +293,25 @@ export function Footer() {
                     </span>
                   </>
                 )}
+              </div>
+              
+              {/* Legal Links - Below Social Media Icons, Highlighted */}
+              <div className="flex flex-wrap gap-3 pt-2 border-t border-white/10">
+                <Link href="/legal/terms-of-service" className="text-secondary hover:text-secondary/80 text-sm font-medium transition-colors">
+                  Terms
+                </Link>
+                <span className="text-white/30">|</span>
+                <Link href="/legal/privacy-policy" className="text-secondary hover:text-secondary/80 text-sm font-medium transition-colors">
+                  Privacy
+                </Link>
+                <span className="text-white/30">|</span>
+                <Link href="/legal/cookie-policy" className="text-secondary hover:text-secondary/80 text-sm font-medium transition-colors">
+                  Cookies
+                </Link>
+                <span className="text-white/30">|</span>
+                <Link href="/legal/imprint" className="text-secondary hover:text-secondary/80 text-sm font-medium transition-colors">
+                  Imprint
+                </Link>
               </div>
             </div>
 
@@ -369,8 +389,11 @@ export function Footer() {
               <Link href="/legal/terms-of-service" className="hover:text-white transition-colors">
                 Terms of Service
               </Link>
-              <Link href="/legal/privacy" className="hover:text-white transition-colors">
+              <Link href="/legal/privacy-policy" className="hover:text-white transition-colors">
                 Privacy
+              </Link>
+              <Link href="/legal/cookie-policy" className="hover:text-white transition-colors">
+                Cookies
               </Link>
               <Link href="/legal/imprint" className="hover:text-white transition-colors">
                 Imprint
