@@ -379,7 +379,7 @@ export const legalPages = mysqlTable("legal_pages", {
   slug: varchar("slug", { length: 100 }).notNull().unique(),
   title: varchar("title", { length: 255 }).notNull(),
   content: text("content"),
-    contentDe: text("content_de"),
+  contentDe: text("content_de"),
   contentZh: text("content_zh"),
   metaTitle: varchar("meta_title", { length: 255 }),
   metaDescription: text("meta_description"),
