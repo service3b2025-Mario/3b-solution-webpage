@@ -527,3 +527,58 @@ export const whatsappClicks = mysqlTable("whatsapp_clicks", {
 
 export type WhatsAppClick = typeof whatsappClicks.$inferSelect;
 export type InsertWhatsAppClick = typeof whatsappClicks.$inferInsert;
+
+// =====================================================
+// LEGAL PAGE ENHANCEMENTS
+// =====================================================
+
+// Legal Page Version History
+export const legalPageVersions = mysqlTable("legal_page_versions", {
+  id: int("id").autoincrement().primaryKey(),
+  legalPageId: int("legal_page_id").notNull(),
+  versionNumber: int("version_number").notNull().default(1),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content"),
+  metaTitle: varchar("meta_title", { length: 255 }),
+  metaDescription: text("meta_description"),
+  changedBy: varchar("changed_by", { length: 255 }).default("admin"),
+  changeSummary: varchar("change_summary", { length: 500 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export type LegalPageVersion = typeof legalPageVersions.$inferSelect;
+export type InsertLegalPageVersion = typeof legalPageVersions.$inferInsert;
+
+// Site Settings for Placeholders
+export const siteSettings = mysqlTable("site_settings", {
+  id: int("id").autoincrement().primaryKey(),
+  settingKey: varchar("setting_key", { length: 100 }).notNull().unique(),
+  settingValue: text("setting_value"),
+  settingType: varchar("setting_type", { length: 20 }).default("text"),
+  category: varchar("category", { length: 50 }).default("general"),
+  description: varchar("description", { length: 500 }),
+  isSensitive: boolean("is_sensitive").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SiteSetting = typeof siteSettings.$inferSelect;
+export type InsertSiteSetting = typeof siteSettings.$inferInsert;
+
+// Consent Logs for GDPR Compliance
+export const consentLogs = mysqlTable("consent_logs", {
+  id: int("id").autoincrement().primaryKey(),
+  sessionId: varchar("session_id", { length: 255 }),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  userAgent: text("user_agent"),
+  consentEssential: boolean("consent_essential").default(true),
+  consentAnalytics: boolean("consent_analytics").default(false),
+  consentMarketing: boolean("consent_marketing").default(false),
+  ccpaOptOut: boolean("ccpa_opt_out").default(false),
+  consentTimestamp: timestamp("consent_timestamp").defaultNow().notNull(),
+  consentVersion: varchar("consent_version", { length: 20 }).default("1.0"),
+});
+
+export type ConsentLog = typeof consentLogs.$inferSelect;
+export type InsertConsentLog = typeof consentLogs.$inferInsert;
+
