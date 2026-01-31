@@ -133,30 +133,264 @@
         'cookie_flags': 'SameSite=None;Secure'
       });
     </script>
-
-    <!-- Cookie Language Selector - Load via inline script that runs after DOM ready -->
-    <script>
-      // This inline script will load the cookie language selector after DOM is ready
-      // Using DOMContentLoaded ensures it runs after the page structure is in place
-      document.addEventListener('DOMContentLoaded', function() {
-        // Small delay to ensure Silktide has initialized
-        setTimeout(function() {
-          var script = document.createElement('script');
-          script.src = '/cookie-language-selector.js';
-          script.async = false; // Load synchronously to ensure it runs
-          script.onload = function() {
-            console.log('[Cookie Language Selector] Loaded via inline loader');
-          };
-          script.onerror = function() {
-            console.error('[Cookie Language Selector] Failed to load');
-          };
-          document.body.appendChild(script);
-        }, 100);
-      });
-    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Cookie Language Selector - INLINE VERSION (embedded directly to avoid loading issues) -->
+    <script>
+    (function() {
+      'use strict';
+      
+      var translations = {
+        en: {
+          mainText: 'We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept all", you consent to our use of cookies.',
+          acceptAll: 'Accept all',
+          rejectNonEssential: 'Reject non-essential',
+          managePreferences: 'Manage preferences',
+          cookiePolicy: 'Cookie Policy',
+          preferencesTitle: 'Cookie Preferences',
+          preferencesDesc: 'Choose which types of cookies you want to accept. You can change your preferences at any time.',
+          essentialTitle: 'Essential',
+          essentialDesc: 'These cookies are necessary for the website to function and cannot be switched off.',
+          analyticsTitle: 'Analytics',
+          analyticsDesc: 'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.',
+          marketingTitle: 'Marketing',
+          marketingDesc: 'These cookies are used to deliver personalized advertisements and measure the effectiveness of our marketing campaigns.',
+          savePreferences: 'Save preferences'
+        },
+        de: {
+          mainText: 'Wir verwenden Cookies, um Ihr Surferlebnis zu verbessern und unseren Datenverkehr zu analysieren. Durch Klicken auf "Alle akzeptieren" stimmen Sie der Verwendung von Cookies zu.',
+          acceptAll: 'Alle akzeptieren',
+          rejectNonEssential: 'Nicht wesentliche ablehnen',
+          managePreferences: 'Einstellungen verwalten',
+          cookiePolicy: 'Cookie-Richtlinie',
+          preferencesTitle: 'Cookie-Einstellungen',
+          preferencesDesc: 'Wählen Sie aus, welche Arten von Cookies Sie akzeptieren möchten. Sie können Ihre Einstellungen jederzeit ändern.',
+          essentialTitle: 'Notwendig',
+          essentialDesc: 'Diese Cookies sind für die Funktion der Website erforderlich und können nicht deaktiviert werden.',
+          analyticsTitle: 'Analytik',
+          analyticsDesc: 'Diese Cookies helfen uns zu verstehen, wie Besucher mit unserer Website interagieren, indem sie Informationen anonym sammeln und melden.',
+          marketingTitle: 'Marketing',
+          marketingDesc: 'Diese Cookies werden verwendet, um personalisierte Werbung zu liefern und die Wirksamkeit unserer Marketingkampagnen zu messen.',
+          savePreferences: 'Einstellungen speichern'
+        },
+        zh: {
+          mainText: '我们使用Cookie来增强您的浏览体验并分析我们的流量。点击"全部接受"即表示您同意我们使用Cookie。',
+          acceptAll: '全部接受',
+          rejectNonEssential: '拒绝非必要',
+          managePreferences: '管理偏好',
+          cookiePolicy: 'Cookie政策',
+          preferencesTitle: 'Cookie偏好设置',
+          preferencesDesc: '选择您要接受的Cookie类型。您可以随时更改您的偏好设置。',
+          essentialTitle: '必要',
+          essentialDesc: '这些Cookie是网站正常运行所必需的，无法关闭。',
+          analyticsTitle: '分析',
+          analyticsDesc: '这些Cookie通过匿名收集和报告信息，帮助我们了解访客如何与我们的网站互动。',
+          marketingTitle: '营销',
+          marketingDesc: '这些Cookie用于提供个性化广告并衡量我们营销活动的效果。',
+          savePreferences: '保存偏好'
+        }
+      };
+      
+      var currentLang = 'en';
+      
+      function detectLanguage() {
+        var browserLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase().substring(0, 2);
+        if (browserLang === 'de') return 'de';
+        if (browserLang === 'zh') return 'zh';
+        return 'en';
+      }
+      
+      function createLanguageSelector() {
+        if (document.getElementById('cookie-lang-selector-js')) {
+          return document.getElementById('cookie-lang-selector-js');
+        }
+        
+        var selector = document.createElement('div');
+        selector.id = 'cookie-lang-selector-js';
+        selector.style.cssText = 'position: fixed; z-index: 2147483648; background: #1a365d; padding: 8px 15px; border-radius: 8px; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;';
+        
+        var html = '<span style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-right: 10px;">Language:</span>';
+        
+        [{ code: 'en', label: 'EN' }, { code: 'de', label: 'DE' }, { code: 'zh', label: '中文' }].forEach(function(lang) {
+          var isActive = lang.code === currentLang;
+          var bgColor = isActive ? '#D78F00' : 'transparent';
+          var borderColor = isActive ? '#D78F00' : 'rgba(255,255,255,0.4)';
+          html += '<button type="button" class="cookie-lang-btn" data-lang="' + lang.code + '" style="background: ' + bgColor + '; border: 1px solid ' + borderColor + '; color: #fff; padding: 5px 14px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; font-weight: 500; margin-left: 5px; transition: all 0.2s;">' + lang.label + '</button>';
+        });
+        
+        selector.innerHTML = html;
+        document.body.appendChild(selector);
+        
+        selector.querySelectorAll('.cookie-lang-btn').forEach(function(btn) {
+          btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            setLanguage(btn.getAttribute('data-lang'));
+          });
+          btn.addEventListener('mouseenter', function() {
+            if (btn.getAttribute('data-lang') !== currentLang) btn.style.background = 'rgba(215, 143, 0, 0.3)';
+          });
+          btn.addEventListener('mouseleave', function() {
+            if (btn.getAttribute('data-lang') !== currentLang) btn.style.background = 'transparent';
+          });
+        });
+        
+        return selector;
+      }
+      
+      function findCookieCard() {
+        var modal = document.querySelector('.stcm-modal');
+        if (modal && isElementVisible(modal)) return modal;
+        
+        var prompt = document.querySelector('.stcm-prompt');
+        if (prompt && isElementVisible(prompt)) return prompt;
+        
+        var backdrop = document.querySelector('#stcm-backdrop');
+        if (backdrop && isElementVisible(backdrop)) {
+          var card = backdrop.querySelector('.stcm-prompt, .stcm-modal, [role="dialog"]');
+          if (card && isElementVisible(card)) return card;
+          var rect = backdrop.getBoundingClientRect();
+          if (rect.width < window.innerWidth * 0.9) return backdrop;
+        }
+        return null;
+      }
+      
+      function isElementVisible(el) {
+        if (!el) return false;
+        var style = window.getComputedStyle(el);
+        var rect = el.getBoundingClientRect();
+        return style.display !== 'none' && style.visibility !== 'hidden' && parseFloat(style.opacity) > 0 && rect.width > 0 && rect.height > 0;
+      }
+      
+      function positionSelector(selector, card) {
+        if (!selector || !card) return;
+        var cardRect = card.getBoundingClientRect();
+        var top = cardRect.top - 50;
+        if (top < 10) top = 10;
+        selector.style.top = top + 'px';
+        selector.style.left = (cardRect.left + cardRect.width / 2) + 'px';
+        selector.style.transform = 'translateX(-50%)';
+        selector.style.display = 'flex';
+      }
+      
+      function hideSelector() {
+        var selector = document.getElementById('cookie-lang-selector-js');
+        if (selector) selector.style.display = 'none';
+      }
+      
+      function updateButtonStyles() {
+        document.querySelectorAll('.cookie-lang-btn').forEach(function(btn) {
+          var lang = btn.getAttribute('data-lang');
+          btn.style.background = lang === currentLang ? '#D78F00' : 'transparent';
+          btn.style.borderColor = lang === currentLang ? '#D78F00' : 'rgba(255,255,255,0.4)';
+        });
+      }
+      
+      function setLanguage(lang) {
+        currentLang = lang;
+        updateButtonStyles();
+        updateAllText(lang);
+      }
+      
+      function updateAllText(lang) {
+        var t = translations[lang];
+        if (!t) return;
+        
+        // Update headings
+        document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(function(h) {
+          var text = h.textContent.trim().toLowerCase();
+          if (text.includes('cookie preferences') || text.includes('cookie-einstellungen') || text.includes('cookie偏好设置')) {
+            h.textContent = t.preferencesTitle;
+          }
+        });
+        
+        // Update text elements
+        document.querySelectorAll('p, span, div, strong, b, label').forEach(function(el) {
+          if (el.children.length > 0 && el.querySelector('button, a, input')) return;
+          var text = el.textContent.trim().toLowerCase();
+          var originalText = el.textContent.trim();
+          
+          if (text.includes('we use cookies') || text.includes('wir verwenden cookies') || text.includes('我们使用cookie')) {
+            el.textContent = t.mainText;
+          }
+          else if (text.includes('choose which types') || text.includes('wählen sie aus') || text.includes('选择您要接受')) {
+            el.textContent = t.preferencesDesc;
+          }
+          else if (originalText === 'Essential' || originalText === 'Notwendig' || originalText === '必要') {
+            el.textContent = t.essentialTitle;
+          }
+          else if (text.includes('necessary for the website to function') || text.includes('für die funktion der website') || text.includes('网站正常运行所必需')) {
+            el.textContent = t.essentialDesc;
+          }
+          else if (originalText === 'Analytics' || originalText === 'Analytik' || originalText === '分析') {
+            el.textContent = t.analyticsTitle;
+          }
+          else if (text.includes('help us understand how visitors') || text.includes('helfen uns zu verstehen') || text.includes('帮助我们了解访客')) {
+            el.textContent = t.analyticsDesc;
+          }
+          else if (originalText === 'Marketing' || originalText === '营销') {
+            el.textContent = t.marketingTitle;
+          }
+          else if (text.includes('deliver personalized advertisements') || text.includes('personalisierte werbung') || text.includes('提供个性化广告')) {
+            el.textContent = t.marketingDesc;
+          }
+        });
+        
+        // Update buttons
+        document.querySelectorAll('button').forEach(function(btn) {
+          if (btn.classList.contains('cookie-lang-btn')) return;
+          var text = btn.textContent.trim().toLowerCase();
+          if (text === 'accept all' || text === 'alle akzeptieren' || text === '全部接受') btn.textContent = t.acceptAll;
+          else if (text === 'reject non-essential' || text === 'nicht wesentliche ablehnen' || text === '拒绝非必要') btn.textContent = t.rejectNonEssential;
+          else if (text === 'manage preferences' || text === 'einstellungen verwalten' || text === '管理偏好') btn.textContent = t.managePreferences;
+          else if (text === 'save preferences' || text === 'einstellungen speichern' || text === '保存偏好') btn.textContent = t.savePreferences;
+        });
+        
+        // Update Cookie Policy links
+        document.querySelectorAll('a').forEach(function(link) {
+          var text = link.textContent.trim().toLowerCase();
+          if (text === 'cookie policy' || text === 'cookie-richtlinie' || text === 'cookie政策') {
+            link.textContent = t.cookiePolicy;
+            if (!link.href.includes('lang=')) link.href = '/legal/cookie-policy?lang=en';
+          }
+        });
+      }
+      
+      function update() {
+        var card = findCookieCard();
+        if (card) {
+          var selector = createLanguageSelector();
+          positionSelector(selector, card);
+          updateAllText(currentLang);
+        } else {
+          hideSelector();
+        }
+      }
+      
+      function init() {
+        currentLang = detectLanguage();
+        update();
+        setInterval(update, 200);
+        
+        var observer = new MutationObserver(function() { setTimeout(update, 50); });
+        observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
+        
+        console.log('[Cookie Language Selector] Inline version initialized. Language:', currentLang);
+      }
+      
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+      
+      setTimeout(init, 500);
+      setTimeout(init, 1000);
+      setTimeout(init, 2000);
+    })();
+    </script>
   </body>
 </html>
