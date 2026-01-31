@@ -141,6 +141,24 @@
         visibility: hidden !important;
         opacity: 0 !important;
       }
+      
+      /* HIDE Silktide branding link completely */
+      #stcm-wrapper a.stcm-logo,
+      #stcm-wrapper .stcm-logo,
+      #stcm-wrapper a[href*="silktide"],
+      #stcm-wrapper [class*="logo"],
+      #stcm-banner a.stcm-logo,
+      .stcm-modal a[href*="silktide"],
+      a[href*="consent-manager"] {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        height: 0 !important;
+        width: 0 !important;
+        overflow: hidden !important;
+        position: absolute !important;
+        pointer-events: none !important;
+      }
 
       /* Additional custom styling for buttons */
       #stcm-wrapper button {
@@ -201,6 +219,28 @@
         background-color: #D78F00 !important;
         border-color: #D78F00 !important;
       }
+      
+      /* CCPA Notice Styling */
+      .ccpa-notice {
+        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        border: 2px solid #f59e0b;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin: 16px 0;
+        font-size: 0.85rem;
+        color: #92400e;
+      }
+      
+      .ccpa-notice strong {
+        display: block;
+        margin-bottom: 6px;
+        color: #78350f;
+      }
+      
+      .ccpa-notice a {
+        color: #b45309 !important;
+        text-decoration: underline;
+      }
 
       /* Mobile responsive */
       @media (max-width: 640px) {
@@ -245,59 +285,151 @@
     <!-- Silktide Cookie Consent Script -->
     <script src="https://cdn.3bsolution.com/assets/silktide-consent-manager.js"></script>
     <script>
-      // Initialize Silktide Cookie Consent
+      // Multi-language translations for cookie consent
+      const cookieTranslations = {
+        en: {
+          promptDescription: '<p>We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept all", you consent to our use of cookies. <a href="/legal/cookie-policy">Cookie Policy</a></p>',
+          acceptAll: 'Accept all',
+          rejectNonEssential: 'Reject non-essential',
+          managePreferences: 'Manage preferences',
+          preferencesTitle: 'Cookie Preferences',
+          preferencesDescription: '<p>Choose which types of cookies you want to accept. You can change your preferences at any time.</p>',
+          savePreferences: 'Save preferences',
+          essential: 'Essential',
+          essentialDesc: 'These cookies are necessary for the website to function and cannot be switched off.',
+          analytics: 'Analytics',
+          analyticsDesc: 'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.',
+          marketing: 'Marketing',
+          marketingDesc: 'These cookies are used to deliver personalized advertisements and measure the effectiveness of our marketing campaigns.',
+          ccpaNotice: '<div class="ccpa-notice"><strong>🏛️ California Privacy Rights</strong>California residents: You have the right to opt-out of the sale or sharing of your personal information. <a href="/legal/cookie-policy#ccpa">Learn more</a></div>'
+        },
+        de: {
+          promptDescription: '<p>Wir verwenden Cookies, um Ihr Browsererlebnis zu verbessern und unseren Datenverkehr zu analysieren. Durch Klicken auf "Alle akzeptieren" stimmen Sie der Verwendung von Cookies zu. <a href="/legal/cookie-policy">Cookie-Richtlinie</a></p>',
+          acceptAll: 'Alle akzeptieren',
+          rejectNonEssential: 'Nicht notwendige ablehnen',
+          managePreferences: 'Einstellungen verwalten',
+          preferencesTitle: 'Cookie-Einstellungen',
+          preferencesDescription: '<p>Wählen Sie, welche Arten von Cookies Sie akzeptieren möchten. Sie können Ihre Einstellungen jederzeit ändern.</p>',
+          savePreferences: 'Einstellungen speichern',
+          essential: 'Notwendig',
+          essentialDesc: 'Diese Cookies sind für die Funktion der Website erforderlich und können nicht deaktiviert werden.',
+          analytics: 'Analytik',
+          analyticsDesc: 'Diese Cookies helfen uns zu verstehen, wie Besucher mit unserer Website interagieren, indem sie Informationen anonym sammeln und melden.',
+          marketing: 'Marketing',
+          marketingDesc: 'Diese Cookies werden verwendet, um personalisierte Werbung zu liefern und die Wirksamkeit unserer Marketingkampagnen zu messen.',
+          ccpaNotice: '<div class="ccpa-notice"><strong>🏛️ Kalifornische Datenschutzrechte</strong>Einwohner Kaliforniens: Sie haben das Recht, dem Verkauf oder der Weitergabe Ihrer persönlichen Daten zu widersprechen. <a href="/legal/cookie-policy#ccpa">Mehr erfahren</a></div>'
+        },
+        zh: {
+          promptDescription: '<p>我们使用Cookie来增强您的浏览体验并分析我们的流量。点击"全部接受"即表示您同意我们使用Cookie。<a href="/legal/cookie-policy">Cookie政策</a></p>',
+          acceptAll: '全部接受',
+          rejectNonEssential: '拒绝非必要',
+          managePreferences: '管理偏好设置',
+          preferencesTitle: 'Cookie偏好设置',
+          preferencesDescription: '<p>选择您要接受的Cookie类型。您可以随时更改您的偏好设置。</p>',
+          savePreferences: '保存设置',
+          essential: '必要',
+          essentialDesc: '这些Cookie是网站正常运行所必需的，无法关闭。',
+          analytics: '分析',
+          analyticsDesc: '这些Cookie通过匿名收集和报告信息，帮助我们了解访问者如何与我们的网站互动。',
+          marketing: '营销',
+          marketingDesc: '这些Cookie用于投放个性化广告并衡量我们营销活动的效果。',
+          ccpaNotice: '<div class="ccpa-notice"><strong>🏛️ 加州隐私权</strong>加州居民：您有权选择不出售或共享您的个人信息。<a href="/legal/cookie-policy#ccpa">了解更多</a></div>'
+        }
+      };
+      
+      // Detect user language based on browser settings or geo-location
+      function detectLanguage() {
+        const browserLang = navigator.language || navigator.userLanguage;
+        if (browserLang.startsWith('de')) return 'de';
+        if (browserLang.startsWith('zh')) return 'zh';
+        return 'en';
+      }
+      
+      // Get translations for current language
+      const currentLang = detectLanguage();
+      const t = cookieTranslations[currentLang];
+      
+      // Check for California visitors (CCPA)
+      let isCalifornia = false;
+      fetch('https://ipapi.co/json/')
+        .then(response => response.json())
+        .then(data => {
+          if (data.region === 'California' || data.region_code === 'CA') {
+            isCalifornia = true;
+            // Add CCPA notice to the prompt description
+            const promptDesc = document.querySelector('#stcm-wrapper .stcm-prompt p');
+            if (promptDesc) {
+              promptDesc.insertAdjacentHTML('afterend', t.ccpaNotice);
+            }
+          }
+        })
+        .catch(err => console.log('Could not detect location for CCPA'));
+      
+      // Initialize Silktide Cookie Consent with multi-language support
       window.silktideConsentManager.init({
         // Consent Types Configuration
         consentTypes: [
           {
             id: 'essential',
-            label: 'Essential',
-            description: 'These cookies are necessary for the website to function and cannot be switched off.',
+            label: t.essential,
+            description: t.essentialDesc,
             required: true,
           },
           {
             id: 'analytics',
-            label: 'Analytics',
-            description: 'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.',
+            label: t.analytics,
+            description: t.analyticsDesc,
             defaultValue: false,
             gtag: 'analytics_storage',
             onAccept: function() {
               console.log('Analytics cookies accepted');
+              // Update Google Consent Mode
+              gtag('consent', 'update', { 'analytics_storage': 'granted' });
             },
             onReject: function() {
               console.log('Analytics cookies rejected');
+              gtag('consent', 'update', { 'analytics_storage': 'denied' });
             }
           },
           {
             id: 'marketing',
-            label: 'Marketing',
-            description: 'These cookies are used to deliver personalized advertisements and measure the effectiveness of our marketing campaigns.',
+            label: t.marketing,
+            description: t.marketingDesc,
             defaultValue: false,
             gtag: ['ad_storage', 'ad_user_data', 'ad_personalization'],
             onAccept: function() {
               console.log('Marketing cookies accepted');
+              gtag('consent', 'update', {
+                'ad_storage': 'granted',
+                'ad_user_data': 'granted',
+                'ad_personalization': 'granted'
+              });
             },
             onReject: function() {
               console.log('Marketing cookies rejected');
+              gtag('consent', 'update', {
+                'ad_storage': 'denied',
+                'ad_user_data': 'denied',
+                'ad_personalization': 'denied'
+              });
             }
           }
         ],
         
-        // Event name for Google Tag Manager
         eventName: 'cookie_consent_update',
         
-        // Customized text
+        // Customized text with multi-language support
         text: {
           prompt: {
-            description: '<p>We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept all", you consent to our use of cookies.</p>',
-            acceptAllButtonText: 'Accept all',
-            rejectNonEssentialButtonText: 'Reject non-essential',
-            preferencesButtonText: 'Manage preferences',
+            description: t.promptDescription,
+            acceptAllButtonText: t.acceptAll,
+            rejectNonEssentialButtonText: t.rejectNonEssential,
+            preferencesButtonText: t.managePreferences,
           },
           preferences: {
-            title: 'Cookie Preferences',
-            description: '<p>Choose which types of cookies you want to accept. You can change your preferences at any time.</p>',
-            saveButtonText: 'Save preferences',
+            title: t.preferencesTitle,
+            description: t.preferencesDescription,
+            saveButtonText: t.savePreferences,
           }
         },
         
@@ -317,14 +449,40 @@
           show: true
         },
         
+        // Hide Silktide branding
+        branding: {
+          show: false
+        },
+        
         // Callbacks
         onAcceptAll: function() {
           console.log('User accepted all cookies');
+          gtag('consent', 'update', {
+            'analytics_storage': 'granted',
+            'ad_storage': 'granted',
+            'ad_user_data': 'granted',
+            'ad_personalization': 'granted'
+          });
         },
         onRejectAll: function() {
           console.log('User rejected non-essential cookies');
+          gtag('consent', 'update', {
+            'analytics_storage': 'denied',
+            'ad_storage': 'denied',
+            'ad_user_data': 'denied',
+            'ad_personalization': 'denied'
+          });
         }
       });
+      
+      // Remove Silktide branding link after initialization
+      setTimeout(function() {
+        const brandingLinks = document.querySelectorAll('a[href*="silktide"], a[href*="consent-manager"], .stcm-logo');
+        brandingLinks.forEach(function(link) {
+          link.style.display = 'none';
+          link.remove();
+        });
+      }, 100);
     </script>
     
     <!-- Cloudflare Analytics Event Listener -->
