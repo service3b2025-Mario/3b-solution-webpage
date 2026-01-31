@@ -1,7 +1,7 @@
 import { useParams } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Layout from "@/components/Layout";
 import { Breadcrumb } from "@/components/Breadcrumb";
 
@@ -53,6 +53,45 @@ function parseContent(content: string | null | undefined): MultiLangContent {
   return { en: content, de: "", zh: "" };
 }
 
+// Extract date from content HTML
+// Looks for patterns like:
+// - "Last Updated: January 2026"
+// - "Effective Date: January 2026"
+// - "Last Updated: 01/31/2026"
+// - "Letzte Aktualisierung: Januar 2026"
+// - "最后更新：2026年1月"
+function extractDateFromContent(htmlContent: string): string | null {
+  if (!htmlContent) return null;
+  
+  // Common date patterns in content
+  const patterns = [
+    // English patterns
+    /Last\s*Updated?:?\s*([A-Za-z]+\s*\d{4}|\d{1,2}\/\d{1,2}\/\d{4}|\d{4}-\d{2}-\d{2})/i,
+    /Effective\s*Date:?\s*([A-Za-z]+\s*\d{4}|\d{1,2}\/\d{1,2}\/\d{4}|\d{4}-\d{2}-\d{2})/i,
+    /Last\s*Updated:?\s*([A-Za-z]+\s*\d{4})\s*\|/i,
+    /Effective\s*Date:?\s*([A-Za-z]+\s*\d{4})\s*\|/i,
+    // German patterns
+    /Letzte\s*Aktualisierung:?\s*([A-Za-zäöü]+\s*\d{4}|\d{1,2}\.\d{1,2}\.\d{4})/i,
+    /Stand:?\s*([A-Za-zäöü]+\s*\d{4}|\d{1,2}\.\d{1,2}\.\d{4})/i,
+    /Gültig\s*ab:?\s*([A-Za-zäöü]+\s*\d{4}|\d{1,2}\.\d{1,2}\.\d{4})/i,
+    // Chinese patterns
+    /最后更新[：:]\s*(\d{4}年\d{1,2}月|\d{4}-\d{2}-\d{2})/,
+    /生效日期[：:]\s*(\d{4}年\d{1,2}月|\d{4}-\d{2}-\d{2})/,
+    /更新日期[：:]\s*(\d{4}年\d{1,2}月|\d{4}-\d{2}-\d{2})/,
+    // Version patterns with dates
+    /Version\s*[\d.]+\s*[-–|]\s*([A-Za-z]+\s*\d{4})/i,
+  ];
+  
+  for (const pattern of patterns) {
+    const match = htmlContent.match(pattern);
+    if (match && match[1]) {
+      return match[1].trim();
+    }
+  }
+  
+  return null;
+}
+
 // Map slug to display title
 function getPageTitle(slug: string): string {
   const titles: Record<string, string> = {
@@ -85,6 +124,36 @@ export default function LegalPage() {
     }
   }, [slug]);
 
+  // Parse content and extract date
+  const parsedContent = useMemo(() => parseContent(page?.content), [page?.content]);
+  
+  // Extract date from the English content (primary source)
+  // Falls back to German, then Chinese, then database updatedAt
+  const displayDate = useMemo(() => {
+    // Try to extract from English content first
+    let extractedDate = extractDateFromContent(parsedContent.en || "");
+    
+    // If not found in English, try German
+    if (!extractedDate && parsedContent.de) {
+      extractedDate = extractDateFromContent(parsedContent.de);
+    }
+    
+    // If not found in German, try Chinese
+    if (!extractedDate && parsedContent.zh) {
+      extractedDate = extractDateFromContent(parsedContent.zh);
+    }
+    
+    // If still not found, fall back to database updatedAt
+    if (!extractedDate && page?.updatedAt) {
+      return new Date(page.updatedAt).toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric"
+      });
+    }
+    
+    return extractedDate || "N/A";
+  }, [parsedContent, page?.updatedAt]);
+
   if (isLoading) {
     return (
       <Layout>
@@ -108,9 +177,6 @@ export default function LegalPage() {
     );
   }
 
-  // Parse the content (handles both JSON and plain HTML)
-  const parsedContent = parseContent(page.content);
-  
   // Get content based on selected language
   const getContent = () => {
     if (selectedLang === "de" && parsedContent.de) return parsedContent.de;
@@ -133,7 +199,7 @@ export default function LegalPage() {
               {page.title || pageTitle}
             </h1>
             <p className="text-white/80">
-              Last updated: {page.updatedAt ? new Date(page.updatedAt).toLocaleDateString() : "N/A"}
+              Last updated: {displayDate}
             </p>
           </div>
           
