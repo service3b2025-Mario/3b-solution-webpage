@@ -1,9 +1,9 @@
 /**
- * Cookie Language Selector for 3B Solution - Version 5
+ * Cookie Language Selector for 3B Solution - Version 6
  * Fixes: 
- * 1. Language selector shows on BOTH main banner AND preferences modal
- * 2. ALL text translates including category titles and descriptions
- * 3. Better DOM element detection
+ * 1. Language selector positioned DIRECTLY above the cookie card (not at top of page)
+ * 2. Language selector HIDES when cookies are accepted/rejected
+ * 3. All text translates properly
  */
 
 (function() {
@@ -74,7 +74,6 @@
   };
   
   var currentLang = 'en';
-  var selectorCreated = false;
   
   // Detect browser language
   function detectLanguage() {
@@ -88,7 +87,7 @@
   // Create the floating language selector element
   function createLanguageSelector() {
     if (document.getElementById('cookie-lang-selector-js')) {
-      return;
+      return document.getElementById('cookie-lang-selector-js');
     }
     
     var selector = document.createElement('div');
@@ -117,7 +116,6 @@
     
     selector.innerHTML = html;
     document.body.appendChild(selector);
-    selectorCreated = true;
     
     // Add click handlers
     var buttons = selector.querySelectorAll('.cookie-lang-btn');
@@ -142,37 +140,37 @@
     });
     
     console.log('Language selector created');
+    return selector;
   }
   
-  // Find the visible Silktide element (banner or modal)
-  function findVisibleSilktideElement() {
-    // Check for modal first (it appears on top)
+  // Find the actual cookie card element (the visible dialog box)
+  function findCookieCard() {
+    // Look for the modal first (preferences dialog)
     var modal = document.querySelector('.stcm-modal');
     if (modal && isElementVisible(modal)) {
-      return { element: modal, type: 'modal' };
+      return modal;
     }
     
-    // Check for the main prompt/banner
+    // Look for the main prompt/banner
     var prompt = document.querySelector('.stcm-prompt');
     if (prompt && isElementVisible(prompt)) {
-      return { element: prompt, type: 'banner' };
+      return prompt;
     }
     
-    // Check backdrop as fallback
+    // Look for any dialog-like element inside backdrop
     var backdrop = document.querySelector('#stcm-backdrop');
     if (backdrop && isElementVisible(backdrop)) {
-      // Find the actual content inside backdrop
-      var content = backdrop.querySelector('.stcm-prompt, .stcm-modal, [class*="stcm"]');
-      if (content && isElementVisible(content)) {
-        return { element: content, type: content.classList.contains('stcm-modal') ? 'modal' : 'banner' };
+      // Find the actual card inside
+      var card = backdrop.querySelector('.stcm-prompt, .stcm-modal, [role="dialog"]');
+      if (card && isElementVisible(card)) {
+        return card;
       }
-      return { element: backdrop, type: 'banner' };
-    }
-    
-    // Check any stcm element
-    var anyStcm = document.querySelector('[class*="stcm"]');
-    if (anyStcm && isElementVisible(anyStcm)) {
-      return { element: anyStcm, type: 'banner' };
+      // If no card found, check if backdrop itself has the content
+      var rect = backdrop.getBoundingClientRect();
+      if (rect.width < window.innerWidth * 0.9) {
+        // Backdrop is not full-width, so it's likely the card itself
+        return backdrop;
+      }
     }
     
     return null;
@@ -190,23 +188,31 @@
            rect.height > 0;
   }
   
-  // Position the language selector above the visible element
-  function positionSelector() {
+  // Position the language selector directly above the cookie card
+  function positionSelector(selector, card) {
+    if (!selector || !card) return;
+    
+    var cardRect = card.getBoundingClientRect();
+    var selectorHeight = 40; // Approximate height of selector
+    
+    // Position directly above the card, centered with the card
+    var top = cardRect.top - selectorHeight - 10; // 10px gap
+    var left = cardRect.left + (cardRect.width / 2);
+    
+    // Make sure it doesn't go off screen
+    if (top < 10) top = 10;
+    
+    selector.style.position = 'fixed';
+    selector.style.top = top + 'px';
+    selector.style.left = left + 'px';
+    selector.style.transform = 'translateX(-50%)';
+    selector.style.display = 'flex';
+  }
+  
+  // Hide the language selector
+  function hideSelector() {
     var selector = document.getElementById('cookie-lang-selector-js');
-    if (!selector) return;
-    
-    var found = findVisibleSilktideElement();
-    
-    if (found) {
-      var rect = found.element.getBoundingClientRect();
-      
-      // Position above the element, centered
-      selector.style.position = 'fixed';
-      selector.style.top = Math.max(10, rect.top - 50) + 'px';
-      selector.style.left = '50%';
-      selector.style.transform = 'translateX(-50%)';
-      selector.style.display = 'flex';
-    } else {
+    if (selector) {
       selector.style.display = 'none';
     }
   }
@@ -246,8 +252,6 @@
     
     // Update all buttons
     updateButtons(t);
-    
-    console.log('Updated all text to language:', lang);
   }
   
   // Update banner text
@@ -284,7 +288,7 @@
     });
   }
   
-  // Update modal text - using more aggressive text matching
+  // Update modal text
   function updateModalText(t) {
     // Update title
     var allHeadings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
@@ -295,10 +299,9 @@
       }
     });
     
-    // Update all text content - find by current text in any language
+    // Update all text content
     var allElements = document.querySelectorAll('p, span, div, strong, b, label');
     allElements.forEach(function(el) {
-      // Skip if has children that are not text nodes
       if (el.children.length > 0 && el.querySelector('button, a, input')) return;
       
       var text = el.textContent.trim().toLowerCase();
@@ -345,24 +348,19 @@
   function updateButtons(t) {
     var buttons = document.querySelectorAll('button');
     buttons.forEach(function(btn) {
-      // Skip language buttons
       if (btn.classList.contains('cookie-lang-btn')) return;
       
       var text = btn.textContent.trim().toLowerCase();
       
-      // Accept all
       if (text === 'accept all' || text === 'alle akzeptieren' || text === '全部接受') {
         btn.textContent = t.acceptAll;
       }
-      // Reject non-essential
       else if (text === 'reject non-essential' || text === 'nicht wesentliche ablehnen' || text === '拒绝非必要') {
         btn.textContent = t.rejectNonEssential;
       }
-      // Manage preferences
       else if (text === 'manage preferences' || text === 'einstellungen verwalten' || text === '管理偏好') {
         btn.textContent = t.managePreferences;
       }
-      // Save preferences
       else if (text === 'save preferences' || text === 'einstellungen speichern' || text === '保存偏好') {
         btn.textContent = t.savePreferences;
       }
@@ -381,17 +379,16 @@
   
   // Main update function
   function update() {
-    var found = findVisibleSilktideElement();
+    var card = findCookieCard();
     
-    if (found) {
-      createLanguageSelector();
-      positionSelector();
+    if (card) {
+      // Cookie card is visible - show and position the language selector
+      var selector = createLanguageSelector();
+      positionSelector(selector, card);
       updateAllText(currentLang);
     } else {
-      var selector = document.getElementById('cookie-lang-selector-js');
-      if (selector) {
-        selector.style.display = 'none';
-      }
+      // No cookie card visible - HIDE the language selector
+      hideSelector();
     }
   }
   
@@ -403,7 +400,7 @@
     update();
     fixCookiePolicyLinks();
     
-    // Set up interval to check for banner
+    // Set up interval to check for banner (and hide when gone)
     setInterval(function() {
       update();
       fixCookiePolicyLinks();
@@ -424,7 +421,7 @@
       attributeFilter: ['style', 'class']
     });
     
-    console.log('Cookie Language Selector v5 initialized. Language:', currentLang);
+    console.log('Cookie Language Selector v6 initialized. Language:', currentLang);
   }
   
   // Run when DOM is ready
