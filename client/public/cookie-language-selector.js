@@ -1,195 +1,287 @@
 /**
- * Cookie Consent Language Selector
- * This file adds a language selector (EN/DE/中文) to the Silktide cookie consent banner
- * Place this file in: client/public/cookie-language-selector.js
+ * Cookie Language Selector for 3B Solution
+ * This script adds language selection buttons (EN/DE/中文) to the Silktide cookie consent banner
+ * and ensures Cookie Policy links open in English by default
  */
 
 (function() {
   'use strict';
   
-  // Multi-language translations
-  const cookieTranslations = {
+  // Translations for cookie consent
+  var translations = {
     en: {
-      promptDescription: '<p>We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept all", you consent to our use of cookies. <a href="/legal/cookie-policy?lang=en">Cookie Policy</a></p>',
+      mainText: 'We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept all", you consent to our use of cookies.',
       acceptAll: 'Accept all',
       rejectNonEssential: 'Reject non-essential',
       managePreferences: 'Manage preferences',
+      cookiePolicy: 'Cookie Policy',
       preferencesTitle: 'Cookie Preferences',
-      preferencesDescription: '<p>Choose which types of cookies you want to accept. You can change your preferences at any time.</p>',
-      savePreferences: 'Save preferences',
-      essential: 'Essential',
-      essentialDesc: 'These cookies are necessary for the website to function and cannot be switched off.',
-      analytics: 'Analytics',
-      analyticsDesc: 'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.',
-      marketing: 'Marketing',
-      marketingDesc: 'These cookies are used to deliver personalized advertisements and measure the effectiveness of our marketing campaigns.'
+      necessaryTitle: 'Necessary',
+      necessaryDesc: 'Required for the website to function properly',
+      analyticsTitle: 'Analytics',
+      analyticsDesc: 'Help us understand how visitors interact with our website',
+      marketingTitle: 'Marketing',
+      marketingDesc: 'Used to deliver personalized advertisements',
+      savePreferences: 'Save preferences'
     },
     de: {
-      promptDescription: '<p>Wir verwenden Cookies, um Ihr Browsererlebnis zu verbessern und unseren Datenverkehr zu analysieren. Durch Klicken auf "Alle akzeptieren" stimmen Sie der Verwendung von Cookies zu. <a href="/legal/cookie-policy?lang=en">Cookie-Richtlinie</a></p>',
+      mainText: 'Wir verwenden Cookies, um Ihr Surferlebnis zu verbessern und unseren Datenverkehr zu analysieren. Durch Klicken auf "Alle akzeptieren" stimmen Sie der Verwendung von Cookies zu.',
       acceptAll: 'Alle akzeptieren',
-      rejectNonEssential: 'Nicht notwendige ablehnen',
+      rejectNonEssential: 'Nicht wesentliche ablehnen',
       managePreferences: 'Einstellungen verwalten',
+      cookiePolicy: 'Cookie-Richtlinie',
       preferencesTitle: 'Cookie-Einstellungen',
-      preferencesDescription: '<p>Wählen Sie, welche Arten von Cookies Sie akzeptieren möchten. Sie können Ihre Einstellungen jederzeit ändern.</p>',
-      savePreferences: 'Einstellungen speichern',
-      essential: 'Notwendig',
-      essentialDesc: 'Diese Cookies sind für die Funktion der Website erforderlich und können nicht deaktiviert werden.',
-      analytics: 'Analytik',
-      analyticsDesc: 'Diese Cookies helfen uns zu verstehen, wie Besucher mit unserer Website interagieren.',
-      marketing: 'Marketing',
-      marketingDesc: 'Diese Cookies werden verwendet, um personalisierte Werbung zu liefern.'
+      necessaryTitle: 'Notwendig',
+      necessaryDesc: 'Erforderlich für die ordnungsgemäße Funktion der Website',
+      analyticsTitle: 'Analytik',
+      analyticsDesc: 'Helfen Sie uns zu verstehen, wie Besucher mit unserer Website interagieren',
+      marketingTitle: 'Marketing',
+      marketingDesc: 'Wird verwendet, um personalisierte Werbung zu liefern',
+      savePreferences: 'Einstellungen speichern'
     },
     zh: {
-      promptDescription: '<p>我们使用Cookie来增强您的浏览体验并分析我们的流量。点击"全部接受"即表示您同意我们使用Cookie。<a href="/legal/cookie-policy?lang=en">Cookie政策</a></p>',
+      mainText: '我们使用Cookie来增强您的浏览体验并分析我们的流量。点击"全部接受"即表示您同意我们使用Cookie。',
       acceptAll: '全部接受',
       rejectNonEssential: '拒绝非必要',
-      managePreferences: '管理偏好设置',
+      managePreferences: '管理偏好',
+      cookiePolicy: 'Cookie政策',
       preferencesTitle: 'Cookie偏好设置',
-      preferencesDescription: '<p>选择您要接受的Cookie类型。您可以随时更改您的偏好设置。</p>',
-      savePreferences: '保存设置',
-      essential: '必要',
-      essentialDesc: '这些Cookie是网站正常运行所必需的，无法关闭。',
-      analytics: '分析',
-      analyticsDesc: '这些Cookie帮助我们了解访问者如何与我们的网站互动。',
-      marketing: '营销',
-      marketingDesc: '这些Cookie用于投放个性化广告。'
+      necessaryTitle: '必要',
+      necessaryDesc: '网站正常运行所必需',
+      analyticsTitle: '分析',
+      analyticsDesc: '帮助我们了解访客如何与我们的网站互动',
+      marketingTitle: '营销',
+      marketingDesc: '用于提供个性化广告',
+      savePreferences: '保存偏好'
     }
   };
   
-  let currentLang = 'en';
-  let langSelectorElement = null;
+  var currentLang = 'en';
   
-  // Function to create the language selector element
+  // Detect browser language
+  function detectLanguage() {
+    var browserLang = navigator.language || navigator.userLanguage || 'en';
+    browserLang = browserLang.toLowerCase().substring(0, 2);
+    if (browserLang === 'de') return 'de';
+    if (browserLang === 'zh') return 'zh';
+    return 'en';
+  }
+  
+  // Create language selector element
   function createLanguageSelector() {
-    // Remove existing if any
-    const existing = document.getElementById('cookie-lang-selector-js');
-    if (existing) existing.remove();
+    // Check if already exists
+    if (document.getElementById('cookie-lang-selector-js')) {
+      return document.getElementById('cookie-lang-selector-js');
+    }
     
-    // Create the element
-    const selector = document.createElement('div');
+    var selector = document.createElement('div');
     selector.id = 'cookie-lang-selector-js';
-    selector.style.cssText = 'display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, calc(-50% - 160px)); z-index: 9999999; background: #132A4B; padding: 10px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); gap: 10px; align-items: center; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;';
+    selector.style.cssText = 'position: fixed; bottom: 180px; left: 50%; transform: translateX(-50%); z-index: 2147483647; display: flex; align-items: center; justify-content: center; background: #132A4B; padding: 8px 16px; border-radius: 8px 8px 0 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.3); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;';
     
-    selector.innerHTML = '<span style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-right: 5px;">Language:</span>' +
-      '<button type="button" class="lang-btn" data-lang="en" style="background: #D78F00; border: 1px solid #D78F00; color: #fff; padding: 6px 16px; font-size: 0.85rem; border-radius: 4px; cursor: pointer; font-weight: 500; margin-left: 5px;">EN</button>' +
-      '<button type="button" class="lang-btn" data-lang="de" style="background: transparent; border: 1px solid rgba(255,255,255,0.4); color: rgba(255,255,255,0.8); padding: 6px 16px; font-size: 0.85rem; border-radius: 4px; cursor: pointer; font-weight: 500; margin-left: 5px;">DE</button>' +
-      '<button type="button" class="lang-btn" data-lang="zh" style="background: transparent; border: 1px solid rgba(255,255,255,0.4); color: rgba(255,255,255,0.8); padding: 6px 16px; font-size: 0.85rem; border-radius: 4px; cursor: pointer; font-weight: 500; margin-left: 5px;">中文</button>';
+    var label = document.createElement('span');
+    label.style.cssText = 'color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-right: 5px;';
+    label.textContent = 'Language:';
+    selector.appendChild(label);
     
-    // Add to body
-    document.body.appendChild(selector);
-    langSelectorElement = selector;
+    var languages = [
+      { code: 'en', label: 'EN' },
+      { code: 'de', label: 'DE' },
+      { code: 'zh', label: '中文' }
+    ];
     
-    // Add click handlers
-    selector.querySelectorAll('.lang-btn').forEach(function(btn) {
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        var lang = this.getAttribute('data-lang');
-        currentLang = lang;
-        updateBannerLanguage(lang);
-        
-        // Update button styles
-        selector.querySelectorAll('.lang-btn').forEach(function(b) {
-          if (b.getAttribute('data-lang') === lang) {
-            b.style.background = '#D78F00';
-            b.style.borderColor = '#D78F00';
-            b.style.color = '#fff';
-          } else {
-            b.style.background = 'transparent';
-            b.style.borderColor = 'rgba(255,255,255,0.4)';
-            b.style.color = 'rgba(255,255,255,0.8)';
-          }
-        });
+    languages.forEach(function(lang) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'lang-btn';
+      btn.setAttribute('data-lang', lang.code);
+      btn.textContent = lang.label;
+      btn.style.cssText = 'background: transparent; border: 1px solid rgba(255,255,255,0.4); color: rgba(255,255,255,0.8); padding: 6px 16px; font-size: 0.85rem; border-radius: 4px; cursor: pointer; font-weight: 500; margin-left: 5px;';
+      
+      if (lang.code === currentLang) {
+        btn.style.background = '#D78F00';
+        btn.style.borderColor = '#D78F00';
+        btn.style.color = '#fff';
+      }
+      
+      btn.addEventListener('click', function() {
+        setLanguage(lang.code);
       });
       
-      // Hover effect
-      btn.addEventListener('mouseenter', function() {
-        if (this.getAttribute('data-lang') !== currentLang) {
-          this.style.background = 'rgba(255,255,255,0.15)';
-          this.style.color = '#fff';
-        }
-      });
-      btn.addEventListener('mouseleave', function() {
-        if (this.getAttribute('data-lang') !== currentLang) {
-          this.style.background = 'transparent';
-          this.style.color = 'rgba(255,255,255,0.8)';
+      selector.appendChild(btn);
+    });
+    
+    document.body.appendChild(selector);
+    return selector;
+  }
+  
+  // Update button styles when language changes
+  function updateButtonStyles() {
+    var buttons = document.querySelectorAll('#cookie-lang-selector-js .lang-btn');
+    buttons.forEach(function(btn) {
+      var lang = btn.getAttribute('data-lang');
+      if (lang === currentLang) {
+        btn.style.background = '#D78F00';
+        btn.style.borderColor = '#D78F00';
+        btn.style.color = '#fff';
+      } else {
+        btn.style.background = 'transparent';
+        btn.style.borderColor = 'rgba(255,255,255,0.4)';
+        btn.style.color = 'rgba(255,255,255,0.8)';
+      }
+    });
+  }
+  
+  // Set language and update banner text
+  function setLanguage(lang) {
+    currentLang = lang;
+    updateButtonStyles();
+    updateBannerText(lang);
+  }
+  
+  // Update the cookie banner text
+  function updateBannerText(lang) {
+    var t = translations[lang];
+    if (!t) return;
+    
+    // Update main prompt text - look for various possible selectors
+    var promptSelectors = ['.stcm-prompt__text', '.stcm-prompt p', '.stcm-message', '[class*="prompt"] p'];
+    promptSelectors.forEach(function(sel) {
+      var elements = document.querySelectorAll(sel);
+      elements.forEach(function(el) {
+        if (el && el.textContent && el.textContent.length > 50) {
+          el.textContent = t.mainText;
         }
       });
     });
     
-    console.log('[Cookie Language Selector] Created successfully');
-    return selector;
-  }
-  
-  // Function to update banner text
-  function updateBannerLanguage(lang) {
-    var t = cookieTranslations[lang];
-    
-    // Update prompt description
-    var promptDesc = document.querySelector('#stcm-wrapper .stcm-prompt p');
-    if (promptDesc) promptDesc.innerHTML = t.promptDescription;
-    
-    // Update buttons
-    var acceptBtn = document.querySelector('#stcm-wrapper button[data-stcm-action="accept-all"]');
-    if (acceptBtn) acceptBtn.textContent = t.acceptAll;
-    
-    var rejectBtn = document.querySelector('#stcm-wrapper button[data-stcm-action="reject-all"]');
-    if (rejectBtn) rejectBtn.textContent = t.rejectNonEssential;
-    
-    var prefsBtn = document.querySelector('#stcm-wrapper button[data-stcm-action="preferences"], #stcm-wrapper a[data-stcm-action="preferences"]');
-    if (prefsBtn) prefsBtn.textContent = t.managePreferences;
-    
-    console.log('[Cookie Language Selector] Language updated to:', lang);
-  }
-  
-  // Function to show/hide language selector
-  function updateSelectorVisibility() {
-    if (!langSelectorElement) {
-      langSelectorElement = createLanguageSelector();
-    }
-    
-    var banner = document.querySelector('#stcm-wrapper .stcm-prompt');
-    var backdrop = document.querySelector('#stcm-wrapper .stcm-backdrop');
-    
-    var bannerVisible = banner && window.getComputedStyle(banner).display !== 'none' && window.getComputedStyle(banner).visibility !== 'hidden';
-    var backdropVisible = backdrop && window.getComputedStyle(backdrop).display !== 'none';
-    
-    if (bannerVisible || backdropVisible) {
-      langSelectorElement.style.display = 'flex';
-    } else {
-      langSelectorElement.style.display = 'none';
-    }
-  }
-  
-  // Initialize when DOM is ready
-  function init() {
-    console.log('[Cookie Language Selector] Initializing...');
-    
-    // Start checking for banner visibility
-    setInterval(updateSelectorVisibility, 200);
-    
-    // Also use MutationObserver for faster response
-    var checkWrapper = function() {
-      var wrapper = document.querySelector('#stcm-wrapper');
-      if (wrapper) {
-        var observer = new MutationObserver(updateSelectorVisibility);
-        observer.observe(wrapper, { childList: true, subtree: true, attributes: true });
-        console.log('[Cookie Language Selector] MutationObserver attached');
-      } else {
-        setTimeout(checkWrapper, 100);
+    // Update buttons by looking for common patterns
+    var allButtons = document.querySelectorAll('button');
+    allButtons.forEach(function(btn) {
+      var text = btn.textContent.trim().toLowerCase();
+      if (text.includes('accept all') || text.includes('alle akzeptieren') || text.includes('全部接受')) {
+        btn.textContent = t.acceptAll;
+      } else if (text.includes('reject') || text.includes('ablehnen') || text.includes('拒绝')) {
+        btn.textContent = t.rejectNonEssential;
+      } else if (text.includes('manage') || text.includes('preferences') || text.includes('einstellungen') || text.includes('管理')) {
+        btn.textContent = t.managePreferences;
+      } else if (text.includes('save') || text.includes('speichern') || text.includes('保存')) {
+        btn.textContent = t.savePreferences;
       }
-    };
-    checkWrapper();
+    });
     
-    // Initial check
-    updateSelectorVisibility();
+    // Update Cookie Policy link
+    var links = document.querySelectorAll('a');
+    links.forEach(function(link) {
+      var text = link.textContent.trim().toLowerCase();
+      if (text.includes('cookie policy') || text.includes('cookie-richtlinie') || text.includes('cookie政策')) {
+        link.textContent = t.cookiePolicy;
+        // Ensure link goes to English version
+        if (link.href && link.href.includes('cookie-policy') && !link.href.includes('lang=')) {
+          link.href = link.href + (link.href.includes('?') ? '&' : '?') + 'lang=en';
+        }
+      }
+    });
   }
   
-  // Start initialization
+  // Check if cookie banner is visible
+  function isBannerVisible() {
+    // Check for various Silktide elements
+    var selectors = [
+      '#stcm-backdrop',
+      '.stcm-backdrop',
+      '.stcm-prompt',
+      '[class*="stcm"]',
+      '[id*="stcm"]'
+    ];
+    
+    for (var i = 0; i < selectors.length; i++) {
+      var el = document.querySelector(selectors[i]);
+      if (el) {
+        var style = window.getComputedStyle(el);
+        var rect = el.getBoundingClientRect();
+        // Check if element is visible (has dimensions and not hidden)
+        if (style.display !== 'none' && 
+            style.visibility !== 'hidden' && 
+            style.opacity !== '0' &&
+            rect.width > 0 && 
+            rect.height > 0) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  
+  // Show/hide language selector based on banner visibility
+  function updateSelectorVisibility() {
+    var selector = document.getElementById('cookie-lang-selector-js');
+    if (!selector) {
+      selector = createLanguageSelector();
+    }
+    
+    var bannerVisible = isBannerVisible();
+    
+    if (bannerVisible) {
+      selector.style.display = 'flex';
+    } else {
+      selector.style.display = 'none';
+    }
+  }
+  
+  // Fix Cookie Policy links to always open English version
+  function fixCookiePolicyLinks() {
+    var links = document.querySelectorAll('a[href*="cookie-policy"]');
+    links.forEach(function(link) {
+      if (!link.href.includes('lang=')) {
+        link.href = link.href + (link.href.includes('?') ? '&' : '?') + 'lang=en';
+      }
+    });
+  }
+  
+  // Initialize
+  function init() {
+    // Detect initial language
+    currentLang = detectLanguage();
+    
+    // Create the language selector
+    createLanguageSelector();
+    
+    // Fix Cookie Policy links
+    fixCookiePolicyLinks();
+    
+    // Update banner text with detected language
+    updateBannerText(currentLang);
+    
+    // Check visibility immediately
+    updateSelectorVisibility();
+    
+    // Set up interval to check visibility
+    setInterval(updateSelectorVisibility, 300);
+    
+    // Also watch for DOM changes
+    var observer = new MutationObserver(function() {
+      updateSelectorVisibility();
+      fixCookiePolicyLinks();
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class']
+    });
+    
+    console.log('Cookie Language Selector initialized. Current language:', currentLang);
+  }
+  
+  // Run when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
   
+  // Also run after a short delay to ensure Silktide has loaded
+  setTimeout(init, 1000);
+  setTimeout(init, 2000);
 })();
