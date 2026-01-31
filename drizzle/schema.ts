@@ -378,9 +378,7 @@ export const legalPages = mysqlTable("legal_pages", {
   id: int("id").autoincrement().primaryKey(),
   slug: varchar("slug", { length: 100 }).notNull().unique(),
   title: varchar("title", { length: 255 }).notNull(),
-  content: text("content"),
-  contentDe: text("content_de"),
-  contentZh: text("content_zh"),
+  content: text("content"),  // Stores JSON with {en, de, zh} for multi-language support
   metaTitle: varchar("meta_title", { length: 255 }),
   metaDescription: text("meta_description"),
   isActive: boolean("is_active").default(true),
