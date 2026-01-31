@@ -730,9 +730,7 @@ export const appRouter = router({
     create: adminProcedure.input(z.object({
       slug: z.string(),
       title: z.string(),
-      content: z.string().optional(),
-            contentDe: z.string().optional(),
-      contentZh: z.string().optional(),
+      content: z.string().optional(),  // JSON format: {en: "...", de: "...", zh: "..."}
       metaTitle: z.string().optional(),
       metaDescription: z.string().optional(),
       isActive: z.boolean().optional(),
@@ -742,9 +740,7 @@ export const appRouter = router({
       id: z.number(),
       slug: z.string().optional(),
       title: z.string().optional(),
-      content: z.string().optional(),
-            contentDe: z.string().optional(),
-      contentZh: z.string().optional(),
+      content: z.string().optional(),  // JSON format: {en: "...", de: "...", zh: "..."}
       metaTitle: z.string().optional(),
       metaDescription: z.string().optional(),
       isActive: z.boolean().optional(),
