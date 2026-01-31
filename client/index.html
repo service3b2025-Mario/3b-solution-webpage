@@ -17,13 +17,10 @@
     </script>
     
     <meta charset="UTF-8" />
-    <!-- FIXED: Removed maximum-scale=1 for accessibility (allows zoom) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Google Search Console Verification -->
-    <!-- www.3bsolution.com -->
     <meta name="google-site-verification" content="h46SUR56zcv1oZvtAiGpn5JMRfLG1kVaInKSHbacP0c" />
-    <!-- 3bsolution.com (non-www) -->
     <meta name="google-site-verification" content="QvyyYhH7nan2IzCe9eg22CnPhn3gI494QxQzS70fgRc" />
     
     <!-- Primary Meta Tags -->
@@ -48,32 +45,25 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     
-    <!-- Silktide Cookie Consent CSS - Load early for no flash of unstyled content -->
+    <!-- Silktide Cookie Consent CSS -->
     <link rel="stylesheet" href="https://cdn.3bsolution.com/assets/silktide-consent-manager.css">
     
-    <!-- Custom Brand Styling for Cookie Consent -->
+    <!-- Custom Brand Styling for Cookie Consent + Language Selector -->
     <style>
-      /* 3B Solution Exact Brand Colors for Cookie Consent Banner */
+      /* 3B Solution Brand Colors for Cookie Consent */
       #stcm-wrapper {
-        /* Exact Brand Colors */
-        --primaryColor: #D78F00;         /* Exact Orange - RGB(215, 143, 0) */
-        --backgroundColor: #132A4B;      /* Exact Blue - RGB(19, 42, 75) */
-        --textColor: #FFFFFF;            /* White text for contrast */
+        --primaryColor: #D78F00;
+        --backgroundColor: #132A4B;
+        --textColor: #FFFFFF;
         --fontFamily: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        
-        /* Button styling */
         --boxShadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        
-        /* Backdrop */
         --backdropBackgroundColor: rgba(0, 0, 0, 0.5);
         --backdropBackgroundBlur: 5px;
-        
-        /* Cookie icon - HIDE IT */
         --iconColor: transparent;
         --iconBackgroundColor: transparent;
       }
 
-      /* CENTER the banner PERFECTLY and make it SMALLER */
+      /* Center the banner */
       #stcm-wrapper .stcm-prompt {
         position: fixed !important;
         top: 50% !important;
@@ -90,89 +80,45 @@
         box-sizing: border-box !important;
       }
 
-      /* Ensure content is properly contained */
-      #stcm-wrapper .stcm-prompt > * {
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-      }
-
-      /* Adjust text size */
       #stcm-wrapper .stcm-prompt p {
         font-size: 0.95rem !important;
         line-height: 1.6 !important;
         margin-bottom: 1.25rem !important;
-        padding: 0 !important;
       }
 
-      /* Make buttons container flex and wrap properly */
       #stcm-wrapper .stcm-prompt .stcm-buttons {
         display: flex !important;
         flex-wrap: wrap !important;
         gap: 0.75rem !important;
         margin-top: 1.25rem !important;
         justify-content: center !important;
-        align-items: center !important;
       }
 
-      /* Make buttons more compact */
       #stcm-wrapper .stcm-prompt button {
         padding: 0.7rem 1.5rem !important;
         font-size: 0.9rem !important;
-        white-space: nowrap !important;
-        flex-shrink: 0 !important;
-      }
-
-      /* Put "Manage preferences" link below buttons, centered */
-      #stcm-wrapper .stcm-prompt a[data-stcm-action="preferences"],
-      #stcm-wrapper .stcm-prompt button[data-stcm-action="preferences"] {
-        display: block !important;
-        width: 100% !important;
-        text-align: center !important;
-        margin-top: 1rem !important;
-        font-size: 0.85rem !important;
-        padding: 0.5rem !important;
-      }
-
-      /* HIDE the Silktide logo/icon completely */
-      #stcm-wrapper .stcm-icon,
-      #stcm-wrapper [class*="icon"],
-      #stcm-wrapper svg {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-      }
-      
-      /* HIDE Silktide branding link completely */
-      #stcm-wrapper a.stcm-logo,
-      #stcm-wrapper .stcm-logo,
-      #stcm-wrapper a[href*="silktide"],
-      #stcm-wrapper [class*="logo"],
-      #stcm-banner a.stcm-logo,
-      .stcm-modal a[href*="silktide"],
-      a[href*="consent-manager"] {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
-        width: 0 !important;
-        overflow: hidden !important;
-        position: absolute !important;
-        pointer-events: none !important;
-      }
-
-      /* Additional custom styling for buttons */
-      #stcm-wrapper button {
         font-weight: 600;
         letter-spacing: 0.025em;
         transition: all 0.2s ease-in-out;
       }
 
-      #stcm-wrapper button:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      #stcm-wrapper .stcm-icon {
+        display: none !important;
+      }
+      
+      /* Hide Silktide branding */
+      #stcm-wrapper a.stcm-logo,
+      #stcm-wrapper .stcm-logo,
+      #stcm-wrapper a[href*="silktide"],
+      a[href*="consent-manager"] {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+        overflow: hidden !important;
       }
 
-      /* Primary button (Accept all) - Orange */
+      /* Primary button - Orange */
       #stcm-wrapper button[data-stcm-action="accept-all"] {
         background-color: #D78F00 !important;
         color: #FFFFFF !important;
@@ -183,63 +129,77 @@
         background-color: #C17F00 !important;
       }
 
-      /* Secondary button (Reject non-essential) - Orange outlined */
+      /* Secondary button - Orange outlined */
       #stcm-wrapper button[data-stcm-action="reject-all"] {
         background-color: transparent !important;
         color: #D78F00 !important;
         border: 2px solid #D78F00 !important;
       }
 
-      #stcm-wrapper button[data-stcm-action="reject-all"]:hover {
-        background-color: rgba(215, 143, 0, 0.1) !important;
-      }
-
-      /* Preferences link - Orange */
+      /* Preferences link */
       #stcm-wrapper a,
       #stcm-wrapper button[data-stcm-action="preferences"] {
         color: #D78F00 !important;
       }
 
-      #stcm-wrapper a:hover,
-      #stcm-wrapper button[data-stcm-action="preferences"]:hover {
-        color: #E79F10 !important;
-        text-decoration: underline;
-      }
-
-      /* Modal styling - Blue background */
+      /* Modal styling */
       #stcm-wrapper .stcm-modal {
         background-color: #132A4B !important;
         color: #FFFFFF !important;
         max-width: 600px !important;
-        margin: 0 auto !important;
       }
 
-      /* Toggle switches - Orange when checked */
-      #stcm-wrapper input[type="checkbox"]:checked {
-        background-color: #D78F00 !important;
-        border-color: #D78F00 !important;
-      }
-      
-      /* CCPA Notice Styling */
-      .ccpa-notice {
-        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-        border: 2px solid #f59e0b;
+      /* ========================================
+         LANGUAGE SELECTOR - FIXED POSITION
+         This will ALWAYS appear when cookie banner is shown
+         ======================================== */
+      #cookie-lang-selector {
+        display: none; /* Hidden by default, shown via JS when banner appears */
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, calc(-50% - 180px)); /* Position above the cookie banner */
+        z-index: 999999;
+        background: #132A4B;
+        padding: 10px 20px;
         border-radius: 8px;
-        padding: 12px 16px;
-        margin: 16px 0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      }
+      
+      #cookie-lang-selector.visible {
+        display: flex !important;
+        gap: 10px;
+        align-items: center;
+      }
+      
+      #cookie-lang-selector span {
+        color: rgba(255, 255, 255, 0.7);
         font-size: 0.85rem;
-        color: #92400e;
+        margin-right: 5px;
       }
       
-      .ccpa-notice strong {
-        display: block;
-        margin-bottom: 6px;
-        color: #78350f;
+      .cookie-lang-btn {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        color: rgba(255, 255, 255, 0.8);
+        padding: 6px 16px;
+        font-size: 0.85rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 500;
       }
       
-      .ccpa-notice a {
-        color: #b45309 !important;
-        text-decoration: underline;
+      .cookie-lang-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: #FFFFFF;
+        border-color: rgba(255, 255, 255, 0.6);
+      }
+      
+      .cookie-lang-btn.active {
+        background: #D78F00;
+        border-color: #D78F00;
+        color: #FFFFFF;
       }
 
       /* Mobile responsive */
@@ -250,15 +210,6 @@
           padding: 1.5rem !important;
         }
         
-        #stcm-wrapper .stcm-prompt p {
-          font-size: 0.875rem !important;
-        }
-        
-        #stcm-wrapper .stcm-prompt button {
-          padding: 0.6rem 1.25rem !important;
-          font-size: 0.875rem !important;
-        }
-        
         #stcm-wrapper .stcm-buttons {
           flex-direction: column !important;
         }
@@ -266,10 +217,20 @@
         #stcm-wrapper .stcm-buttons button {
           width: 100% !important;
         }
+        
+        #cookie-lang-selector {
+          transform: translate(-50%, calc(-50% - 160px));
+          padding: 8px 15px;
+        }
+        
+        .cookie-lang-btn {
+          padding: 5px 12px;
+          font-size: 0.8rem;
+        }
       }
     </style>
     
-    <!-- Google Analytics - Loads after consent -->
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-KL93ZTPFCF"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -282,13 +243,21 @@
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "4cc22ca34fc443978b46e45c87ce3bc1"}'></script>
   </head>
   <body>
+    <!-- LANGUAGE SELECTOR - Fixed HTML element, always in DOM -->
+    <div id="cookie-lang-selector">
+      <span>Language:</span>
+      <button type="button" class="cookie-lang-btn active" data-lang="en">EN</button>
+      <button type="button" class="cookie-lang-btn" data-lang="de">DE</button>
+      <button type="button" class="cookie-lang-btn" data-lang="zh">中文</button>
+    </div>
+    
     <!-- Silktide Cookie Consent Script -->
     <script src="https://cdn.3bsolution.com/assets/silktide-consent-manager.js"></script>
     <script>
-      // Multi-language translations for cookie consent
+      // Multi-language translations
       const cookieTranslations = {
         en: {
-          promptDescription: '<p>We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept all", you consent to our use of cookies. <a href="/legal/cookie-policy">Cookie Policy</a></p>',
+          promptDescription: '<p>We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept all", you consent to our use of cookies. <a href="/legal/cookie-policy?lang=en">Cookie Policy</a></p>',
           acceptAll: 'Accept all',
           rejectNonEssential: 'Reject non-essential',
           managePreferences: 'Manage preferences',
@@ -300,11 +269,10 @@
           analytics: 'Analytics',
           analyticsDesc: 'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.',
           marketing: 'Marketing',
-          marketingDesc: 'These cookies are used to deliver personalized advertisements and measure the effectiveness of our marketing campaigns.',
-          ccpaNotice: '<div class="ccpa-notice"><strong>🏛️ California Privacy Rights</strong>California residents: You have the right to opt-out of the sale or sharing of your personal information. <a href="/legal/cookie-policy#ccpa">Learn more</a></div>'
+          marketingDesc: 'These cookies are used to deliver personalized advertisements and measure the effectiveness of our marketing campaigns.'
         },
         de: {
-          promptDescription: '<p>Wir verwenden Cookies, um Ihr Browsererlebnis zu verbessern und unseren Datenverkehr zu analysieren. Durch Klicken auf "Alle akzeptieren" stimmen Sie der Verwendung von Cookies zu. <a href="/legal/cookie-policy">Cookie-Richtlinie</a></p>',
+          promptDescription: '<p>Wir verwenden Cookies, um Ihr Browsererlebnis zu verbessern und unseren Datenverkehr zu analysieren. Durch Klicken auf "Alle akzeptieren" stimmen Sie der Verwendung von Cookies zu. <a href="/legal/cookie-policy?lang=en">Cookie-Richtlinie</a></p>',
           acceptAll: 'Alle akzeptieren',
           rejectNonEssential: 'Nicht notwendige ablehnen',
           managePreferences: 'Einstellungen verwalten',
@@ -314,13 +282,12 @@
           essential: 'Notwendig',
           essentialDesc: 'Diese Cookies sind für die Funktion der Website erforderlich und können nicht deaktiviert werden.',
           analytics: 'Analytik',
-          analyticsDesc: 'Diese Cookies helfen uns zu verstehen, wie Besucher mit unserer Website interagieren, indem sie Informationen anonym sammeln und melden.',
+          analyticsDesc: 'Diese Cookies helfen uns zu verstehen, wie Besucher mit unserer Website interagieren.',
           marketing: 'Marketing',
-          marketingDesc: 'Diese Cookies werden verwendet, um personalisierte Werbung zu liefern und die Wirksamkeit unserer Marketingkampagnen zu messen.',
-          ccpaNotice: '<div class="ccpa-notice"><strong>🏛️ Kalifornische Datenschutzrechte</strong>Einwohner Kaliforniens: Sie haben das Recht, dem Verkauf oder der Weitergabe Ihrer persönlichen Daten zu widersprechen. <a href="/legal/cookie-policy#ccpa">Mehr erfahren</a></div>'
+          marketingDesc: 'Diese Cookies werden verwendet, um personalisierte Werbung zu liefern.'
         },
         zh: {
-          promptDescription: '<p>我们使用Cookie来增强您的浏览体验并分析我们的流量。点击"全部接受"即表示您同意我们使用Cookie。<a href="/legal/cookie-policy">Cookie政策</a></p>',
+          promptDescription: '<p>我们使用Cookie来增强您的浏览体验并分析我们的流量。点击"全部接受"即表示您同意我们使用Cookie。<a href="/legal/cookie-policy?lang=en">Cookie政策</a></p>',
           acceptAll: '全部接受',
           rejectNonEssential: '拒绝非必要',
           managePreferences: '管理偏好设置',
@@ -330,44 +297,76 @@
           essential: '必要',
           essentialDesc: '这些Cookie是网站正常运行所必需的，无法关闭。',
           analytics: '分析',
-          analyticsDesc: '这些Cookie通过匿名收集和报告信息，帮助我们了解访问者如何与我们的网站互动。',
+          analyticsDesc: '这些Cookie帮助我们了解访问者如何与我们的网站互动。',
           marketing: '营销',
-          marketingDesc: '这些Cookie用于投放个性化广告并衡量我们营销活动的效果。',
-          ccpaNotice: '<div class="ccpa-notice"><strong>🏛️ 加州隐私权</strong>加州居民：您有权选择不出售或共享您的个人信息。<a href="/legal/cookie-policy#ccpa">了解更多</a></div>'
+          marketingDesc: '这些Cookie用于投放个性化广告。'
         }
       };
       
-      // Detect user language based on browser settings or geo-location
-      function detectLanguage() {
-        const browserLang = navigator.language || navigator.userLanguage;
-        if (browserLang.startsWith('de')) return 'de';
-        if (browserLang.startsWith('zh')) return 'zh';
-        return 'en';
+      let currentLang = 'en';
+      const langSelector = document.getElementById('cookie-lang-selector');
+      
+      // Function to update banner text
+      function updateBannerLanguage(lang) {
+        currentLang = lang;
+        const t = cookieTranslations[lang];
+        
+        // Update prompt description
+        const promptDesc = document.querySelector('#stcm-wrapper .stcm-prompt p');
+        if (promptDesc) promptDesc.innerHTML = t.promptDescription;
+        
+        // Update buttons
+        const acceptBtn = document.querySelector('#stcm-wrapper button[data-stcm-action="accept-all"]');
+        if (acceptBtn) acceptBtn.textContent = t.acceptAll;
+        
+        const rejectBtn = document.querySelector('#stcm-wrapper button[data-stcm-action="reject-all"]');
+        if (rejectBtn) rejectBtn.textContent = t.rejectNonEssential;
+        
+        const prefsBtn = document.querySelector('#stcm-wrapper button[data-stcm-action="preferences"], #stcm-wrapper a[data-stcm-action="preferences"]');
+        if (prefsBtn) prefsBtn.textContent = t.managePreferences;
+        
+        // Update active button state
+        document.querySelectorAll('.cookie-lang-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.lang === lang);
+        });
       }
       
-      // Get translations for current language
-      const currentLang = detectLanguage();
-      const t = cookieTranslations[currentLang];
+      // Add click handlers to language buttons
+      document.querySelectorAll('.cookie-lang-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          updateBannerLanguage(this.dataset.lang);
+        });
+      });
       
-      // Check for California visitors (CCPA)
-      let isCalifornia = false;
-      fetch('https://ipapi.co/json/')
-        .then(response => response.json())
-        .then(data => {
-          if (data.region === 'California' || data.region_code === 'CA') {
-            isCalifornia = true;
-            // Add CCPA notice to the prompt description
-            const promptDesc = document.querySelector('#stcm-wrapper .stcm-prompt p');
-            if (promptDesc) {
-              promptDesc.insertAdjacentHTML('afterend', t.ccpaNotice);
-            }
-          }
-        })
-        .catch(err => console.log('Could not detect location for CCPA'));
+      // Show/hide language selector based on cookie banner visibility
+      function checkBannerVisibility() {
+        const banner = document.querySelector('#stcm-wrapper .stcm-prompt');
+        const backdrop = document.querySelector('#stcm-wrapper .stcm-backdrop');
+        
+        if ((banner && getComputedStyle(banner).display !== 'none') || 
+            (backdrop && getComputedStyle(backdrop).display !== 'none')) {
+          langSelector.classList.add('visible');
+        } else {
+          langSelector.classList.remove('visible');
+        }
+      }
       
-      // Initialize Silktide Cookie Consent with multi-language support
+      // Check visibility periodically and on DOM changes
+      setInterval(checkBannerVisibility, 200);
+      
+      const observer = new MutationObserver(checkBannerVisibility);
+      setTimeout(() => {
+        const wrapper = document.querySelector('#stcm-wrapper');
+        if (wrapper) {
+          observer.observe(wrapper, { childList: true, subtree: true, attributes: true });
+        }
+      }, 500);
+      
+      // Get initial translations
+      let t = cookieTranslations[currentLang];
+      
+      // Initialize Silktide
       window.silktideConsentManager.init({
-        // Consent Types Configuration
         consentTypes: [
           {
             id: 'essential',
@@ -382,12 +381,9 @@
             defaultValue: false,
             gtag: 'analytics_storage',
             onAccept: function() {
-              console.log('Analytics cookies accepted');
-              // Update Google Consent Mode
               gtag('consent', 'update', { 'analytics_storage': 'granted' });
             },
             onReject: function() {
-              console.log('Analytics cookies rejected');
               gtag('consent', 'update', { 'analytics_storage': 'denied' });
             }
           },
@@ -398,7 +394,6 @@
             defaultValue: false,
             gtag: ['ad_storage', 'ad_user_data', 'ad_personalization'],
             onAccept: function() {
-              console.log('Marketing cookies accepted');
               gtag('consent', 'update', {
                 'ad_storage': 'granted',
                 'ad_user_data': 'granted',
@@ -406,7 +401,6 @@
               });
             },
             onReject: function() {
-              console.log('Marketing cookies rejected');
               gtag('consent', 'update', {
                 'ad_storage': 'denied',
                 'ad_user_data': 'denied',
@@ -418,7 +412,6 @@
         
         eventName: 'cookie_consent_update',
         
-        // Customized text with multi-language support
         text: {
           prompt: {
             description: t.promptDescription,
@@ -433,30 +426,13 @@
           }
         },
         
-        // Prompt position - will be overridden by CSS to center
-        prompt: {
-          position: 'bottomCenter'
-        },
+        prompt: { position: 'bottomCenter' },
+        icon: { position: 'bottomLeft', show: false },
+        backdrop: { show: true },
+        branding: { show: false },
         
-        // Icon position - DISABLED (hidden via CSS)
-        icon: {
-          position: 'bottomLeft',
-          show: false  // Disable icon
-        },
-        
-        // Show backdrop
-        backdrop: {
-          show: true
-        },
-        
-        // Hide Silktide branding
-        branding: {
-          show: false
-        },
-        
-        // Callbacks
         onAcceptAll: function() {
-          console.log('User accepted all cookies');
+          langSelector.classList.remove('visible');
           gtag('consent', 'update', {
             'analytics_storage': 'granted',
             'ad_storage': 'granted',
@@ -465,7 +441,7 @@
           });
         },
         onRejectAll: function() {
-          console.log('User rejected non-essential cookies');
+          langSelector.classList.remove('visible');
           gtag('consent', 'update', {
             'analytics_storage': 'denied',
             'ad_storage': 'denied',
@@ -475,54 +451,24 @@
         }
       });
       
-      // Remove Silktide branding link after initialization
-      setTimeout(function() {
-        const brandingLinks = document.querySelectorAll('a[href*="silktide"], a[href*="consent-manager"], .stcm-logo');
-        brandingLinks.forEach(function(link) {
-          link.style.display = 'none';
-          link.remove();
-        });
-      }, 100);
-    </script>
-    
-    <!-- Cloudflare Analytics Event Listener -->
-    <script>
-    document.addEventListener('cookie_consent_update', function() {
-      // Trigger Cloudflare Analytics with consent info
-      if (typeof window.silktideConsentManager !== 'undefined') {
-        const manager = window.silktideConsentManager.getInstance();
-        const consents = manager.getAcceptedConsents();
-        
-        // Log consent status for Cloudflare Analytics
-        if (window.cloudflareAnalytics) {
-          window.cloudflareAnalytics.track('consent_updated', {
-            language: {
-              locale: {
-                en: {
-                  name: 'Cloudflare Analytics'
-                }
-              }
-            }
-          });
-        }
-      }
-    });
+      // Remove branding
+      setTimeout(() => {
+        document.querySelectorAll('a[href*="silktide"], .stcm-logo').forEach(el => el.remove());
+      }, 200);
     </script>
     
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- OPTIMIZED: Delay Tidio chat loading by 5 seconds for better LCP/TBT -->
+    <!-- Tidio chat - delayed load -->
     <script>
-      // Load Tidio after page is fully loaded with 5 second delay
-      // This significantly improves mobile performance scores
       window.addEventListener('load', function() {
         setTimeout(function() {
           var tidioScript = document.createElement('script');
           tidioScript.src = '//code.tidio.co/cvpvxh6l67b1ohzzgthjoesvluguc84c.js';
           tidioScript.async = true;
           document.body.appendChild(tidioScript);
-        }, 5000); // 5 second delay after page load
+        }, 5000);
       });
     </script>
   </body>
