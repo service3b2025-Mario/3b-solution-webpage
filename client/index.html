@@ -48,7 +48,7 @@
     <!-- Silktide Cookie Consent CSS -->
     <link rel="stylesheet" href="https://cdn.3bsolution.com/assets/silktide-consent-manager.css">
     
-    <!-- Custom Brand Styling for Cookie Consent + Language Selector -->
+    <!-- Custom Brand Styling for Cookie Consent -->
     <style>
       /* 3B Solution Brand Colors for Cookie Consent */
       #stcm-wrapper {
@@ -149,59 +149,6 @@
         max-width: 600px !important;
       }
 
-      /* ========================================
-         LANGUAGE SELECTOR - FIXED POSITION
-         This will ALWAYS appear when cookie banner is shown
-         ======================================== */
-      #cookie-lang-selector {
-        display: none; /* Hidden by default, shown via JS when banner appears */
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, calc(-50% - 180px)); /* Position above the cookie banner */
-        z-index: 999999;
-        background: #132A4B;
-        padding: 10px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      }
-      
-      #cookie-lang-selector.visible {
-        display: flex !important;
-        gap: 10px;
-        align-items: center;
-      }
-      
-      #cookie-lang-selector span {
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 0.85rem;
-        margin-right: 5px;
-      }
-      
-      .cookie-lang-btn {
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        color: rgba(255, 255, 255, 0.8);
-        padding: 6px 16px;
-        font-size: 0.85rem;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-weight: 500;
-      }
-      
-      .cookie-lang-btn:hover {
-        background: rgba(255, 255, 255, 0.15);
-        color: #FFFFFF;
-        border-color: rgba(255, 255, 255, 0.6);
-      }
-      
-      .cookie-lang-btn.active {
-        background: #D78F00;
-        border-color: #D78F00;
-        color: #FFFFFF;
-      }
-
       /* Mobile responsive */
       @media (max-width: 640px) {
         #stcm-wrapper .stcm-prompt {
@@ -216,16 +163,6 @@
         
         #stcm-wrapper .stcm-buttons button {
           width: 100% !important;
-        }
-        
-        #cookie-lang-selector {
-          transform: translate(-50%, calc(-50% - 160px));
-          padding: 8px 15px;
-        }
-        
-        .cookie-lang-btn {
-          padding: 5px 12px;
-          font-size: 0.8rem;
         }
       }
     </style>
@@ -243,17 +180,15 @@
     <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "4cc22ca34fc443978b46e45c87ce3bc1"}'></script>
   </head>
   <body>
-    <!-- LANGUAGE SELECTOR - Fixed HTML element, always in DOM -->
-    <div id="cookie-lang-selector">
-      <span>Language:</span>
-      <button type="button" class="cookie-lang-btn active" data-lang="en">EN</button>
-      <button type="button" class="cookie-lang-btn" data-lang="de">DE</button>
-      <button type="button" class="cookie-lang-btn" data-lang="zh">中文</button>
-    </div>
-    
     <!-- Silktide Cookie Consent Script -->
     <script src="https://cdn.3bsolution.com/assets/silktide-consent-manager.js"></script>
     <script>
+      // =====================================================
+      // LANGUAGE SELECTOR - CREATED VIA JAVASCRIPT
+      // This creates the element dynamically to ensure it works
+      // regardless of React/Vite build process
+      // =====================================================
+      
       // Multi-language translations
       const cookieTranslations = {
         en: {
@@ -304,11 +239,87 @@
       };
       
       let currentLang = 'en';
-      const langSelector = document.getElementById('cookie-lang-selector');
+      let langSelectorElement = null;
+      
+      // Function to create the language selector element
+      function createLanguageSelector() {
+        // Remove existing if any
+        const existing = document.getElementById('cookie-lang-selector-js');
+        if (existing) existing.remove();
+        
+        // Create the element
+        const selector = document.createElement('div');
+        selector.id = 'cookie-lang-selector-js';
+        selector.style.cssText = `
+          display: none;
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, calc(-50% - 160px));
+          z-index: 9999999;
+          background: #132A4B;
+          padding: 10px 20px;
+          border-radius: 8px;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+          gap: 10px;
+          align-items: center;
+        `;
+        
+        selector.innerHTML = `
+          <span style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-right: 5px;">Language:</span>
+          <button type="button" class="lang-btn" data-lang="en" style="background: #D78F00; border: 1px solid #D78F00; color: #fff; padding: 6px 16px; font-size: 0.85rem; border-radius: 4px; cursor: pointer; font-weight: 500;">EN</button>
+          <button type="button" class="lang-btn" data-lang="de" style="background: transparent; border: 1px solid rgba(255,255,255,0.4); color: rgba(255,255,255,0.8); padding: 6px 16px; font-size: 0.85rem; border-radius: 4px; cursor: pointer; font-weight: 500;">DE</button>
+          <button type="button" class="lang-btn" data-lang="zh" style="background: transparent; border: 1px solid rgba(255,255,255,0.4); color: rgba(255,255,255,0.8); padding: 6px 16px; font-size: 0.85rem; border-radius: 4px; cursor: pointer; font-weight: 500;">中文</button>
+        `;
+        
+        // Add to body
+        document.body.appendChild(selector);
+        langSelectorElement = selector;
+        
+        // Add click handlers
+        selector.querySelectorAll('.lang-btn').forEach(btn => {
+          btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const lang = this.dataset.lang;
+            currentLang = lang;
+            updateBannerLanguage(lang);
+            
+            // Update button styles
+            selector.querySelectorAll('.lang-btn').forEach(b => {
+              if (b.dataset.lang === lang) {
+                b.style.background = '#D78F00';
+                b.style.borderColor = '#D78F00';
+                b.style.color = '#fff';
+              } else {
+                b.style.background = 'transparent';
+                b.style.borderColor = 'rgba(255,255,255,0.4)';
+                b.style.color = 'rgba(255,255,255,0.8)';
+              }
+            });
+          });
+          
+          // Hover effect
+          btn.addEventListener('mouseenter', function() {
+            if (this.dataset.lang !== currentLang) {
+              this.style.background = 'rgba(255,255,255,0.15)';
+              this.style.color = '#fff';
+            }
+          });
+          btn.addEventListener('mouseleave', function() {
+            if (this.dataset.lang !== currentLang) {
+              this.style.background = 'transparent';
+              this.style.color = 'rgba(255,255,255,0.8)';
+            }
+          });
+        });
+        
+        console.log('Language selector created via JavaScript');
+        return selector;
+      }
       
       // Function to update banner text
       function updateBannerLanguage(lang) {
-        currentLang = lang;
         const t = cookieTranslations[lang];
         
         // Update prompt description
@@ -325,42 +336,27 @@
         const prefsBtn = document.querySelector('#stcm-wrapper button[data-stcm-action="preferences"], #stcm-wrapper a[data-stcm-action="preferences"]');
         if (prefsBtn) prefsBtn.textContent = t.managePreferences;
         
-        // Update active button state
-        document.querySelectorAll('.cookie-lang-btn').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.lang === lang);
-        });
+        console.log('Cookie banner language updated to:', lang);
       }
       
-      // Add click handlers to language buttons
-      document.querySelectorAll('.cookie-lang-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          updateBannerLanguage(this.dataset.lang);
-        });
-      });
-      
-      // Show/hide language selector based on cookie banner visibility
-      function checkBannerVisibility() {
+      // Function to show/hide language selector
+      function updateSelectorVisibility() {
+        if (!langSelectorElement) {
+          langSelectorElement = createLanguageSelector();
+        }
+        
         const banner = document.querySelector('#stcm-wrapper .stcm-prompt');
         const backdrop = document.querySelector('#stcm-wrapper .stcm-backdrop');
         
-        if ((banner && getComputedStyle(banner).display !== 'none') || 
-            (backdrop && getComputedStyle(backdrop).display !== 'none')) {
-          langSelector.classList.add('visible');
+        const bannerVisible = banner && window.getComputedStyle(banner).display !== 'none' && window.getComputedStyle(banner).visibility !== 'hidden';
+        const backdropVisible = backdrop && window.getComputedStyle(backdrop).display !== 'none';
+        
+        if (bannerVisible || backdropVisible) {
+          langSelectorElement.style.display = 'flex';
         } else {
-          langSelector.classList.remove('visible');
+          langSelectorElement.style.display = 'none';
         }
       }
-      
-      // Check visibility periodically and on DOM changes
-      setInterval(checkBannerVisibility, 200);
-      
-      const observer = new MutationObserver(checkBannerVisibility);
-      setTimeout(() => {
-        const wrapper = document.querySelector('#stcm-wrapper');
-        if (wrapper) {
-          observer.observe(wrapper, { childList: true, subtree: true, attributes: true });
-        }
-      }, 500);
       
       // Get initial translations
       let t = cookieTranslations[currentLang];
@@ -432,7 +428,7 @@
         branding: { show: false },
         
         onAcceptAll: function() {
-          langSelector.classList.remove('visible');
+          if (langSelectorElement) langSelectorElement.style.display = 'none';
           gtag('consent', 'update', {
             'analytics_storage': 'granted',
             'ad_storage': 'granted',
@@ -441,7 +437,7 @@
           });
         },
         onRejectAll: function() {
-          langSelector.classList.remove('visible');
+          if (langSelectorElement) langSelectorElement.style.display = 'none';
           gtag('consent', 'update', {
             'analytics_storage': 'denied',
             'ad_storage': 'denied',
@@ -451,8 +447,22 @@
         }
       });
       
+      // Start checking for banner visibility
+      setInterval(updateSelectorVisibility, 200);
+      
+      // Also use MutationObserver for faster response
+      setTimeout(function() {
+        const wrapper = document.querySelector('#stcm-wrapper');
+        if (wrapper) {
+          const observer = new MutationObserver(updateSelectorVisibility);
+          observer.observe(wrapper, { childList: true, subtree: true, attributes: true });
+        }
+        // Initial check
+        updateSelectorVisibility();
+      }, 500);
+      
       // Remove branding
-      setTimeout(() => {
+      setTimeout(function() {
         document.querySelectorAll('a[href*="silktide"], .stcm-logo').forEach(el => el.remove());
       }, 200);
     </script>
