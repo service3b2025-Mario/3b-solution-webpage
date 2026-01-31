@@ -23,6 +23,34 @@ function detectUserCountry(): string {
   return "EN";
 }
 
+// Parse content - handles both JSON multi-language format and plain HTML
+interface MultiLangContent {
+  en?: string;
+  de?: string;
+  zh?: string;
+}
+
+function parseContent(content: string | null | undefined): MultiLangContent {
+  if (!content) return { en: "", de: "", zh: "" };
+  
+  // Try to parse as JSON first
+  try {
+    const parsed = JSON.parse(content);
+    if (typeof parsed === "object" && (parsed.en || parsed.de || parsed.zh)) {
+      return {
+        en: parsed.en || "",
+        de: parsed.de || "",
+        zh: parsed.zh || "",
+      };
+    }
+  } catch (e) {
+    // Not JSON, treat as plain HTML (legacy format - English only)
+  }
+  
+  // Fallback: treat entire content as English
+  return { en: content, de: "", zh: "" };
+}
+
 export default function LegalPage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: page, isLoading, error } = trpc.legalPages.getBySlug.useQuery(slug || "");
@@ -63,16 +91,19 @@ export default function LegalPage() {
     );
   }
 
+  // Parse the content (handles both JSON and plain HTML)
+  const parsedContent = parseContent(page.content);
+
   // Get content based on selected language
   const getContent = () => {
-    if (selectedLang === "de" && page.contentDe) return page.contentDe;
-    if (selectedLang === "zh" && page.contentZh) return page.contentZh;
-    return page.content || "";
+    if (selectedLang === "de" && parsedContent.de) return parsedContent.de;
+    if (selectedLang === "zh" && parsedContent.zh) return parsedContent.zh;
+    return parsedContent.en || "";
   };
 
   // Check if translations are available
-  const hasGerman = !!page.contentDe;
-  const hasChinese = !!page.contentZh;
+  const hasGerman = !!parsedContent.de;
+  const hasChinese = !!parsedContent.zh;
 
   return (
     <div className="min-h-screen bg-gray-50">
