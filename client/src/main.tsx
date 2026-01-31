@@ -8,6 +8,7 @@ import App from "./App";
 import { getLoginUrl } from "./const";
 import "./index.css";
 
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -19,13 +20,17 @@ const queryClient = new QueryClient({
   },
 });
 
+
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
   if (typeof window === "undefined") return;
 
+
   const isUnauthorized = error.message === UNAUTHED_ERR_MSG;
 
+
   if (!isUnauthorized) return;
+
 
   // Only redirect if OAuth is configured (login URL is not empty)
   const loginUrl = getLoginUrl();
@@ -35,6 +40,7 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
   // If no OAuth configured, don't redirect - let the page handle it
 };
 
+
 queryClient.getQueryCache().subscribe(event => {
   if (event.type === "updated" && event.action.type === "error") {
     const error = event.query.state.error;
@@ -43,6 +49,7 @@ queryClient.getQueryCache().subscribe(event => {
   }
 });
 
+
 queryClient.getMutationCache().subscribe(event => {
   if (event.type === "updated" && event.action.type === "error") {
     const error = event.mutation.state.error;
@@ -50,6 +57,7 @@ queryClient.getMutationCache().subscribe(event => {
     console.error("[API Mutation Error]", error);
   }
 });
+
 
 const trpcClient = trpc.createClient({
   links: [
@@ -66,6 +74,7 @@ const trpcClient = trpc.createClient({
   ],
 });
 
+
 createRoot(document.getElementById("root")!).render(
   <trpc.Provider client={trpcClient} queryClient={queryClient}>
     <QueryClientProvider client={queryClient}>
@@ -73,6 +82,7 @@ createRoot(document.getElementById("root")!).render(
     </QueryClientProvider>
   </trpc.Provider>
 );
+
 
 // Register service worker for caching
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
@@ -87,3 +97,25 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
     );
   });
 }
+
+
+// Load Cookie Language Selector Script
+// This dynamically loads the script since Vite strips non-module scripts from index.html
+(function loadCookieLanguageSelector() {
+  if (typeof window === 'undefined') return;
+  
+  // Check if script is already loaded
+  const existingScript = document.querySelector('script[src="/cookie-language-selector.js"]');
+  if (existingScript) return;
+  
+  const script = document.createElement('script');
+  script.src = '/cookie-language-selector.js';
+  script.async = true;
+  script.onload = () => {
+    console.log('[Cookie Language Selector] Script loaded successfully');
+  };
+  script.onerror = () => {
+    console.error('[Cookie Language Selector] Failed to load script');
+  };
+  document.head.appendChild(script);
+})();
