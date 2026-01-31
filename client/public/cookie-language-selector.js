@@ -1,7 +1,7 @@
 /**
- * Cookie Language Selector for 3B Solution - Version 3
+ * Cookie Language Selector for 3B Solution - Version 4
  * Fixes: 
- * 1. Language selector positioned INSIDE the banner (not overlapping)
+ * 1. Language selector as FIXED floating element (positioned above banner, not overlapping)
  * 2. All text translates including main message
  * 3. Preferences modal text also translates
  */
@@ -74,7 +74,7 @@
   };
   
   var currentLang = 'en';
-  var selectorInjected = false;
+  var selectorCreated = false;
   
   // Detect browser language
   function detectLanguage() {
@@ -85,10 +85,17 @@
     return 'en';
   }
   
-  // Create language selector HTML
-  function createLanguageSelectorHTML() {
-    var html = '<div id="cookie-lang-selector-js" style="display: flex; align-items: center; justify-content: flex-start; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.2);">';
-    html += '<span style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-right: 8px;">Language:</span>';
+  // Create the floating language selector element
+  function createLanguageSelector() {
+    if (selectorCreated || document.getElementById('cookie-lang-selector-js')) {
+      return;
+    }
+    
+    var selector = document.createElement('div');
+    selector.id = 'cookie-lang-selector-js';
+    selector.style.cssText = 'position: fixed; bottom: auto; top: 50%; transform: translateY(-50%); left: 50%; margin-left: 0; z-index: 2147483648; background: #1a365d; padding: 8px 15px; border-radius: 8px 8px 0 0; display: none; align-items: center; justify-content: center; box-shadow: 0 -2px 10px rgba(0,0,0,0.3); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;';
+    
+    var html = '<span style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-right: 10px;">Language:</span>';
     
     var languages = [
       { code: 'en', label: 'EN' },
@@ -100,52 +107,78 @@
       var isActive = lang.code === currentLang;
       var bgColor = isActive ? '#D78F00' : 'transparent';
       var borderColor = isActive ? '#D78F00' : 'rgba(255,255,255,0.4)';
-      var textColor = isActive ? '#fff' : 'rgba(255,255,255,0.8)';
+      var textColor = '#fff';
       
       html += '<button type="button" class="cookie-lang-btn" data-lang="' + lang.code + '" ';
       html += 'style="background: ' + bgColor + '; border: 1px solid ' + borderColor + '; color: ' + textColor + '; ';
-      html += 'padding: 5px 14px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; font-weight: 500; margin-left: 5px;">';
+      html += 'padding: 5px 14px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; font-weight: 500; margin-left: 5px; transition: all 0.2s;">';
       html += lang.label + '</button>';
     });
     
-    html += '</div>';
-    return html;
-  }
-  
-  // Inject language selector into the banner
-  function injectLanguageSelector() {
-    if (selectorInjected) return;
+    selector.innerHTML = html;
+    document.body.appendChild(selector);
+    selectorCreated = true;
     
-    // Find the Silktide prompt container
-    var prompt = document.querySelector('.stcm-prompt');
-    if (!prompt) return;
-    
-    // Check if already injected
-    if (document.getElementById('cookie-lang-selector-js')) {
-      selectorInjected = true;
-      return;
-    }
-    
-    // Find the first child element to insert before
-    var firstChild = prompt.firstElementChild;
-    if (firstChild) {
-      var selectorDiv = document.createElement('div');
-      selectorDiv.innerHTML = createLanguageSelectorHTML();
-      var selector = selectorDiv.firstElementChild;
-      prompt.insertBefore(selector, firstChild);
-      selectorInjected = true;
-      
-      // Add click handlers
-      var buttons = selector.querySelectorAll('.cookie-lang-btn');
-      buttons.forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          setLanguage(btn.getAttribute('data-lang'));
-        });
+    // Add click handlers
+    var buttons = selector.querySelectorAll('.cookie-lang-btn');
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        setLanguage(btn.getAttribute('data-lang'));
       });
       
-      console.log('Language selector injected into banner');
+      // Hover effects
+      btn.addEventListener('mouseenter', function() {
+        if (btn.getAttribute('data-lang') !== currentLang) {
+          btn.style.background = 'rgba(215, 143, 0, 0.3)';
+        }
+      });
+      btn.addEventListener('mouseleave', function() {
+        if (btn.getAttribute('data-lang') !== currentLang) {
+          btn.style.background = 'transparent';
+        }
+      });
+    });
+    
+    console.log('Language selector created');
+  }
+  
+  // Position the language selector above the visible banner/modal
+  function positionSelector() {
+    var selector = document.getElementById('cookie-lang-selector-js');
+    if (!selector) return;
+    
+    // Find the visible Silktide element
+    var banner = document.querySelector('.stcm-prompt');
+    var modal = document.querySelector('.stcm-modal, [class*="stcm-modal"]');
+    var backdrop = document.querySelector('#stcm-backdrop');
+    
+    var targetEl = null;
+    
+    // Check which element is visible
+    [modal, banner, backdrop].forEach(function(el) {
+      if (el && !targetEl) {
+        var style = window.getComputedStyle(el);
+        var rect = el.getBoundingClientRect();
+        if (style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0) {
+          targetEl = el;
+        }
+      }
+    });
+    
+    if (targetEl) {
+      var rect = targetEl.getBoundingClientRect();
+      var selectorRect = selector.getBoundingClientRect();
+      
+      // Position above the banner/modal
+      selector.style.position = 'fixed';
+      selector.style.top = (rect.top - selectorRect.height - 5) + 'px';
+      selector.style.left = '50%';
+      selector.style.transform = 'translateX(-50%)';
+      selector.style.display = 'flex';
+    } else {
+      selector.style.display = 'none';
     }
   }
   
@@ -157,11 +190,9 @@
       if (lang === currentLang) {
         btn.style.background = '#D78F00';
         btn.style.borderColor = '#D78F00';
-        btn.style.color = '#fff';
       } else {
         btn.style.background = 'transparent';
         btn.style.borderColor = 'rgba(255,255,255,0.4)';
-        btn.style.color = 'rgba(255,255,255,0.8)';
       }
     });
   }
@@ -179,245 +210,119 @@
     if (!t) return;
     
     // ===== UPDATE MAIN BANNER =====
+    updateBannerText(t);
     
-    // Find and update the main text paragraph
-    // Silktide typically uses a paragraph inside .stcm-prompt
-    var textElements = document.querySelectorAll('.stcm-prompt p, .stcm-prompt__text, .stcm-message');
-    textElements.forEach(function(el) {
-      // Only update if it looks like the cookie message (contains "cookies" or similar)
-      var text = el.textContent.toLowerCase();
-      if (text.includes('cookie') || text.includes('traffic') || text.includes('browsing') || 
-          text.includes('datenverkehr') || text.includes('surferlebnis') ||
-          text.includes('流量') || text.includes('浏览')) {
-        // Find the Cookie Policy link inside
-        var link = el.querySelector('a');
+    // ===== UPDATE PREFERENCES MODAL =====
+    updateModalText(t);
+    
+    // ===== UPDATE BUTTONS =====
+    updateButtons(t);
+    
+    console.log('Updated all text to language:', lang);
+  }
+  
+  // Update banner text
+  function updateBannerText(t) {
+    // Find all paragraphs that might contain the cookie message
+    var paragraphs = document.querySelectorAll('p');
+    paragraphs.forEach(function(p) {
+      var text = p.textContent.toLowerCase();
+      // Check if this is the cookie message
+      if ((text.includes('we use cookies') || text.includes('wir verwenden cookies') || text.includes('我们使用cookie')) ||
+          (text.includes('cookies to enhance') || text.includes('surferlebnis') || text.includes('浏览体验'))) {
+        // Check if there's a link inside
+        var link = p.querySelector('a');
         if (link) {
-          // Preserve the link
-          el.innerHTML = t.mainText + ' <a href="/legal/cookie-policy?lang=en" style="color: #D78F00;">' + t.cookiePolicy + '</a>';
-        } else {
-          el.textContent = t.mainText;
+          p.innerHTML = t.mainText + ' <a href="/legal/cookie-policy?lang=en" style="color: #D78F00;">' + t.cookiePolicy + '</a>';
         }
       }
     });
     
-    // Also try to find text nodes directly
-    var prompt = document.querySelector('.stcm-prompt');
-    if (prompt) {
-      // Look for the text that contains the cookie message
-      var walker = document.createTreeWalker(prompt, NodeFilter.SHOW_TEXT, null, false);
-      var node;
-      while (node = walker.nextNode()) {
-        var text = node.textContent.toLowerCase();
-        if ((text.includes('we use cookies') || text.includes('wir verwenden cookies') || text.includes('我们使用cookie')) && text.length > 50) {
-          node.textContent = t.mainText;
-        }
-      }
-    }
-    
-    // Update Cookie Policy link
-    var policyLinks = document.querySelectorAll('a[href*="cookie-policy"], a[href*="cookie"]');
-    policyLinks.forEach(function(link) {
-      var text = link.textContent.toLowerCase();
-      if (text.includes('cookie policy') || text.includes('cookie-richtlinie') || text.includes('cookie政策') || text === 'cookie policy') {
+    // Update Cookie Policy links
+    var links = document.querySelectorAll('a');
+    links.forEach(function(link) {
+      var text = link.textContent.trim().toLowerCase();
+      if (text === 'cookie policy' || text === 'cookie-richtlinie' || text === 'cookie政策') {
         link.textContent = t.cookiePolicy;
-        // Ensure English version
         if (!link.href.includes('lang=')) {
           link.href = '/legal/cookie-policy?lang=en';
         }
       }
     });
-    
-    // Update main banner buttons
-    var allButtons = document.querySelectorAll('.stcm-prompt button, .stcm-buttons button');
-    allButtons.forEach(function(btn) {
-      var text = btn.textContent.trim().toLowerCase();
-      // Accept all
-      if (text.includes('accept all') || text.includes('alle akzeptieren') || text.includes('全部接受') || text === 'accept all') {
-        btn.textContent = t.acceptAll;
-      }
-      // Reject non-essential
-      else if (text.includes('reject') || text.includes('ablehnen') || text.includes('拒绝') || text.includes('non-essential') || text.includes('wesentliche')) {
-        btn.textContent = t.rejectNonEssential;
-      }
-      // Manage preferences
-      else if (text.includes('manage') || text.includes('preferences') || text.includes('einstellungen verwalten') || text.includes('管理')) {
-        btn.textContent = t.managePreferences;
-      }
-      // Save preferences
-      else if (text.includes('save') || text.includes('speichern') || text.includes('保存')) {
-        btn.textContent = t.savePreferences;
-      }
-    });
-    
-    // ===== UPDATE PREFERENCES MODAL =====
-    
-    // Find the preferences modal
-    var modal = document.querySelector('.stcm-modal, .stcm-preferences, [class*="stcm-modal"]');
-    if (modal) {
-      // Update modal title
-      var titles = modal.querySelectorAll('h1, h2, h3, .stcm-modal__title');
-      titles.forEach(function(title) {
-        var text = title.textContent.toLowerCase();
-        if (text.includes('cookie') && (text.includes('preferences') || text.includes('einstellungen') || text.includes('偏好'))) {
-          title.textContent = t.preferencesTitle;
-        }
-      });
-      
-      // Update modal description
-      var descs = modal.querySelectorAll('p');
-      descs.forEach(function(desc) {
-        var text = desc.textContent.toLowerCase();
-        if (text.includes('choose which') || text.includes('wählen sie') || text.includes('选择')) {
-          desc.textContent = t.preferencesDesc;
-        }
-      });
-      
-      // Update category titles and descriptions
-      var categories = modal.querySelectorAll('.stcm-category, .stcm-toggle, [class*="category"], [class*="toggle"]');
-      categories.forEach(function(cat) {
-        var titleEl = cat.querySelector('h3, h4, .stcm-category__title, strong, b');
-        var descEl = cat.querySelector('p, .stcm-category__desc, span');
-        
-        if (titleEl) {
-          var titleText = titleEl.textContent.toLowerCase();
-          
-          // Essential/Necessary
-          if (titleText.includes('essential') || titleText.includes('necessary') || titleText.includes('notwendig') || titleText.includes('必要')) {
-            titleEl.textContent = t.essentialTitle;
-            if (descEl) {
-              var descText = descEl.textContent.toLowerCase();
-              if (descText.includes('necessary') || descText.includes('function') || descText.includes('erforderlich') || descText.includes('必需')) {
-                descEl.textContent = t.essentialDesc;
-              }
-            }
-          }
-          // Analytics
-          else if (titleText.includes('analytics') || titleText.includes('analytik') || titleText.includes('分析')) {
-            titleEl.textContent = t.analyticsTitle;
-            if (descEl) {
-              var descText = descEl.textContent.toLowerCase();
-              if (descText.includes('understand') || descText.includes('visitors') || descText.includes('verstehen') || descText.includes('了解')) {
-                descEl.textContent = t.analyticsDesc;
-              }
-            }
-          }
-          // Marketing
-          else if (titleText.includes('marketing') || titleText.includes('营销')) {
-            titleEl.textContent = t.marketingTitle;
-            if (descEl) {
-              var descText = descEl.textContent.toLowerCase();
-              if (descText.includes('personalized') || descText.includes('advertisements') || descText.includes('personalisierte') || descText.includes('个性化')) {
-                descEl.textContent = t.marketingDesc;
-              }
-            }
-          }
-        }
-      });
-      
-      // Also try a more direct approach - find all text in modal
-      updateModalTextDirect(modal, t);
-    }
-    
-    // Also update any standalone text elements
-    updateStandaloneElements(t);
-    
-    console.log('Updated all text to language:', lang);
   }
   
-  // Direct text replacement in modal
-  function updateModalTextDirect(modal, t) {
-    // Get all text-containing elements
-    var elements = modal.querySelectorAll('h1, h2, h3, h4, p, span, strong, b, label');
-    
-    elements.forEach(function(el) {
-      var text = el.textContent.trim();
-      var textLower = text.toLowerCase();
+  // Update modal text
+  function updateModalText(t) {
+    // Find all headings and update titles
+    var headings = document.querySelectorAll('h1, h2, h3, h4, strong, b');
+    headings.forEach(function(h) {
+      var text = h.textContent.trim().toLowerCase();
       
-      // Skip if it's a button or has child elements with text
-      if (el.tagName === 'BUTTON') return;
-      if (el.children.length > 0 && el.querySelector('button, a')) return;
-      
-      // Title
-      if (textLower === 'cookie preferences' || textLower === 'cookie-einstellungen' || textLower === 'cookie偏好设置') {
-        el.textContent = t.preferencesTitle;
+      if (text === 'cookie preferences' || text === 'cookie-einstellungen' || text === 'cookie偏好设置') {
+        h.textContent = t.preferencesTitle;
       }
-      // Essential
-      else if (textLower === 'essential' || textLower === 'notwendig' || textLower === '必要') {
-        el.textContent = t.essentialTitle;
+      else if (text === 'essential' || text === 'notwendig' || text === '必要') {
+        h.textContent = t.essentialTitle;
       }
-      // Analytics
-      else if (textLower === 'analytics' || textLower === 'analytik' || textLower === '分析') {
-        el.textContent = t.analyticsTitle;
+      else if (text === 'analytics' || text === 'analytik' || text === '分析') {
+        h.textContent = t.analyticsTitle;
       }
-      // Marketing
-      else if (textLower === 'marketing' || textLower === '营销') {
-        el.textContent = t.marketingTitle;
-      }
-      // Descriptions - check for key phrases
-      else if (textLower.includes('necessary for the website to function') || 
-               textLower.includes('erforderlich für die funktion') ||
-               textLower.includes('网站正常运行所必需')) {
-        el.textContent = t.essentialDesc;
-      }
-      else if (textLower.includes('help us understand how visitors') || 
-               textLower.includes('helfen uns zu verstehen') ||
-               textLower.includes('帮助我们了解访客')) {
-        el.textContent = t.analyticsDesc;
-      }
-      else if (textLower.includes('deliver personalized advertisements') || 
-               textLower.includes('personalisierte werbung') ||
-               textLower.includes('提供个性化广告')) {
-        el.textContent = t.marketingDesc;
-      }
-      else if (textLower.includes('choose which types') || 
-               textLower.includes('wählen sie aus') ||
-               textLower.includes('选择您要接受')) {
-        el.textContent = t.preferencesDesc;
+      else if (text === 'marketing' || text === '营销') {
+        h.textContent = t.marketingTitle;
       }
     });
     
-    // Update buttons in modal
-    var modalButtons = modal.querySelectorAll('button');
-    modalButtons.forEach(function(btn) {
-      var text = btn.textContent.trim().toLowerCase();
-      if (text.includes('save') || text.includes('speichern') || text.includes('保存')) {
-        btn.textContent = t.savePreferences;
+    // Find all paragraphs and update descriptions
+    var paragraphs = document.querySelectorAll('p');
+    paragraphs.forEach(function(p) {
+      var text = p.textContent.toLowerCase();
+      
+      if (text.includes('choose which types') || text.includes('wählen sie aus') || text.includes('选择您要接受')) {
+        p.textContent = t.preferencesDesc;
       }
-      else if (text.includes('reject') || text.includes('ablehnen') || text.includes('拒绝')) {
-        btn.textContent = t.rejectNonEssential;
+      else if (text.includes('necessary for the website') || text.includes('für die funktion der website') || text.includes('网站正常运行所必需')) {
+        p.textContent = t.essentialDesc;
+      }
+      else if (text.includes('help us understand how visitors') || text.includes('helfen uns zu verstehen') || text.includes('帮助我们了解访客')) {
+        p.textContent = t.analyticsDesc;
+      }
+      else if (text.includes('deliver personalized advertisements') || text.includes('personalisierte werbung') || text.includes('提供个性化广告')) {
+        p.textContent = t.marketingDesc;
       }
     });
   }
   
-  // Update any standalone elements outside the main containers
-  function updateStandaloneElements(t) {
-    // Find all buttons on the page that might be cookie-related
-    var allButtons = document.querySelectorAll('button');
-    allButtons.forEach(function(btn) {
+  // Update all buttons
+  function updateButtons(t) {
+    var buttons = document.querySelectorAll('button');
+    buttons.forEach(function(btn) {
       // Skip language buttons
       if (btn.classList.contains('cookie-lang-btn')) return;
       
       var text = btn.textContent.trim().toLowerCase();
       
-      // Only update if it's clearly a cookie consent button
+      // Accept all
       if (text === 'accept all' || text === 'alle akzeptieren' || text === '全部接受') {
         btn.textContent = t.acceptAll;
       }
+      // Reject non-essential
       else if (text === 'reject non-essential' || text === 'nicht wesentliche ablehnen' || text === '拒绝非必要') {
         btn.textContent = t.rejectNonEssential;
       }
+      // Manage preferences
       else if (text === 'manage preferences' || text === 'einstellungen verwalten' || text === '管理偏好') {
         btn.textContent = t.managePreferences;
       }
+      // Save preferences
       else if (text === 'save preferences' || text === 'einstellungen speichern' || text === '保存偏好') {
         btn.textContent = t.savePreferences;
       }
     });
   }
   
-  // Check if cookie banner is visible
-  function isBannerVisible() {
-    var selectors = ['#stcm-backdrop', '.stcm-backdrop', '.stcm-prompt'];
+  // Check if any Silktide element is visible
+  function isSilktideVisible() {
+    var selectors = ['#stcm-backdrop', '.stcm-backdrop', '.stcm-prompt', '.stcm-modal', '[class*="stcm"]'];
     
     for (var i = 0; i < selectors.length; i++) {
       var el = document.querySelector(selectors[i]);
@@ -438,9 +343,15 @@
   
   // Main update function
   function update() {
-    if (isBannerVisible()) {
-      injectLanguageSelector();
+    if (isSilktideVisible()) {
+      createLanguageSelector();
+      positionSelector();
       updateAllText(currentLang);
+    } else {
+      var selector = document.getElementById('cookie-lang-selector-js');
+      if (selector) {
+        selector.style.display = 'none';
+      }
     }
   }
   
@@ -466,21 +377,14 @@
     setInterval(function() {
       update();
       fixCookiePolicyLinks();
-    }, 500);
+    }, 300);
     
     // Watch for DOM changes
     var observer = new MutationObserver(function(mutations) {
-      // Check if any mutation added the banner or modal
-      var shouldUpdate = mutations.some(function(m) {
-        return m.addedNodes.length > 0 || m.attributeName === 'style' || m.attributeName === 'class';
-      });
-      
-      if (shouldUpdate) {
-        setTimeout(function() {
-          update();
-          fixCookiePolicyLinks();
-        }, 100);
-      }
+      setTimeout(function() {
+        update();
+        fixCookiePolicyLinks();
+      }, 50);
     });
     
     observer.observe(document.body, {
@@ -490,7 +394,7 @@
       attributeFilter: ['style', 'class']
     });
     
-    console.log('Cookie Language Selector v3 initialized. Language:', currentLang);
+    console.log('Cookie Language Selector v4 initialized. Language:', currentLang);
   }
   
   // Run when DOM is ready
