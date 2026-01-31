@@ -1264,23 +1264,78 @@ function MarketReportsTab() {
   );
 }
 
-// Legal Pages Tab - UPDATED with multi-language support and add new page
+// Legal Pages Tab - UPDATED with JSON-based multi-language support
+// This component stores all 3 languages (EN, DE, ZH) in a single 'content' field as JSON
+// Format: { "en": "<html>", "de": "<html>", "zh": "<html>" }
+
 function LegalPagesTab() {
   const [activeTab, setActiveTab] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<any>({});
   const [isAdding, setIsAdding] = useState(false);
+  const [contentLang, setContentLang] = useState<"en" | "de" | "zh">("en");
 
   const utils = trpc.useUtils();
   const { data: pages, isLoading } = trpc.legalPages.listAll.useQuery(undefined, {
     enabled: activeTab,
   });
 
+  // Parse JSON content into separate language fields for editing
+  const parseContentForEdit = (page: any) => {
+    let contentEn = "";
+    let contentDe = "";
+    let contentZh = "";
+    
+    if (page.content) {
+      try {
+        const parsed = JSON.parse(page.content);
+        if (typeof parsed === "object" && (parsed.en || parsed.de || parsed.zh)) {
+          contentEn = parsed.en || "";
+          contentDe = parsed.de || "";
+          contentZh = parsed.zh || "";
+        } else {
+          // Not valid JSON format, treat as English content
+          contentEn = page.content;
+        }
+      } catch (e) {
+        // Not JSON, treat entire content as English (legacy format)
+        contentEn = page.content;
+      }
+    }
+    
+    return {
+      ...page,
+      contentEn,
+      contentDe,
+      contentZh,
+    };
+  };
+
+  // Convert separate language fields back to JSON for saving
+  const prepareContentForSave = (data: any) => {
+    const jsonContent = JSON.stringify({
+      en: data.contentEn || "",
+      de: data.contentDe || "",
+      zh: data.contentZh || "",
+    });
+    
+    return {
+      title: data.title,
+      slug: data.slug,
+      content: jsonContent,
+      metaTitle: data.metaTitle,
+      metaDescription: data.metaDescription,
+      isActive: data.isActive,
+      order: data.order,
+    };
+  };
+
   const createPage = trpc.legalPages.create.useMutation({
     onSuccess: () => {
       setIsAdding(false);
       setEditingId(null);
       setEditData({});
+      setContentLang("en");
       utils.legalPages.listAll.invalidate();
       toast.success("Legal page created successfully");
     },
@@ -1308,6 +1363,7 @@ function LegalPagesTab() {
       utils.legalPages.listAll.invalidate();
       setEditingId(null);
       setEditData({});
+      setContentLang("en");
       toast.success("Legal page updated successfully");
     },
   });
@@ -1328,14 +1384,17 @@ function LegalPagesTab() {
 
   const handleEdit = (page: any) => {
     setEditingId(page.id);
-    setEditData(page);
+    setEditData(parseContentForEdit(page));
+    setContentLang("en");
   };
 
   const handleSave = () => {
+    const dataToSave = prepareContentForSave(editData);
+    
     if (isAdding) {
-      createPage.mutate(editData);
+      createPage.mutate(dataToSave);
     } else if (editingId) {
-      updatePage.mutate({ id: editingId, ...editData });
+      updatePage.mutate({ id: editingId, ...dataToSave });
     }
   };
 
@@ -1343,6 +1402,7 @@ function LegalPagesTab() {
     setIsAdding(false);
     setEditingId(null);
     setEditData({});
+    setContentLang("en");
   };
 
   const handleAdd = () => {
@@ -1351,7 +1411,7 @@ function LegalPagesTab() {
     setEditData({
       title: "",
       slug: "",
-      content: "",
+      contentEn: "",
       contentDe: "",
       contentZh: "",
       metaTitle: "",
@@ -1359,12 +1419,26 @@ function LegalPagesTab() {
       isActive: true,
       order: 0,
     });
+    setContentLang("en");
   };
 
   const handleDelete = (id: number) => {
     if (confirm("Are you sure you want to delete this legal page?")) {
       deletePage.mutate(id);
     }
+  };
+
+  // Get current content field based on selected language
+  const getCurrentContentField = () => {
+    if (contentLang === "de") return "contentDe";
+    if (contentLang === "zh") return "contentZh";
+    return "contentEn";
+  };
+
+  const getPlaceholder = () => {
+    if (contentLang === "de") return "Geben Sie den Inhalt der rechtlichen Seite auf Deutsch ein...";
+    if (contentLang === "zh") return "请输入中文法律页面内容...";
+    return "Enter legal page content in English...";
   };
 
   return (
@@ -1432,36 +1506,48 @@ function LegalPagesTab() {
                         />
                       </div>
                     </div>
+                    
+                    {/* Language tabs for content */}
                     <div>
-                      <label className="text-sm font-medium mb-2 block">Content (English)</label>
-                      <div className="min-h-[300px]">
+                      <label className="text-sm font-medium mb-2 block">Content</label>
+                      <div className="flex gap-2 mb-3">
+                        <Button
+                          type="button"
+                          variant={contentLang === "en" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setContentLang("en")}
+                          className={contentLang === "en" ? "bg-primary" : ""}
+                        >
+                          English {editData.contentEn ? "✓" : ""}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={contentLang === "de" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setContentLang("de")}
+                          className={contentLang === "de" ? "bg-primary" : ""}
+                        >
+                          Deutsch {editData.contentDe ? "✓" : ""}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={contentLang === "zh" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setContentLang("zh")}
+                          className={contentLang === "zh" ? "bg-primary" : ""}
+                        >
+                          中文 {editData.contentZh ? "✓" : ""}
+                        </Button>
+                      </div>
+                      <div className="min-h-[400px] border rounded-md">
                         <RichTextEditor
-                          content={editData.content || ""}
-                          onChange={(content) => setEditData({ ...editData, content })}
-                          placeholder="Enter legal page content in English..."
+                          content={editData[getCurrentContentField()] || ""}
+                          onChange={(content) => setEditData({ ...editData, [getCurrentContentField()]: content })}
+                          placeholder={getPlaceholder()}
                         />
                       </div>
                     </div>
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Content (German / Deutsch)</label>
-                      <div className="min-h-[300px]">
-                        <RichTextEditor
-                          content={editData.contentDe || ""}
-                          onChange={(contentDe) => setEditData({ ...editData, contentDe })}
-                          placeholder="Geben Sie den Inhalt der rechtlichen Seite auf Deutsch ein..."
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Content (Chinese / 中文)</label>
-                      <div className="min-h-[300px]">
-                        <RichTextEditor
-                          content={editData.contentZh || ""}
-                          onChange={(contentZh) => setEditData({ ...editData, contentZh })}
-                          placeholder="请输入中文法律页面内容..."
-                        />
-                      </div>
-                    </div>
+                    
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="text-sm font-medium mb-2 block">Meta Title</label>
@@ -1552,36 +1638,48 @@ function LegalPagesTab() {
                             placeholder="privacy-policy"
                           />
                         </div>
+                        
+                        {/* Language tabs for content */}
                         <div>
-                          <label className="text-sm font-medium mb-2 block">Content (English)</label>
-                          <div className="min-h-[400px]">
+                          <label className="text-sm font-medium mb-2 block">Content</label>
+                          <div className="flex gap-2 mb-3">
+                            <Button
+                              type="button"
+                              variant={contentLang === "en" ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setContentLang("en")}
+                              className={contentLang === "en" ? "bg-primary" : ""}
+                            >
+                              English {editData.contentEn ? "✓" : ""}
+                            </Button>
+                            <Button
+                              type="button"
+                              variant={contentLang === "de" ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setContentLang("de")}
+                              className={contentLang === "de" ? "bg-primary" : ""}
+                            >
+                              Deutsch {editData.contentDe ? "✓" : ""}
+                            </Button>
+                            <Button
+                              type="button"
+                              variant={contentLang === "zh" ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setContentLang("zh")}
+                              className={contentLang === "zh" ? "bg-primary" : ""}
+                            >
+                              中文 {editData.contentZh ? "✓" : ""}
+                            </Button>
+                          </div>
+                          <div className="min-h-[400px] border rounded-md">
                             <RichTextEditor
-                              content={editData.content || ""}
-                              onChange={(content) => setEditData({ ...editData, content })}
-                              placeholder="Enter legal page content in English..."
+                              content={editData[getCurrentContentField()] || ""}
+                              onChange={(content) => setEditData({ ...editData, [getCurrentContentField()]: content })}
+                              placeholder={getPlaceholder()}
                             />
                           </div>
                         </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Content (German / Deutsch)</label>
-                          <div className="min-h-[400px]">
-                            <RichTextEditor
-                              content={editData.contentDe || ""}
-                              onChange={(contentDe) => setEditData({ ...editData, contentDe })}
-                              placeholder="Geben Sie den Inhalt der rechtlichen Seite auf Deutsch ein..."
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Content (Chinese / 中文)</label>
-                          <div className="min-h-[400px]">
-                            <RichTextEditor
-                              content={editData.contentZh || ""}
-                              onChange={(contentZh) => setEditData({ ...editData, contentZh })}
-                              placeholder="请输入中文法律页面内容..."
-                            />
-                          </div>
-                        </div>
+                        
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <label className="text-sm font-medium mb-2 block">Meta Title</label>
@@ -1604,7 +1702,34 @@ function LegalPagesTab() {
                       </div>
                     ) : (
                       <div className="prose prose-sm max-w-none">
-                        <div dangerouslySetInnerHTML={{ __html: page.content || "<p class='text-muted-foreground'>No content yet</p>" }} />
+                        {(() => {
+                          // Try to parse and show English content preview
+                          try {
+                            const parsed = JSON.parse(page.content || "{}");
+                            const preview = parsed.en || parsed.de || parsed.zh || "";
+                            return (
+                              <div>
+                                <div className="flex gap-2 mb-2">
+                                  {parsed.en && <Badge variant="outline">EN ✓</Badge>}
+                                  {parsed.de && <Badge variant="outline">DE ✓</Badge>}
+                                  {parsed.zh && <Badge variant="outline">ZH ✓</Badge>}
+                                </div>
+                                <div 
+                                  className="text-muted-foreground line-clamp-3"
+                                  dangerouslySetInnerHTML={{ __html: preview.substring(0, 300) + "..." }} 
+                                />
+                              </div>
+                            );
+                          } catch (e) {
+                            // Legacy format - show as-is
+                            return (
+                              <div 
+                                className="text-muted-foreground line-clamp-3"
+                                dangerouslySetInnerHTML={{ __html: (page.content || "<p>No content yet</p>").substring(0, 300) + "..." }} 
+                              />
+                            );
+                          }
+                        })()}
                       </div>
                     )}
                   </CardContent>
@@ -1621,6 +1746,7 @@ function LegalPagesTab() {
     </Card>
   );
 }
+
 
 export default function ContentManagement() {
   const [activeTab, setActiveTab] = useState("services");
