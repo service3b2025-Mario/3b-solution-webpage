@@ -1,9 +1,9 @@
 /**
- * Cookie Language Selector for 3B Solution - Version 4
+ * Cookie Language Selector for 3B Solution - Version 5
  * Fixes: 
- * 1. Language selector as FIXED floating element (positioned above banner, not overlapping)
- * 2. All text translates including main message
- * 3. Preferences modal text also translates
+ * 1. Language selector shows on BOTH main banner AND preferences modal
+ * 2. ALL text translates including category titles and descriptions
+ * 3. Better DOM element detection
  */
 
 (function() {
@@ -87,13 +87,13 @@
   
   // Create the floating language selector element
   function createLanguageSelector() {
-    if (selectorCreated || document.getElementById('cookie-lang-selector-js')) {
+    if (document.getElementById('cookie-lang-selector-js')) {
       return;
     }
     
     var selector = document.createElement('div');
     selector.id = 'cookie-lang-selector-js';
-    selector.style.cssText = 'position: fixed; bottom: auto; top: 50%; transform: translateY(-50%); left: 50%; margin-left: 0; z-index: 2147483648; background: #1a365d; padding: 8px 15px; border-radius: 8px 8px 0 0; display: none; align-items: center; justify-content: center; box-shadow: 0 -2px 10px rgba(0,0,0,0.3); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;';
+    selector.style.cssText = 'position: fixed; z-index: 2147483648; background: #1a365d; padding: 8px 15px; border-radius: 8px; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;';
     
     var html = '<span style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-right: 10px;">Language:</span>';
     
@@ -144,36 +144,65 @@
     console.log('Language selector created');
   }
   
-  // Position the language selector above the visible banner/modal
+  // Find the visible Silktide element (banner or modal)
+  function findVisibleSilktideElement() {
+    // Check for modal first (it appears on top)
+    var modal = document.querySelector('.stcm-modal');
+    if (modal && isElementVisible(modal)) {
+      return { element: modal, type: 'modal' };
+    }
+    
+    // Check for the main prompt/banner
+    var prompt = document.querySelector('.stcm-prompt');
+    if (prompt && isElementVisible(prompt)) {
+      return { element: prompt, type: 'banner' };
+    }
+    
+    // Check backdrop as fallback
+    var backdrop = document.querySelector('#stcm-backdrop');
+    if (backdrop && isElementVisible(backdrop)) {
+      // Find the actual content inside backdrop
+      var content = backdrop.querySelector('.stcm-prompt, .stcm-modal, [class*="stcm"]');
+      if (content && isElementVisible(content)) {
+        return { element: content, type: content.classList.contains('stcm-modal') ? 'modal' : 'banner' };
+      }
+      return { element: backdrop, type: 'banner' };
+    }
+    
+    // Check any stcm element
+    var anyStcm = document.querySelector('[class*="stcm"]');
+    if (anyStcm && isElementVisible(anyStcm)) {
+      return { element: anyStcm, type: 'banner' };
+    }
+    
+    return null;
+  }
+  
+  // Check if element is visible
+  function isElementVisible(el) {
+    if (!el) return false;
+    var style = window.getComputedStyle(el);
+    var rect = el.getBoundingClientRect();
+    return style.display !== 'none' && 
+           style.visibility !== 'hidden' && 
+           parseFloat(style.opacity) > 0 &&
+           rect.width > 0 && 
+           rect.height > 0;
+  }
+  
+  // Position the language selector above the visible element
   function positionSelector() {
     var selector = document.getElementById('cookie-lang-selector-js');
     if (!selector) return;
     
-    // Find the visible Silktide element
-    var banner = document.querySelector('.stcm-prompt');
-    var modal = document.querySelector('.stcm-modal, [class*="stcm-modal"]');
-    var backdrop = document.querySelector('#stcm-backdrop');
+    var found = findVisibleSilktideElement();
     
-    var targetEl = null;
-    
-    // Check which element is visible
-    [modal, banner, backdrop].forEach(function(el) {
-      if (el && !targetEl) {
-        var style = window.getComputedStyle(el);
-        var rect = el.getBoundingClientRect();
-        if (style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0) {
-          targetEl = el;
-        }
-      }
-    });
-    
-    if (targetEl) {
-      var rect = targetEl.getBoundingClientRect();
-      var selectorRect = selector.getBoundingClientRect();
+    if (found) {
+      var rect = found.element.getBoundingClientRect();
       
-      // Position above the banner/modal
+      // Position above the element, centered
       selector.style.position = 'fixed';
-      selector.style.top = (rect.top - selectorRect.height - 5) + 'px';
+      selector.style.top = Math.max(10, rect.top - 50) + 'px';
       selector.style.left = '50%';
       selector.style.transform = 'translateX(-50%)';
       selector.style.display = 'flex';
@@ -209,13 +238,13 @@
     var t = translations[lang];
     if (!t) return;
     
-    // ===== UPDATE MAIN BANNER =====
+    // Update banner text
     updateBannerText(t);
     
-    // ===== UPDATE PREFERENCES MODAL =====
+    // Update modal text
     updateModalText(t);
     
-    // ===== UPDATE BUTTONS =====
+    // Update all buttons
     updateButtons(t);
     
     console.log('Updated all text to language:', lang);
@@ -223,14 +252,18 @@
   
   // Update banner text
   function updateBannerText(t) {
-    // Find all paragraphs that might contain the cookie message
-    var paragraphs = document.querySelectorAll('p');
-    paragraphs.forEach(function(p) {
+    // Find paragraphs containing cookie message
+    var allParagraphs = document.querySelectorAll('p');
+    allParagraphs.forEach(function(p) {
       var text = p.textContent.toLowerCase();
-      // Check if this is the cookie message
-      if ((text.includes('we use cookies') || text.includes('wir verwenden cookies') || text.includes('我们使用cookie')) ||
-          (text.includes('cookies to enhance') || text.includes('surferlebnis') || text.includes('浏览体验'))) {
-        // Check if there's a link inside
+      if (text.includes('we use cookies') || 
+          text.includes('wir verwenden cookies') || 
+          text.includes('我们使用cookie') ||
+          text.includes('enhance your browsing') ||
+          text.includes('surferlebnis') ||
+          text.includes('浏览体验')) {
+        
+        // Preserve the Cookie Policy link if it exists
         var link = p.querySelector('a');
         if (link) {
           p.innerHTML = t.mainText + ' <a href="/legal/cookie-policy?lang=en" style="color: #D78F00;">' + t.cookiePolicy + '</a>';
@@ -238,7 +271,7 @@
       }
     });
     
-    // Update Cookie Policy links
+    // Update standalone Cookie Policy links
     var links = document.querySelectorAll('a');
     links.forEach(function(link) {
       var text = link.textContent.trim().toLowerCase();
@@ -251,43 +284,59 @@
     });
   }
   
-  // Update modal text
+  // Update modal text - using more aggressive text matching
   function updateModalText(t) {
-    // Find all headings and update titles
-    var headings = document.querySelectorAll('h1, h2, h3, h4, strong, b');
-    headings.forEach(function(h) {
+    // Update title
+    var allHeadings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    allHeadings.forEach(function(h) {
       var text = h.textContent.trim().toLowerCase();
-      
-      if (text === 'cookie preferences' || text === 'cookie-einstellungen' || text === 'cookie偏好设置') {
+      if (text.includes('cookie preferences') || text.includes('cookie-einstellungen') || text.includes('cookie偏好设置')) {
         h.textContent = t.preferencesTitle;
-      }
-      else if (text === 'essential' || text === 'notwendig' || text === '必要') {
-        h.textContent = t.essentialTitle;
-      }
-      else if (text === 'analytics' || text === 'analytik' || text === '分析') {
-        h.textContent = t.analyticsTitle;
-      }
-      else if (text === 'marketing' || text === '营销') {
-        h.textContent = t.marketingTitle;
       }
     });
     
-    // Find all paragraphs and update descriptions
-    var paragraphs = document.querySelectorAll('p');
-    paragraphs.forEach(function(p) {
-      var text = p.textContent.toLowerCase();
+    // Update all text content - find by current text in any language
+    var allElements = document.querySelectorAll('p, span, div, strong, b, label');
+    allElements.forEach(function(el) {
+      // Skip if has children that are not text nodes
+      if (el.children.length > 0 && el.querySelector('button, a, input')) return;
       
+      var text = el.textContent.trim().toLowerCase();
+      var originalText = el.textContent.trim();
+      
+      // Preferences description
       if (text.includes('choose which types') || text.includes('wählen sie aus') || text.includes('选择您要接受')) {
-        p.textContent = t.preferencesDesc;
+        el.textContent = t.preferencesDesc;
       }
-      else if (text.includes('necessary for the website') || text.includes('für die funktion der website') || text.includes('网站正常运行所必需')) {
-        p.textContent = t.essentialDesc;
+      // Essential title
+      else if (originalText === 'Essential' || originalText === 'Notwendig' || originalText === '必要') {
+        el.textContent = t.essentialTitle;
       }
-      else if (text.includes('help us understand how visitors') || text.includes('helfen uns zu verstehen') || text.includes('帮助我们了解访客')) {
-        p.textContent = t.analyticsDesc;
+      // Essential description
+      else if (text.includes('necessary for the website to function') || 
+               text.includes('für die funktion der website erforderlich') || 
+               text.includes('网站正常运行所必需')) {
+        el.textContent = t.essentialDesc;
       }
-      else if (text.includes('deliver personalized advertisements') || text.includes('personalisierte werbung') || text.includes('提供个性化广告')) {
-        p.textContent = t.marketingDesc;
+      // Analytics title
+      else if (originalText === 'Analytics' || originalText === 'Analytik' || originalText === '分析') {
+        el.textContent = t.analyticsTitle;
+      }
+      // Analytics description
+      else if (text.includes('help us understand how visitors interact') || 
+               text.includes('helfen uns zu verstehen, wie besucher') || 
+               text.includes('帮助我们了解访客如何')) {
+        el.textContent = t.analyticsDesc;
+      }
+      // Marketing title
+      else if (originalText === 'Marketing' || originalText === '营销') {
+        el.textContent = t.marketingTitle;
+      }
+      // Marketing description
+      else if (text.includes('deliver personalized advertisements') || 
+               text.includes('personalisierte werbung zu liefern') || 
+               text.includes('提供个性化广告')) {
+        el.textContent = t.marketingDesc;
       }
     });
   }
@@ -320,30 +369,21 @@
     });
   }
   
-  // Check if any Silktide element is visible
-  function isSilktideVisible() {
-    var selectors = ['#stcm-backdrop', '.stcm-backdrop', '.stcm-prompt', '.stcm-modal', '[class*="stcm"]'];
-    
-    for (var i = 0; i < selectors.length; i++) {
-      var el = document.querySelector(selectors[i]);
-      if (el) {
-        var style = window.getComputedStyle(el);
-        var rect = el.getBoundingClientRect();
-        if (style.display !== 'none' && 
-            style.visibility !== 'hidden' && 
-            parseFloat(style.opacity) > 0 &&
-            rect.width > 0 && 
-            rect.height > 0) {
-          return true;
-        }
+  // Fix Cookie Policy links
+  function fixCookiePolicyLinks() {
+    var links = document.querySelectorAll('a[href*="cookie-policy"]');
+    links.forEach(function(link) {
+      if (!link.href.includes('lang=')) {
+        link.href = link.href + (link.href.includes('?') ? '&' : '?') + 'lang=en';
       }
-    }
-    return false;
+    });
   }
   
   // Main update function
   function update() {
-    if (isSilktideVisible()) {
+    var found = findVisibleSilktideElement();
+    
+    if (found) {
       createLanguageSelector();
       positionSelector();
       updateAllText(currentLang);
@@ -353,16 +393,6 @@
         selector.style.display = 'none';
       }
     }
-  }
-  
-  // Fix Cookie Policy links
-  function fixCookiePolicyLinks() {
-    var links = document.querySelectorAll('a[href*="cookie-policy"]');
-    links.forEach(function(link) {
-      if (!link.href.includes('lang=')) {
-        link.href = link.href + (link.href.includes('?') ? '&' : '?') + 'lang=en';
-      }
-    });
   }
   
   // Initialize
@@ -377,7 +407,7 @@
     setInterval(function() {
       update();
       fixCookiePolicyLinks();
-    }, 300);
+    }, 200);
     
     // Watch for DOM changes
     var observer = new MutationObserver(function(mutations) {
@@ -394,7 +424,7 @@
       attributeFilter: ['style', 'class']
     });
     
-    console.log('Cookie Language Selector v4 initialized. Language:', currentLang);
+    console.log('Cookie Language Selector v5 initialized. Language:', currentLang);
   }
   
   // Run when DOM is ready
