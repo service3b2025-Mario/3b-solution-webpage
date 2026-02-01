@@ -24,7 +24,7 @@ export default function Services() {
               Our Services
             </h1>
             <p className="text-xl text-white/80">
-              Comprehensive investment solutions designed to maximize your real estate portfolio returns
+              Comprehensive investment solutions designed to optimize your real estate portfolio performance
             </p>
           </div>
         </div>
@@ -80,10 +80,10 @@ export default function Services() {
         <div className="container">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Our Investment Process
+              Our Transaction Process
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              A structured approach to help you achieve your investment goals
+              A structured approach to help you achieve your real estate goals
             </p>
           </div>
 
@@ -120,7 +120,7 @@ export default function Services() {
               </p>
               <div className="space-y-4">
                 {[
-                  "15-30% projected annual returns",
+                  "Target returns: 15-30% (projected)",
                   "Global portfolio diversification",
                   "Expert team with local market knowledge",
                   "End-to-end investment management",
@@ -200,7 +200,7 @@ export default function Services() {
                   <p className="text-sm text-muted-foreground mb-3">Ultra High Net Worth Individuals</p>
                   <div className="text-xs text-muted-foreground space-y-1">
                     <p>• $30M+ net worth</p>
-                    <p>• Accredited investor status</p>
+                    <p>• Qualified client status</p>
                     <p>• Global portfolio diversification</p>
                   </div>
                 </CardContent>
@@ -218,7 +218,7 @@ export default function Services() {
                   <div className="text-xs text-muted-foreground space-y-1">
                     <p>• $50M+ AUM</p>
                     <p>• Long-term horizon</p>
-                    <p>• Risk-adjusted returns</p>
+                    <p>• Risk-adjusted performance</p>
                   </div>
                 </CardContent>
               </Card>
