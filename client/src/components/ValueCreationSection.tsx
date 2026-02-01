@@ -99,7 +99,7 @@ export function ValueCreationSection() {
             A disciplined framework built for long-term, risk-adjusted performance
           </p>
           <p className="text-lg text-muted-foreground mt-4 max-w-4xl mx-auto">
-            At 3B Solution, value creation is not accidental. It is the result of a structured, data-driven approach that combines careful market selection, active asset management, and institutional risk discipline. Our focus is on <span className="font-semibold text-foreground">protecting capital first</span> — and growing it through execution, not speculation.
+            At 3B Solution, value creation is not accidental. It is the result of a structured, data-driven approach that combines careful market selection, active property management, and institutional risk discipline. Our focus is on <span className="font-semibold text-foreground">protecting capital first</span> — and growing it through execution, not speculation.
           </p>
         </div>
 
