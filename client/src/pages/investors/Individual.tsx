@@ -234,7 +234,7 @@ export default function IndividualPage() {
                     <div>
                       <h3 className="text-lg font-semibold mb-2">Open to Learning</h3>
                       <p className="text-muted-foreground">
-                        Willingness to learn about real estate investing, market dynamics, and portfolio management strategies.
+                        Willingness to learn about real estate investing, market dynamics, and property management strategies.
                       </p>
                     </div>
                   </div>
