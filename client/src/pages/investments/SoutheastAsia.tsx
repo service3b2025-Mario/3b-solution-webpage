@@ -436,7 +436,7 @@ export default function SoutheastAsia() {
               </Link>
               <Link href="/investors">
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                  Investor Qualification
+                  Client Onboarding
                 </Button>
               </Link>
             </div>
