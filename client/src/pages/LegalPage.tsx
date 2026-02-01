@@ -1,4 +1,4 @@
-import { useParams } from "wouter";
+import { useParams, useSearch } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Loader2 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
@@ -107,11 +107,23 @@ export default function LegalPage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: page, isLoading, error } = trpc.legalPages.getBySlug.useQuery(slug || "");
   
+  // Get URL search params
+  const searchString = useSearch();
+  const urlParams = new URLSearchParams(searchString);
+  const langParam = urlParams.get("lang");
+  
   // Language state
   const [selectedLang, setSelectedLang] = useState<"en" | "de" | "zh">("en");
   
-  // Set default language based on geo-detection (especially for cookie policy)
+  // Set default language based on URL param first, then geo-detection
   useEffect(() => {
+    // Priority 1: URL parameter
+    if (langParam === "en" || langParam === "de" || langParam === "zh") {
+      setSelectedLang(langParam);
+      return;
+    }
+    
+    // Priority 2: Geo-detection (only for cookie policy without lang param)
     const country = detectUserCountry();
     if (slug === "cookie-policy") {
       // Cookie policy defaults based on geography
@@ -122,7 +134,7 @@ export default function LegalPage() {
       // Other pages default to English
       setSelectedLang("en");
     }
-  }, [slug]);
+  }, [slug, langParam]);
 
   // Parse content and extract date
   const parsedContent = useMemo(() => parseContent(page?.content), [page?.content]);
