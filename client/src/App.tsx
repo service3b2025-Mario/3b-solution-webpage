@@ -32,7 +32,6 @@ import Team from "./pages/Team";
 import NotFound from "@/pages/NotFound";
 import { MobileContactMenu } from "@/components/MobileContactMenu";
 import { PageTransition } from "@/components/PageTransition";
-import { CookieLanguageSelector } from "./components/CookieLanguageSelector";
 
 function Router() {
   const [location] = useLocation();
@@ -86,7 +85,6 @@ function App() {
           <Toaster />
           <MobileContactMenu />
           <Router />
-          <CookieLanguageSelector />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
