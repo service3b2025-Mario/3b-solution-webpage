@@ -63,9 +63,9 @@ export default function UHNWIPage() {
                 <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
                   <Shield className="w-7 h-7 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Accredited Investor Status</h3>
+                <h3 className="text-xl font-semibold mb-3">Qualified Client Status</h3>
                 <p className="text-muted-foreground">
-                  Access to exclusive off-market deals and pre-launch opportunities reserved for accredited investors with verified credentials.
+                  Access to exclusive off-market deals and pre-launch opportunities reserved for qualified clients with verified credentials.
                 </p>
               </CardContent>
             </Card>
@@ -158,9 +158,9 @@ export default function UHNWIPage() {
                       <span className="text-primary font-semibold">2</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Accredited Investor Documentation</h3>
+                      <h3 className="text-lg font-semibold mb-2">Client Registration Documentation</h3>
                       <p className="text-muted-foreground">
-                        SEC-compliant accredited investor verification through certified financial statements or professional certification.
+                        Client verification through certified financial statements or professional certification.
                       </p>
                     </div>
                   </div>
