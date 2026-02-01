@@ -55,58 +55,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
-    <!-- Silktide Cookie Consent Manager -->
-    <script async src="https://cdn.3bsolution.com/assets/silktide-consent-manager.js"></script>
-    <script type="text/javascript">
-      window.stcmConfig = {
-        apiKey: 'f9e8d7c6-b5a4-3210-9876-543210fedcba',
-        branding: { show: false },
-        position: 'bottom',
-        theme: 'dark',
-        colors: {
-          primary: '#D78F00',
-          background: '#1a365d',
-          text: '#ffffff'
-        },
-        categories: {
-          essential: { enabled: true, readonly: true },
-          analytics: { enabled: false },
-          marketing: { enabled: false }
-        },
-        text: {
-          title: 'Cookie Preferences',
-          description: 'We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept all", you consent to our use of cookies.',
-          acceptAll: 'Accept all',
-          rejectNonEssential: 'Reject non-essential',
-          managePreferences: 'Manage preferences',
-          savePreferences: 'Save preferences'
-        },
-        callbacks: {
-          onAccept: function(categories) {
-            if (typeof gtag === 'function') {
-              gtag('consent', 'update', {
-                'analytics_storage': categories.analytics ? 'granted' : 'denied',
-                'ad_storage': categories.marketing ? 'granted' : 'denied',
-                'ad_user_data': categories.marketing ? 'granted' : 'denied',
-                'ad_personalization': categories.marketing ? 'granted' : 'denied'
-              });
-            }
-          },
-          onReject: function() {
-            if (typeof gtag === 'function') {
-              gtag('consent', 'update', {
-                'analytics_storage': 'denied',
-                'ad_storage': 'denied',
-                'ad_user_data': 'denied',
-                'ad_personalization': 'denied'
-              });
-            }
-          }
-        }
-      };
-    </script>
-    
-    <!-- Google Consent Mode V2 - Default to denied -->
+    <!-- Google Consent Mode V2 - Default to denied (MUST be before GA4) -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -133,69 +82,75 @@
         'cookie_flags': 'SameSite=None;Secure'
       });
     </script>
+    
+    <!-- Silktide Cookie Consent Manager -->
+    <script src="https://cdn.3bsolution.com/assets/silktide-consent-manager.js"></script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Cookie Language Selector - INLINE VERSION (embedded directly to avoid loading issues) -->
+    <!-- Initialize Silktide Cookie Consent Manager with proper configuration -->
     <script>
     (function() {
       'use strict';
       
+      // Multi-language translations
       var translations = {
         en: {
-          mainText: 'We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept all", you consent to our use of cookies.',
+          promptTitle: 'Cookie Preferences',
+          promptDescription: 'We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept all", you consent to our use of cookies.',
           acceptAll: 'Accept all',
-          rejectNonEssential: 'Reject non-essential',
+          rejectAll: 'Reject non-essential',
           managePreferences: 'Manage preferences',
-          cookiePolicy: 'Cookie Policy',
           preferencesTitle: 'Cookie Preferences',
-          preferencesDesc: 'Choose which types of cookies you want to accept. You can change your preferences at any time.',
+          preferencesDescription: 'Choose which types of cookies you want to accept. You can change your preferences at any time.',
+          saveButton: 'Save preferences',
           essentialTitle: 'Essential',
-          essentialDesc: 'These cookies are necessary for the website to function and cannot be switched off.',
+          essentialDescription: 'These cookies are necessary for the website to function and cannot be switched off.',
           analyticsTitle: 'Analytics',
-          analyticsDesc: 'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.',
+          analyticsDescription: 'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.',
           marketingTitle: 'Marketing',
-          marketingDesc: 'These cookies are used to deliver personalized advertisements and measure the effectiveness of our marketing campaigns.',
-          savePreferences: 'Save preferences'
+          marketingDescription: 'These cookies are used to deliver personalized advertisements and measure the effectiveness of our marketing campaigns.',
+          cookiePolicy: 'Cookie Policy'
         },
         de: {
-          mainText: 'Wir verwenden Cookies, um Ihr Surferlebnis zu verbessern und unseren Datenverkehr zu analysieren. Durch Klicken auf "Alle akzeptieren" stimmen Sie der Verwendung von Cookies zu.',
+          promptTitle: 'Cookie-Einstellungen',
+          promptDescription: 'Wir verwenden Cookies, um Ihr Surferlebnis zu verbessern und unseren Datenverkehr zu analysieren. Durch Klicken auf "Alle akzeptieren" stimmen Sie der Verwendung von Cookies zu.',
           acceptAll: 'Alle akzeptieren',
-          rejectNonEssential: 'Nicht wesentliche ablehnen',
+          rejectAll: 'Nicht wesentliche ablehnen',
           managePreferences: 'Einstellungen verwalten',
-          cookiePolicy: 'Cookie-Richtlinie',
           preferencesTitle: 'Cookie-Einstellungen',
-          preferencesDesc: 'Wählen Sie aus, welche Arten von Cookies Sie akzeptieren möchten. Sie können Ihre Einstellungen jederzeit ändern.',
+          preferencesDescription: 'Wählen Sie aus, welche Arten von Cookies Sie akzeptieren möchten. Sie können Ihre Einstellungen jederzeit ändern.',
+          saveButton: 'Einstellungen speichern',
           essentialTitle: 'Notwendig',
-          essentialDesc: 'Diese Cookies sind für die Funktion der Website erforderlich und können nicht deaktiviert werden.',
+          essentialDescription: 'Diese Cookies sind für die Funktion der Website erforderlich und können nicht deaktiviert werden.',
           analyticsTitle: 'Analytik',
-          analyticsDesc: 'Diese Cookies helfen uns zu verstehen, wie Besucher mit unserer Website interagieren, indem sie Informationen anonym sammeln und melden.',
+          analyticsDescription: 'Diese Cookies helfen uns zu verstehen, wie Besucher mit unserer Website interagieren, indem sie Informationen anonym sammeln und melden.',
           marketingTitle: 'Marketing',
-          marketingDesc: 'Diese Cookies werden verwendet, um personalisierte Werbung zu liefern und die Wirksamkeit unserer Marketingkampagnen zu messen.',
-          savePreferences: 'Einstellungen speichern'
+          marketingDescription: 'Diese Cookies werden verwendet, um personalisierte Werbung zu liefern und die Wirksamkeit unserer Marketingkampagnen zu messen.',
+          cookiePolicy: 'Cookie-Richtlinie'
         },
         zh: {
-          mainText: '我们使用Cookie来增强您的浏览体验并分析我们的流量。点击"全部接受"即表示您同意我们使用Cookie。',
+          promptTitle: 'Cookie偏好设置',
+          promptDescription: '我们使用Cookie来增强您的浏览体验并分析我们的流量。点击"全部接受"即表示您同意我们使用Cookie。',
           acceptAll: '全部接受',
-          rejectNonEssential: '拒绝非必要',
+          rejectAll: '拒绝非必要',
           managePreferences: '管理偏好',
-          cookiePolicy: 'Cookie政策',
           preferencesTitle: 'Cookie偏好设置',
-          preferencesDesc: '选择您要接受的Cookie类型。您可以随时更改您的偏好设置。',
+          preferencesDescription: '选择您要接受的Cookie类型。您可以随时更改您的偏好设置。',
+          saveButton: '保存偏好',
           essentialTitle: '必要',
-          essentialDesc: '这些Cookie是网站正常运行所必需的，无法关闭。',
+          essentialDescription: '这些Cookie是网站正常运行所必需的，无法关闭。',
           analyticsTitle: '分析',
-          analyticsDesc: '这些Cookie通过匿名收集和报告信息，帮助我们了解访客如何与我们的网站互动。',
+          analyticsDescription: '这些Cookie通过匿名收集和报告信息，帮助我们了解访客如何与我们的网站互动。',
           marketingTitle: '营销',
-          marketingDesc: '这些Cookie用于提供个性化广告并衡量我们营销活动的效果。',
-          savePreferences: '保存偏好'
+          marketingDescription: '这些Cookie用于提供个性化广告并衡量我们营销活动的效果。',
+          cookiePolicy: 'Cookie政策'
         }
       };
       
-      var currentLang = 'en';
-      
+      // Detect browser language
       function detectLanguage() {
         var browserLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase().substring(0, 2);
         if (browserLang === 'de') return 'de';
@@ -203,193 +158,253 @@
         return 'en';
       }
       
-      function createLanguageSelector() {
-        if (document.getElementById('cookie-lang-selector-js')) {
-          return document.getElementById('cookie-lang-selector-js');
+      var currentLang = detectLanguage();
+      
+      // Get translations for current language
+      function getTranslations() {
+        return translations[currentLang] || translations.en;
+      }
+      
+      // Build configuration with current language
+      function buildConfig() {
+        var t = getTranslations();
+        return {
+          consentTypes: [
+            {
+              id: 'essential',
+              required: true,
+              title: t.essentialTitle,
+              description: t.essentialDescription
+            },
+            {
+              id: 'analytics',
+              required: false,
+              title: t.analyticsTitle,
+              description: t.analyticsDescription,
+              defaultValue: false,
+              gtag: {
+                analytics_storage: true
+              },
+              onAccept: function() {
+                if (typeof gtag === 'function') {
+                  gtag('consent', 'update', { 'analytics_storage': 'granted' });
+                }
+              },
+              onReject: function() {
+                if (typeof gtag === 'function') {
+                  gtag('consent', 'update', { 'analytics_storage': 'denied' });
+                }
+              }
+            },
+            {
+              id: 'marketing',
+              required: false,
+              title: t.marketingTitle,
+              description: t.marketingDescription,
+              defaultValue: false,
+              gtag: {
+                ad_storage: true,
+                ad_user_data: true,
+                ad_personalization: true
+              },
+              onAccept: function() {
+                if (typeof gtag === 'function') {
+                  gtag('consent', 'update', {
+                    'ad_storage': 'granted',
+                    'ad_user_data': 'granted',
+                    'ad_personalization': 'granted'
+                  });
+                }
+              },
+              onReject: function() {
+                if (typeof gtag === 'function') {
+                  gtag('consent', 'update', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied'
+                  });
+                }
+              }
+            }
+          ],
+          text: {
+            prompt: {
+              title: t.promptTitle,
+              description: t.promptDescription,
+              acceptAllButtonText: t.acceptAll,
+              rejectAllButtonText: t.rejectAll,
+              preferencesButtonText: t.managePreferences,
+              policyLinkText: t.cookiePolicy,
+              policyLinkUrl: '/legal/cookie-policy?lang=en'
+            },
+            preferences: {
+              title: t.preferencesTitle,
+              description: t.preferencesDescription,
+              saveButtonText: t.saveButton
+            }
+          },
+          icon: {
+            position: 'bottomRight',
+            colorScheme: 'stcm-icon-dark'
+          },
+          prompt: {
+            position: 'bottom'
+          },
+          debug: false
+        };
+      }
+      
+      // Initialize consent manager
+      function initConsentManager() {
+        if (typeof window.silktideConsentManager !== 'undefined' && typeof window.silktideConsentManager.init === 'function') {
+          var config = buildConfig();
+          window.silktideConsentManager.init(config);
+          console.log('[Cookie Consent] Initialized with language:', currentLang);
+          
+          // Add language selector after initialization
+          setTimeout(addLanguageSelector, 500);
+        } else {
+          // Script not loaded yet, retry
+          setTimeout(initConsentManager, 100);
+        }
+      }
+      
+      // Change language and reinitialize
+      function changeLanguage(lang) {
+        if (translations[lang]) {
+          currentLang = lang;
+          var config = buildConfig();
+          if (typeof window.silktideConsentManager !== 'undefined' && typeof window.silktideConsentManager.update === 'function') {
+            // Update the consent manager with new language
+            window.silktideConsentManager.update(config);
+          }
+          updateLanguageSelectorButtons();
+          console.log('[Cookie Consent] Language changed to:', lang);
+        }
+      }
+      
+      // Create and add language selector
+      function addLanguageSelector() {
+        // Check if cookie banner or modal is visible
+        var banner = document.querySelector('.stcm-prompt');
+        var modal = document.querySelector('.stcm-modal');
+        var target = null;
+        
+        if (banner && banner.style.display !== 'none') {
+          target = banner;
+        } else if (modal && modal.style.display !== 'none') {
+          target = modal;
         }
         
+        if (!target) {
+          // No visible consent UI, try again later
+          setTimeout(addLanguageSelector, 500);
+          return;
+        }
+        
+        // Check if selector already exists
+        if (document.getElementById('stcm-lang-selector')) {
+          return;
+        }
+        
+        // Create language selector
         var selector = document.createElement('div');
-        selector.id = 'cookie-lang-selector-js';
-        selector.style.cssText = 'position: fixed; z-index: 2147483648; background: #1a365d; padding: 8px 15px; border-radius: 8px; display: none; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;';
+        selector.id = 'stcm-lang-selector';
+        selector.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; padding: 8px 0;';
         
-        var html = '<span style="color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-right: 10px;">Language:</span>';
+        var label = document.createElement('span');
+        label.textContent = 'Language:';
+        label.style.cssText = 'color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-right: 4px;';
+        selector.appendChild(label);
         
-        [{ code: 'en', label: 'EN' }, { code: 'de', label: 'DE' }, { code: 'zh', label: '中文' }].forEach(function(lang) {
-          var isActive = lang.code === currentLang;
-          var bgColor = isActive ? '#D78F00' : 'transparent';
-          var borderColor = isActive ? '#D78F00' : 'rgba(255,255,255,0.4)';
-          html += '<button type="button" class="cookie-lang-btn" data-lang="' + lang.code + '" style="background: ' + bgColor + '; border: 1px solid ' + borderColor + '; color: #fff; padding: 5px 14px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; font-weight: 500; margin-left: 5px; transition: all 0.2s;">' + lang.label + '</button>';
-        });
+        var languages = [
+          { code: 'en', label: 'EN' },
+          { code: 'de', label: 'DE' },
+          { code: 'zh', label: '中文' }
+        ];
         
-        selector.innerHTML = html;
-        document.body.appendChild(selector);
-        
-        selector.querySelectorAll('.cookie-lang-btn').forEach(function(btn) {
+        languages.forEach(function(lang) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'stcm-lang-btn';
+          btn.setAttribute('data-lang', lang.code);
+          btn.textContent = lang.label;
+          btn.style.cssText = 'background: ' + (lang.code === currentLang ? '#D78F00' : 'transparent') + '; border: 1px solid ' + (lang.code === currentLang ? '#D78F00' : 'rgba(255,255,255,0.4)') + '; color: #fff; padding: 4px 12px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; font-weight: 500; transition: all 0.2s;';
+          
           btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            setLanguage(btn.getAttribute('data-lang'));
+            changeLanguage(lang.code);
           });
-          btn.addEventListener('mouseenter', function() {
-            if (btn.getAttribute('data-lang') !== currentLang) btn.style.background = 'rgba(215, 143, 0, 0.3)';
-          });
-          btn.addEventListener('mouseleave', function() {
-            if (btn.getAttribute('data-lang') !== currentLang) btn.style.background = 'transparent';
-          });
-        });
-        
-        return selector;
-      }
-      
-      function findCookieCard() {
-        var modal = document.querySelector('.stcm-modal');
-        if (modal && isElementVisible(modal)) return modal;
-        
-        var prompt = document.querySelector('.stcm-prompt');
-        if (prompt && isElementVisible(prompt)) return prompt;
-        
-        var backdrop = document.querySelector('#stcm-backdrop');
-        if (backdrop && isElementVisible(backdrop)) {
-          var card = backdrop.querySelector('.stcm-prompt, .stcm-modal, [role="dialog"]');
-          if (card && isElementVisible(card)) return card;
-          var rect = backdrop.getBoundingClientRect();
-          if (rect.width < window.innerWidth * 0.9) return backdrop;
-        }
-        return null;
-      }
-      
-      function isElementVisible(el) {
-        if (!el) return false;
-        var style = window.getComputedStyle(el);
-        var rect = el.getBoundingClientRect();
-        return style.display !== 'none' && style.visibility !== 'hidden' && parseFloat(style.opacity) > 0 && rect.width > 0 && rect.height > 0;
-      }
-      
-      function positionSelector(selector, card) {
-        if (!selector || !card) return;
-        var cardRect = card.getBoundingClientRect();
-        var top = cardRect.top - 50;
-        if (top < 10) top = 10;
-        selector.style.top = top + 'px';
-        selector.style.left = (cardRect.left + cardRect.width / 2) + 'px';
-        selector.style.transform = 'translateX(-50%)';
-        selector.style.display = 'flex';
-      }
-      
-      function hideSelector() {
-        var selector = document.getElementById('cookie-lang-selector-js');
-        if (selector) selector.style.display = 'none';
-      }
-      
-      function updateButtonStyles() {
-        document.querySelectorAll('.cookie-lang-btn').forEach(function(btn) {
-          var lang = btn.getAttribute('data-lang');
-          btn.style.background = lang === currentLang ? '#D78F00' : 'transparent';
-          btn.style.borderColor = lang === currentLang ? '#D78F00' : 'rgba(255,255,255,0.4)';
-        });
-      }
-      
-      function setLanguage(lang) {
-        currentLang = lang;
-        updateButtonStyles();
-        updateAllText(lang);
-      }
-      
-      function updateAllText(lang) {
-        var t = translations[lang];
-        if (!t) return;
-        
-        // Update headings
-        document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(function(h) {
-          var text = h.textContent.trim().toLowerCase();
-          if (text.includes('cookie preferences') || text.includes('cookie-einstellungen') || text.includes('cookie偏好设置')) {
-            h.textContent = t.preferencesTitle;
-          }
-        });
-        
-        // Update text elements
-        document.querySelectorAll('p, span, div, strong, b, label').forEach(function(el) {
-          if (el.children.length > 0 && el.querySelector('button, a, input')) return;
-          var text = el.textContent.trim().toLowerCase();
-          var originalText = el.textContent.trim();
           
-          if (text.includes('we use cookies') || text.includes('wir verwenden cookies') || text.includes('我们使用cookie')) {
-            el.textContent = t.mainText;
-          }
-          else if (text.includes('choose which types') || text.includes('wählen sie aus') || text.includes('选择您要接受')) {
-            el.textContent = t.preferencesDesc;
-          }
-          else if (originalText === 'Essential' || originalText === 'Notwendig' || originalText === '必要') {
-            el.textContent = t.essentialTitle;
-          }
-          else if (text.includes('necessary for the website to function') || text.includes('für die funktion der website') || text.includes('网站正常运行所必需')) {
-            el.textContent = t.essentialDesc;
-          }
-          else if (originalText === 'Analytics' || originalText === 'Analytik' || originalText === '分析') {
-            el.textContent = t.analyticsTitle;
-          }
-          else if (text.includes('help us understand how visitors') || text.includes('helfen uns zu verstehen') || text.includes('帮助我们了解访客')) {
-            el.textContent = t.analyticsDesc;
-          }
-          else if (originalText === 'Marketing' || originalText === '营销') {
-            el.textContent = t.marketingTitle;
-          }
-          else if (text.includes('deliver personalized advertisements') || text.includes('personalisierte werbung') || text.includes('提供个性化广告')) {
-            el.textContent = t.marketingDesc;
-          }
+          btn.addEventListener('mouseenter', function() {
+            if (lang.code !== currentLang) {
+              btn.style.background = 'rgba(215, 143, 0, 0.3)';
+            }
+          });
+          
+          btn.addEventListener('mouseleave', function() {
+            if (lang.code !== currentLang) {
+              btn.style.background = 'transparent';
+            }
+          });
+          
+          selector.appendChild(btn);
         });
         
-        // Update buttons
-        document.querySelectorAll('button').forEach(function(btn) {
-          if (btn.classList.contains('cookie-lang-btn')) return;
-          var text = btn.textContent.trim().toLowerCase();
-          if (text === 'accept all' || text === 'alle akzeptieren' || text === '全部接受') btn.textContent = t.acceptAll;
-          else if (text === 'reject non-essential' || text === 'nicht wesentliche ablehnen' || text === '拒绝非必要') btn.textContent = t.rejectNonEssential;
-          else if (text === 'manage preferences' || text === 'einstellungen verwalten' || text === '管理偏好') btn.textContent = t.managePreferences;
-          else if (text === 'save preferences' || text === 'einstellungen speichern' || text === '保存偏好') btn.textContent = t.savePreferences;
-        });
-        
-        // Update Cookie Policy links
-        document.querySelectorAll('a').forEach(function(link) {
-          var text = link.textContent.trim().toLowerCase();
-          if (text === 'cookie policy' || text === 'cookie-richtlinie' || text === 'cookie政策') {
-            link.textContent = t.cookiePolicy;
-            if (!link.href.includes('lang=')) link.href = '/legal/cookie-policy?lang=en';
-          }
-        });
-      }
-      
-      function update() {
-        var card = findCookieCard();
-        if (card) {
-          var selector = createLanguageSelector();
-          positionSelector(selector, card);
-          updateAllText(currentLang);
+        // Insert at top of consent UI
+        var header = target.querySelector('header, h1, h2, .stcm-prompt-title');
+        if (header) {
+          header.parentNode.insertBefore(selector, header);
         } else {
-          hideSelector();
+          target.insertBefore(selector, target.firstChild);
         }
       }
       
-      function init() {
-        currentLang = detectLanguage();
-        update();
-        setInterval(update, 200);
-        
-        var observer = new MutationObserver(function() { setTimeout(update, 50); });
-        observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
-        
-        console.log('[Cookie Language Selector] Inline version initialized. Language:', currentLang);
+      // Update language selector button styles
+      function updateLanguageSelectorButtons() {
+        var buttons = document.querySelectorAll('.stcm-lang-btn');
+        buttons.forEach(function(btn) {
+          var lang = btn.getAttribute('data-lang');
+          var isActive = lang === currentLang;
+          btn.style.background = isActive ? '#D78F00' : 'transparent';
+          btn.style.borderColor = isActive ? '#D78F00' : 'rgba(255,255,255,0.4)';
+        });
       }
       
+      // Watch for consent UI changes to add language selector
+      function watchForConsentUI() {
+        var observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function() {
+            var banner = document.querySelector('.stcm-prompt');
+            var modal = document.querySelector('.stcm-modal');
+            
+            if ((banner && banner.style.display !== 'none') || (modal && modal.style.display !== 'none')) {
+              if (!document.getElementById('stcm-lang-selector')) {
+                setTimeout(addLanguageSelector, 100);
+              }
+            }
+          });
+        });
+        
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['style', 'class']
+        });
+      }
+      
+      // Start initialization
       if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', function() {
+          initConsentManager();
+          watchForConsentUI();
+        });
       } else {
-        init();
+        initConsentManager();
+        watchForConsentUI();
       }
-      
-      setTimeout(init, 500);
-      setTimeout(init, 1000);
-      setTimeout(init, 2000);
     })();
     </script>
   </body>
