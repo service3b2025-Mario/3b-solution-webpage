@@ -31,7 +31,7 @@ export default function Home() {
   return (
     <Layout>
       <SEO 
-        title="Luxury Real Estate Investment | 5-Star Hotels & Resorts | 15-30% Returns | 3B Solution"
+        title="Luxury Real Estate Investment | 5-Star Hotels & Resorts | Target Returns 15-30% (Projected) | 3B Solution"
         description="Premium real estate investment opportunities in 5-star hotels, luxury resorts, and commercial properties across Southeast Asia, Maldives, Europe, USA. UHNWI & institutional investors. $750M+ portfolio."
         keywords="luxury real estate investment, 5-star hotel investment, resort investment, UHNWI real estate, institutional investors, Southeast Asia property, Maldives resort, hospitality real estate"
         canonical="https://www.3bsolution.com/"
@@ -40,16 +40,16 @@ export default function Home() {
       <OrganizationSchema />
       <InvestmentProductSchema />
       <FAQSchema faqs={[
-        { question: "What is the minimum investment amount?", answer: "The minimum investment varies by project, typically starting at $100,000 USD for individual properties and $1,000,000 USD for fund participation." },
+        { question: "What is the minimum investment amount?", answer: "The minimum investment varies by project, typically starting at $100,000 USD for individual properties and $1,000,000 USD for direct acquisition." },
         { question: "What types of properties do you invest in?", answer: "We specialize in luxury hospitality real estate including 5-star hotels, ultra-luxury island resorts, premium city hotels, and high-end commercial properties." },
-        { question: "What are the expected returns?", answer: "Our historical performance shows 15-30% annual returns across our portfolio. Returns vary by property type, location, and market conditions." },
+        { question: "What are the expected returns?", answer: "Target returns are 15-30% (projected based on market analysis). Returns vary by property type, location, and market conditions." },
         { question: "What is the typical investment horizon?", answer: "Most investments have a 5-7 year hold period, though this can vary based on the specific opportunity." },
         { question: "How do you manage currency risk?", answer: "We employ sophisticated hedging strategies and structure deals in major currencies (USD, EUR). Our global portfolio provides natural diversification." },
         { question: "What makes Southeast Asia and Maldives attractive markets?", answer: "These regions offer strong GDP growth, rising middle class, increasing tourism, and limited supply of luxury hospitality assets." },
-        { question: "Do you offer co-investment opportunities?", answer: "Yes, we structure deals for both direct property co-investment and fund participation for family offices and institutional investors." },
+        { question: "Do you offer co-investment opportunities?", answer: "Yes, we structure deals for both direct property co-investment and direct acquisition for family offices and institutional investors." },
         { question: "What due diligence do you conduct?", answer: "We perform comprehensive due diligence including third-party valuations, environmental assessments, legal review, market analysis, and financial modeling." },
         { question: "How are properties managed?", answer: "We partner with internationally recognized hotel operators (Marriott, Hilton, Accor) and boutique luxury brands with professional asset management." },
-        { question: "How do I get started?", answer: "Schedule a private consultation with our investment team to discuss your objectives and complete the investor qualification process." }
+        { question: "How do I get started?", answer: "Schedule a private consultation with our investment team to discuss your objectives and complete the client onboarding process." }
       ]} />
       {/* Hero Section */}
     <section className="relative min-h-screen flex items-center overflow-hidden">
@@ -113,7 +113,7 @@ export default function Home() {
               
               <p className="text-xl md:text-2xl text-white/70 mb-4 mx-auto max-w-3xl">
                 Anchored in the Philippines, Diversified Globally (Europe, USA).
-                <span className="block mt-2 text-secondary font-bold text-2xl md:text-3xl">15-30% Annual Returns Backed by Global Expertise</span>
+                <span className="block mt-2 text-secondary font-bold text-2xl md:text-3xl">Target Returns: 15-30% (Projected based on market analysis)*</span>
               </p>
               
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
@@ -370,7 +370,7 @@ export default function Home() {
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <ChevronRight className="w-4 h-4 text-secondary" />
-                    Fund participation
+                    Direct acquisition
                   </li>
                   <li className="flex items-center gap-2">
                     <ChevronRight className="w-4 h-4 text-secondary" />
@@ -437,8 +437,8 @@ export default function Home() {
                 <div className="w-12 h-12 mb-4 bg-primary/10 rounded-lg flex items-center justify-center">
                   <TrendingUp className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">Proven Track Record</h3>
-                <p className="text-muted-foreground">8+ years delivering 15-30% annual returns across 70+ projects in 3 continents</p>
+                <h3 className="text-lg font-bold text-foreground mb-2">Market Expertise</h3>
+                <p className="text-muted-foreground">8+ years market experience with pipeline of 70+ opportunities across 3 continents</p>
               </CardContent>
             </Card>
             
@@ -528,7 +528,7 @@ export default function Home() {
                       <li>✓ Institutional investors</li>
                       <li>✓ Individual & first-time investors</li>
                       <li>✓ Real estate fund managers</li>
-                      <li>✓ Accredited investors</li>
+                      <li>✓ Qualified clients</li>
                     </ul>
                   </div>
                 </div>
@@ -564,7 +564,7 @@ export default function Home() {
             <Card className="border-0 shadow-sm">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold text-foreground mb-3">What is the minimum investment amount?</h3>
-                <p className="text-muted-foreground">The minimum investment varies by project, typically starting at $100,000 USD for individual properties and $10,000,000 USD for fund participation. We work with qualified investors to find opportunities that match their investment criteria.</p>
+                <p className="text-muted-foreground">The minimum investment varies by project, typically starting at $100,000 USD for individual properties and $10,000,000 USD for direct acquisition. We work with qualified investors to find opportunities that match their investment criteria.</p>
               </CardContent>
             </Card>
             
@@ -578,7 +578,7 @@ export default function Home() {
             <Card className="border-0 shadow-sm">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold text-foreground mb-3">What are the expected returns?</h3>
-                <p className="text-muted-foreground">Our historical performance shows 15-30% annual returns across our portfolio. Returns vary by property type, location, and market conditions. We provide detailed pro forma projections for each investment opportunity.</p>
+                <p className="text-muted-foreground">Target returns are 15-30% (projected based on market analysis). Returns vary by property type, location, and market conditions. We provide detailed pro forma projections for each investment opportunity.</p>
               </CardContent>
             </Card>
             
@@ -606,7 +606,7 @@ export default function Home() {
             <Card className="border-0 shadow-sm">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold text-foreground mb-3">Do you offer co-investment opportunities?</h3>
-                <p className="text-muted-foreground">Yes, we structure deals for both direct property co-investment and fund participation. Family offices and institutional investors can invest on specific assets.</p>
+                <p className="text-muted-foreground">Yes, we structure deals for both direct property co-investment and direct acquisition. Family offices and institutional investors can invest on specific assets.</p>
               </CardContent>
             </Card>
             
@@ -627,7 +627,7 @@ export default function Home() {
             <Card className="border-0 shadow-sm">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold text-foreground mb-3">How do I get started?</h3>
-                <p className="text-muted-foreground">Schedule a private consultation with our investment team to discuss your objectives, review current opportunities, and complete the investor qualification process. We'll provide a detailed investment memorandum for properties that match your criteria.</p>
+                <p className="text-muted-foreground">Schedule a private consultation with our investment team to discuss your objectives, review current opportunities, and complete the client onboarding process. We'll provide a detailed investment memorandum for properties that match your criteria.</p>
               </CardContent>
             </Card>
           </div>
