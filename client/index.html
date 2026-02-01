@@ -83,7 +83,25 @@
       });
     </script>
     
-    <!-- Silktide Cookie Consent Manager -->
+    <!-- Silktide Cookie Consent Manager - CSS with 3B Solution CI colors override -->
+    <link rel="stylesheet" href="https://cdn.3bsolution.com/assets/silktide-consent-manager.css" />
+    <style>
+      /* 3B Solution CI Color Override for Cookie Consent */
+      #stcm-wrapper {
+        --primaryColor: #D78F00 !important;
+        --backgroundColor: #1a365d !important;
+        --textColor: #ffffff !important;
+        --iconColor: #1a365d !important;
+        --iconBackgroundColor: #D78F00 !important;
+      }
+      /* Hide Silktide branding logo and credit link */
+      #stcm-banner .stcm-logo,
+      #stcm-modal .stcm-credit-link,
+      a.stcm-logo,
+      .stcm-credit-link {
+        display: none !important;
+      }
+    </style>
     <script src="https://cdn.3bsolution.com/assets/silktide-consent-manager.js"></script>
   </head>
   <body>
@@ -106,11 +124,11 @@
           preferencesTitle: 'Cookie Preferences',
           preferencesDescription: 'Choose which types of cookies you want to accept. You can change your preferences at any time.',
           saveButton: 'Save preferences',
-          essentialTitle: 'Essential',
+          essentialLabel: 'Essential',
           essentialDescription: 'These cookies are necessary for the website to function and cannot be switched off.',
-          analyticsTitle: 'Analytics',
+          analyticsLabel: 'Analytics',
           analyticsDescription: 'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.',
-          marketingTitle: 'Marketing',
+          marketingLabel: 'Marketing',
           marketingDescription: 'These cookies are used to deliver personalized advertisements and measure the effectiveness of our marketing campaigns.',
           cookiePolicy: 'Cookie Policy'
         },
@@ -123,11 +141,11 @@
           preferencesTitle: 'Cookie-Einstellungen',
           preferencesDescription: 'Wählen Sie aus, welche Arten von Cookies Sie akzeptieren möchten. Sie können Ihre Einstellungen jederzeit ändern.',
           saveButton: 'Einstellungen speichern',
-          essentialTitle: 'Notwendig',
+          essentialLabel: 'Notwendig',
           essentialDescription: 'Diese Cookies sind für die Funktion der Website erforderlich und können nicht deaktiviert werden.',
-          analyticsTitle: 'Analytik',
+          analyticsLabel: 'Analytik',
           analyticsDescription: 'Diese Cookies helfen uns zu verstehen, wie Besucher mit unserer Website interagieren, indem sie Informationen anonym sammeln und melden.',
-          marketingTitle: 'Marketing',
+          marketingLabel: 'Marketing',
           marketingDescription: 'Diese Cookies werden verwendet, um personalisierte Werbung zu liefern und die Wirksamkeit unserer Marketingkampagnen zu messen.',
           cookiePolicy: 'Cookie-Richtlinie'
         },
@@ -140,11 +158,11 @@
           preferencesTitle: 'Cookie偏好设置',
           preferencesDescription: '选择您要接受的Cookie类型。您可以随时更改您的偏好设置。',
           saveButton: '保存偏好',
-          essentialTitle: '必要',
+          essentialLabel: '必要',
           essentialDescription: '这些Cookie是网站正常运行所必需的，无法关闭。',
-          analyticsTitle: '分析',
+          analyticsLabel: '分析',
           analyticsDescription: '这些Cookie通过匿名收集和报告信息，帮助我们了解访客如何与我们的网站互动。',
-          marketingTitle: '营销',
+          marketingLabel: '营销',
           marketingDescription: '这些Cookie用于提供个性化广告并衡量我们营销活动的效果。',
           cookiePolicy: 'Cookie政策'
         }
@@ -173,13 +191,13 @@
             {
               id: 'essential',
               required: true,
-              title: t.essentialTitle,
+              label: t.essentialLabel,
               description: t.essentialDescription
             },
             {
               id: 'analytics',
               required: false,
-              title: t.analyticsTitle,
+              label: t.analyticsLabel,
               description: t.analyticsDescription,
               defaultValue: false,
               gtag: {
@@ -199,7 +217,7 @@
             {
               id: 'marketing',
               required: false,
-              title: t.marketingTitle,
+              label: t.marketingLabel,
               description: t.marketingDescription,
               defaultValue: false,
               gtag: {
@@ -232,7 +250,7 @@
               title: t.promptTitle,
               description: t.promptDescription,
               acceptAllButtonText: t.acceptAll,
-              rejectAllButtonText: t.rejectAll,
+              rejectNonEssentialButtonText: t.rejectAll,
               preferencesButtonText: t.managePreferences,
               policyLinkText: t.cookiePolicy,
               policyLinkUrl: '/legal/cookie-policy?lang=en'
@@ -240,11 +258,12 @@
             preferences: {
               title: t.preferencesTitle,
               description: t.preferencesDescription,
-              saveButtonText: t.saveButton
+              saveButtonText: t.saveButton,
+              creditLinkText: '' // Hide credit link text
             }
           },
           icon: {
-            position: 'bottomRight',
+            position: 'bottomLeft',
             colorScheme: 'stcm-icon-dark'
           },
           prompt: {
@@ -269,30 +288,71 @@
         }
       }
       
-      // Change language and reinitialize
+      // Change language WITHOUT reinitializing (just update text in DOM)
       function changeLanguage(lang) {
-        if (translations[lang]) {
-          currentLang = lang;
-          var config = buildConfig();
-          if (typeof window.silktideConsentManager !== 'undefined' && typeof window.silktideConsentManager.update === 'function') {
-            // Update the consent manager with new language
-            window.silktideConsentManager.update(config);
-          }
-          updateLanguageSelectorButtons();
-          console.log('[Cookie Consent] Language changed to:', lang);
+        if (!translations[lang]) return;
+        
+        currentLang = lang;
+        var t = getTranslations();
+        
+        // Update banner text if visible
+        var banner = document.getElementById('stcm-banner');
+        if (banner) {
+          var desc = banner.querySelector('p');
+          if (desc) desc.textContent = t.promptDescription;
+          
+          var acceptBtn = banner.querySelector('.stcm-accept-all');
+          if (acceptBtn) acceptBtn.textContent = t.acceptAll;
+          
+          var rejectBtn = banner.querySelector('.stcm-reject-all');
+          if (rejectBtn) rejectBtn.textContent = t.rejectAll;
+          
+          var prefsBtn = banner.querySelector('.stcm-preferences-button span');
+          if (prefsBtn) prefsBtn.textContent = t.managePreferences;
         }
+        
+        // Update modal text if visible
+        var modal = document.getElementById('stcm-modal');
+        if (modal) {
+          var title = modal.querySelector('h1');
+          if (title) title.textContent = t.preferencesTitle;
+          
+          var desc = modal.querySelector('header + p');
+          if (desc) desc.textContent = t.preferencesDescription;
+          
+          var saveBtn = modal.querySelector('.stcm-modal-save');
+          if (saveBtn) saveBtn.textContent = t.saveButton;
+          
+          var rejectBtn = modal.querySelector('.stcm-modal-reject-all');
+          if (rejectBtn) rejectBtn.textContent = t.rejectAll;
+          
+          // Update consent type labels and descriptions
+          var fieldsets = modal.querySelectorAll('fieldset');
+          var consentLabels = [t.essentialLabel, t.analyticsLabel, t.marketingLabel];
+          var consentDescs = [t.essentialDescription, t.analyticsDescription, t.marketingDescription];
+          
+          fieldsets.forEach(function(fieldset, index) {
+            var legend = fieldset.querySelector('legend');
+            var descDiv = fieldset.querySelector('.stcm-consent-description');
+            if (legend && consentLabels[index]) legend.textContent = consentLabels[index];
+            if (descDiv && consentDescs[index]) descDiv.textContent = consentDescs[index];
+          });
+        }
+        
+        updateLanguageSelectorButtons();
+        console.log('[Cookie Consent] Language changed to:', lang);
       }
       
       // Create and add language selector
       function addLanguageSelector() {
         // Check if cookie banner or modal is visible
-        var banner = document.querySelector('.stcm-prompt');
-        var modal = document.querySelector('.stcm-modal');
+        var banner = document.getElementById('stcm-banner');
+        var modal = document.getElementById('stcm-modal');
         var target = null;
         
-        if (banner && banner.style.display !== 'none') {
+        if (banner && getComputedStyle(banner).display !== 'none') {
           target = banner;
-        } else if (modal && modal.style.display !== 'none') {
+        } else if (modal && getComputedStyle(modal).display !== 'none') {
           target = modal;
         }
         
@@ -302,19 +362,25 @@
           return;
         }
         
-        // Check if selector already exists
-        if (document.getElementById('stcm-lang-selector')) {
+        // Check if selector already exists in this target
+        if (target.querySelector('#stcm-lang-selector')) {
           return;
+        }
+        
+        // Remove any existing selector from other location
+        var existingSelector = document.getElementById('stcm-lang-selector');
+        if (existingSelector) {
+          existingSelector.remove();
         }
         
         // Create language selector
         var selector = document.createElement('div');
         selector.id = 'stcm-lang-selector';
-        selector.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; padding: 8px 0;';
+        selector.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; padding: 8px 0;';
         
         var label = document.createElement('span');
         label.textContent = 'Language:';
-        label.style.cssText = 'color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-right: 4px;';
+        label.style.cssText = 'color: #ffffff; opacity: 0.7; font-size: 0.85rem; margin-right: 4px;';
         selector.appendChild(label);
         
         var languages = [
@@ -329,7 +395,8 @@
           btn.className = 'stcm-lang-btn';
           btn.setAttribute('data-lang', lang.code);
           btn.textContent = lang.label;
-          btn.style.cssText = 'background: ' + (lang.code === currentLang ? '#D78F00' : 'transparent') + '; border: 1px solid ' + (lang.code === currentLang ? '#D78F00' : 'rgba(255,255,255,0.4)') + '; color: #fff; padding: 4px 12px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; font-weight: 500; transition: all 0.2s;';
+          var isActive = lang.code === currentLang;
+          btn.style.cssText = 'background: ' + (isActive ? '#D78F00' : 'transparent') + '; border: 1px solid ' + (isActive ? '#D78F00' : '#ffffff') + '; color: ' + (isActive ? '#1a365d' : '#ffffff') + '; padding: 4px 12px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; font-weight: 500; transition: all 0.2s;';
           
           btn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -353,12 +420,7 @@
         });
         
         // Insert at top of consent UI
-        var header = target.querySelector('header, h1, h2, .stcm-prompt-title');
-        if (header) {
-          header.parentNode.insertBefore(selector, header);
-        } else {
-          target.insertBefore(selector, target.firstChild);
-        }
+        target.insertBefore(selector, target.firstChild);
       }
       
       // Update language selector button styles
@@ -368,23 +430,33 @@
           var lang = btn.getAttribute('data-lang');
           var isActive = lang === currentLang;
           btn.style.background = isActive ? '#D78F00' : 'transparent';
-          btn.style.borderColor = isActive ? '#D78F00' : 'rgba(255,255,255,0.4)';
+          btn.style.borderColor = isActive ? '#D78F00' : '#ffffff';
+          btn.style.color = isActive ? '#1a365d' : '#ffffff';
         });
       }
       
       // Watch for consent UI changes to add language selector
       function watchForConsentUI() {
         var observer = new MutationObserver(function(mutations) {
-          mutations.forEach(function() {
-            var banner = document.querySelector('.stcm-prompt');
-            var modal = document.querySelector('.stcm-modal');
-            
-            if ((banner && banner.style.display !== 'none') || (modal && modal.style.display !== 'none')) {
-              if (!document.getElementById('stcm-lang-selector')) {
-                setTimeout(addLanguageSelector, 100);
-              }
+          var banner = document.getElementById('stcm-banner');
+          var modal = document.getElementById('stcm-modal');
+          
+          // Check if banner just became visible
+          if (banner && getComputedStyle(banner).display !== 'none') {
+            if (!banner.querySelector('#stcm-lang-selector')) {
+              setTimeout(function() { addLanguageSelector(); }, 100);
             }
-          });
+          }
+          
+          // Check if modal just became visible
+          if (modal && getComputedStyle(modal).display !== 'none' && modal.style.display === 'flex') {
+            if (!modal.querySelector('#stcm-lang-selector')) {
+              // Remove from banner if exists
+              var bannerSelector = banner ? banner.querySelector('#stcm-lang-selector') : null;
+              if (bannerSelector) bannerSelector.remove();
+              setTimeout(function() { addLanguageSelector(); }, 100);
+            }
+          }
         });
         
         observer.observe(document.body, {
