@@ -5,7 +5,7 @@ export function OrganizationSchema() {
     "@context": "https://schema.org",
     "@type": "RealEstateAgent",
     "name": "3B Solution",
-    "description": "Premium real estate investment solutions specializing in luxury hospitality and commercial properties",
+    "description": "Premium real estate brokerage and services company specializing in luxury hospitality and commercial properties",
     "url": "https://www.3bsolution.com",
     "logo": "https://cdn.3bsolution.com/assets/3b-logo.webp",
     "image": "https://cdn.3bsolution.com/assets/hero-background.webp",
@@ -52,7 +52,7 @@ export function InvestmentProductSchema() {
     "@context": "https://schema.org",
     "@type": "InvestmentOrSavingsProduct",
     "name": "Luxury Hospitality Real Estate Investment",
-    "description": "Premium 5-star hotel and resort investment opportunities with 15-30% annual returns",
+    "description": "Premium 5-star hotel and resort investment opportunities with target returns of 15-30% (projected)",
     "provider": {
       "@type": "Organization",
       "name": "3B Solution"
