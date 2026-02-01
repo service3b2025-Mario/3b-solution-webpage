@@ -305,7 +305,7 @@ export function Footer() {
                   Privacy
                 </Link>
                 <span className="text-white/30">|</span>
-                <Link href="/legal/cookie-policy" className="text-secondary hover:text-secondary/80 text-sm font-medium transition-colors">
+                <Link href="/legal/cookie-policy?lang=en" className="text-secondary hover:text-secondary/80 text-sm font-medium transition-colors">
                   Cookies
                 </Link>
                 <span className="text-white/30">|</span>
