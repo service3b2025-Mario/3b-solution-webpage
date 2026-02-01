@@ -59,7 +59,7 @@ export function InvestorTypesLinks({ currentType }: InvestorTypesLinksProps) {
             Explore Other Investor Types
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover investment solutions tailored to different investor profiles and requirements
+            Discover real estate services tailored to different client profiles and requirements
           </p>
         </div>
 
