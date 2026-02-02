@@ -28,7 +28,7 @@ export default function UHNWIPage() {
               Ultra High Net Worth Individuals
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              Exclusive real estate opportunities for investors with $30M+ net worth seeking global portfolio diversification and accredited investment status.
+              Exclusive real estate opportunities for clients with $30M+ net worth seeking global portfolio diversification and qualified client status.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/properties">
@@ -53,7 +53,7 @@ export default function UHNWIPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Why UHNWI Choose 3B Solution</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Tailored services designed specifically for ultra-high-net-worth individuals seeking premium real estate investments.
+              Tailored services designed specifically for ultra-high-net-worth individuals seeking premium real estate opportunities.
             </p>
           </div>
 
@@ -125,7 +125,7 @@ export default function UHNWIPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Exclusive Network Access</h3>
                 <p className="text-muted-foreground">
-                  Connect with elite investor community, co-ownership opportunities, and private events with industry leaders.
+                  Connect with elite client community, co-ownership opportunities, and private events with industry leaders.
                 </p>
               </CardContent>
             </Card>
@@ -202,7 +202,7 @@ export default function UHNWIPage() {
             <CardContent className="p-12 text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Explore Exclusive Opportunities?</h2>
               <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Schedule a confidential consultation with our UHNWI specialists to discuss your investment objectives.
+                Schedule a confidential consultation with our UHNWI specialists to discuss your property objectives.
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
                 <Link href="/contact">
