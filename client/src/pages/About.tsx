@@ -40,16 +40,15 @@ export default function About() {
                 <span className="text-sm font-medium text-secondary">Our Mission</span>
               </div>
               <h2 className="text-3xl font-bold text-foreground mb-6">
-                Democratizing Access to Premium Real Estate Investments
+                Democratizing Access to Premium Real Estate Opportunities
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-6">
                 At 3B Solution, we believe that exceptional real estate opportunities 
-                should be accessible to discerning investors worldwide. Our mission is to bridge 
+                should be accessible to discerning clients worldwide. Our mission is to bridge 
                 the gap between global capital and high-yield real estate assets in emerging markets.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                With a focus on hospitality, commercial, and mixed-use developments, we deliver 
-                15-30% annual returns backed by deep market expertise and rigorous due diligence.
+                With a focus on hospitality, commercial, and mixed-use developments, we target 15-30% projected annual yields based on comprehensive market analysis and rigorous due diligence.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-6">
@@ -57,7 +56,7 @@ export default function About() {
                 { icon: Globe, title: "Global Reach", desc: "Operating across 4 continents with local expertise" },
                 { icon: Users, title: "Expert Team", desc: "Decades of combined real estate experience" },
                 { icon: Target, title: "Focused Strategy", desc: "Specializing in high-growth hospitality sector" },
-                { icon: Award, title: "Proven Results", desc: "Consistent 15-30% annual returns" },
+                { icon: Award, title: "Proven Results", desc: "Projected 15-30% annual yields" },
               ].map((item, index) => (
                 <Card key={index} className="border-0 shadow-lg">
                   <CardContent className="p-6">
@@ -110,7 +109,7 @@ export default function About() {
               Leadership Team
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Meet the experts driving exceptional returns for our investors
+              Meet our real estate experts dedicated to your success
             </p>
           </div>
 
