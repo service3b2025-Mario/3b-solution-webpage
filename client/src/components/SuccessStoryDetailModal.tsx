@@ -74,7 +74,7 @@ export function SuccessStoryDetailModal({ story, open, onClose }: SuccessStoryDe
             {story.investmentAmount && story.investmentAmount !== 'N/A' && (
               <div className="text-center p-4 bg-muted/50 rounded-lg">
                 <div className="text-2xl font-bold text-secondary">{story.investmentAmount}</div>
-                <div className="text-xs text-muted-foreground">Investment Amount</div>
+                <div className="text-xs text-muted-foreground">Purchase Amount</div>
               </div>
             )}
             {story.timeline && (
