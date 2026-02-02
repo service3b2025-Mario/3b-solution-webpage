@@ -103,7 +103,7 @@ export function TourScheduler({ propertyId, propertyTitle }: TourSchedulerProps)
             Schedule Virtual Tour
           </CardTitle>
           <CardDescription>
-            Sign in to book a personalized virtual tour with our investment team.
+            Sign in to book a personalized virtual tour with our real estate team.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -162,7 +162,7 @@ export function TourScheduler({ propertyId, propertyTitle }: TourSchedulerProps)
           Schedule Virtual Tour
         </CardTitle>
         <CardDescription>
-          Book a personalized virtual tour with our investment team
+          Book a personalized virtual tour with our real estate team
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
