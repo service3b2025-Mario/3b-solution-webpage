@@ -254,7 +254,7 @@ export function DownloadAnalytics() {
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="report">Market Reports</SelectItem>
-                <SelectItem value="guide">Investment Guides</SelectItem>
+                <SelectItem value="guide">Property Market Guides</SelectItem>
                 <SelectItem value="brochure">Brochures</SelectItem>
                 <SelectItem value="document">Documents</SelectItem>
                 <SelectItem value="photo">Photos</SelectItem>
