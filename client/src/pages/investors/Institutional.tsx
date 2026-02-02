@@ -39,7 +39,7 @@ export default function InstitutionalPage() {
               </Link>
               <Link href="/contact">
                 <Button size="lg" variant="outline">
-                  Request Investment Memorandum
+                  Request Property Memorandum
                 </Button>
               </Link>
             </div>
@@ -51,7 +51,7 @@ export default function InstitutionalPage() {
       <section className="py-20">
         <div className="container">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Institutional-Grade Investment Solutions</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Institutional-Grade Real Estate Services</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Comprehensive real estate investment services designed for institutional fiduciary standards and compliance requirements.
             </p>
@@ -137,7 +137,7 @@ export default function InstitutionalPage() {
       <section className="py-20 bg-muted/30">
         <div className="container">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Institutional Investment Criteria</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Institutional Client Criteria</h2>
             <Card>
               <CardContent className="p-8">
                 <div className="space-y-6">
@@ -202,12 +202,12 @@ export default function InstitutionalPage() {
             <CardContent className="p-12 text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Partner with 3B Solution</h2>
               <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Request a detailed investment memorandum and schedule a meeting with our institutional investment team.
+                Request a detailed property memorandum and schedule a meeting with our institutional real estate team.
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
                 <Link href="/contact">
                   <Button size="lg" className="bg-secondary hover:bg-secondary/90">
-                    Request Investment Memorandum
+                    Request Property Memorandum
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
