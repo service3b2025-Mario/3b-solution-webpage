@@ -220,7 +220,7 @@ export default function SoutheastAsia() {
         </div>
       </section>
 
-      {/* Investment Opportunities */}
+      {/* Property Opportunities */}
       <section className="py-20 bg-background">
         <div className="container">
           <div className="text-center mb-12">
