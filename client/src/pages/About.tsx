@@ -24,7 +24,7 @@ export default function About() {
               About 3B Solution
             </h1>
             <p className="text-xl text-white/80">
-              Premium real estate investment solutions anchored in the Philippines, diversified globally
+              Premium real estate brokerage and services anchored in the Philippines, diversified globally
             </p>
           </div>
         </div>
@@ -43,7 +43,7 @@ export default function About() {
                 Democratizing Access to Premium Real Estate Investments
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                At 3B Solution, we believe that exceptional real estate investment opportunities 
+                At 3B Solution, we believe that exceptional real estate opportunities 
                 should be accessible to discerning investors worldwide. Our mission is to bridge 
                 the gap between global capital and high-yield real estate assets in emerging markets.
               </p>
@@ -162,7 +162,7 @@ export default function About() {
                           onClick={(e) => e.stopPropagation()}
                         >
                           <a 
-                            href={`https://wa.me/${member.phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(member.name)}%2C%20I%20would%20like%20to%20discuss%20investment%20opportunities%20with%203B%20Solution.`}
+                            href={`https://wa.me/${member.phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(member.name)}%2C%20I%20would%20like%20to%20discuss%20real%20estate%20opportunities%20with%203B%20Solution.`}
                             target="_blank" 
                             rel="noopener noreferrer"
                           >
