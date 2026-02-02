@@ -364,7 +364,7 @@ export function BookingSelector({ className, layout = "horizontal" }: BookingSel
                       </Select>
                     </div>
                     <div>
-                      <label className="text-sm font-medium mb-2 block">Investment Range</label>
+                      <label className="text-sm font-medium mb-2 block">Budget Range</label>
                       <Select
                         value={formData.investmentRange}
                         onValueChange={(v) => setFormData({ ...formData, investmentRange: v })}
@@ -395,7 +395,7 @@ export function BookingSelector({ className, layout = "horizontal" }: BookingSel
                     setFormData({ ...formData, message: e.target.value });
                     if (errors.message) setErrors({ ...errors, message: "" });
                   }}
-                  placeholder="Tell us about your investment interests..."
+                  placeholder="Tell us about your property interests..."
                   rows={4}
                   className={errors.message ? "border-red-500" : ""}
                 />
