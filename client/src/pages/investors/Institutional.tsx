@@ -25,7 +25,7 @@ export default function InstitutionalPage() {
               <Landmark className="w-10 h-10 text-secondary" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Institutional Investors
+              Institutional Clients
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
               Strategic real estate solutions for pension funds, insurance companies, and endowments managing $50M+ AUM with long-term investment horizons.
@@ -125,7 +125,7 @@ export default function InstitutionalPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Institutional Infrastructure</h3>
                 <p className="text-muted-foreground">
-                  Dedicated institutional services team, quarterly reporting, investor portals, and seamless integration with custodians.
+                  Dedicated institutional services team, quarterly reporting, client portals, and seamless integration with custodians.
                 </p>
               </CardContent>
             </Card>
