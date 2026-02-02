@@ -10,7 +10,7 @@ export default function Investors() {
     <Layout>
       <SEO 
         title="Client Onboarding | UHNWI & Institutional Investors | 3B Solution"
-        description="Exclusive real estate investment opportunities for Ultra High Net Worth Individuals, institutional investors, and family offices. Minimum $100K investment. 15-30% returns."
+        description="Exclusive real estate opportunities for Ultra High Net Worth Individuals, institutional investors, and family offices. Minimum $100K. 15-30% target returns."
         keywords="UHNWI real estate services, institutional real estate clients, family office real estate, qualified client opportunities, luxury hotel services, qualified clients"
         canonical="https://www.3bsolution.com/investors"
       />
@@ -20,7 +20,7 @@ export default function Investors() {
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-6 py-3 bg-secondary/20 backdrop-blur-sm border-2 border-secondary/40 rounded-full mb-6">
-              <span className="text-primary font-semibold">🏆 Exclusive Investment Opportunities</span>
+              <span className="text-primary font-semibold">🏆 Exclusive Property Opportunities</span>
             </div>
             
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
@@ -40,7 +40,7 @@ export default function Investors() {
               </Link>
               <Link href="/properties">
                 <Button size="lg" variant="outline">
-                  View Investment Opportunities
+                  View Property Opportunities
                 </Button>
               </Link>
             </div>
@@ -87,14 +87,14 @@ export default function Investors() {
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="font-semibold">Investment Range</p>
+                      <p className="font-semibold">Budget Range</p>
                       <p className="text-sm text-muted-foreground">$100K - $50M per opportunity</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="font-semibold">Investment Horizon</p>
+                      <p className="font-semibold">Holding Period</p>
                       <p className="text-sm text-muted-foreground">5-7 years typical hold period</p>
                     </div>
                   </div>
@@ -131,7 +131,7 @@ export default function Investors() {
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-secondary mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="font-semibold">Investment Range</p>
+                      <p className="font-semibold">Budget Range</p>
                       <p className="text-sm text-muted-foreground">$5M - $200M per opportunity</p>
                     </div>
                   </div>
@@ -175,7 +175,7 @@ export default function Investors() {
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="font-semibold">Investment Range</p>
+                      <p className="font-semibold">Budget Range</p>
                       <p className="text-sm text-muted-foreground">$1M - $100M per opportunity</p>
                     </div>
                   </div>
@@ -219,7 +219,7 @@ export default function Investors() {
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-chart-2 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="font-semibold">Investment Range</p>
+                      <p className="font-semibold">Budget Range</p>
                       <p className="text-sm text-muted-foreground">$100K - $5M per opportunity</p>
                     </div>
                   </div>
@@ -275,7 +275,7 @@ export default function Investors() {
                   <span className="text-2xl font-bold text-accent">3</span>
                 </div>
                 <h3 className="text-lg font-bold text-foreground mb-2">Deal Review</h3>
-                <p className="text-muted-foreground">Access investment memorandums, pro formas, and due diligence materials</p>
+                <p className="text-muted-foreground">Access property memorandums, pro formas, and due diligence materials</p>
               </CardContent>
             </Card>
             
