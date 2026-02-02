@@ -349,7 +349,7 @@ export default function MyTours() {
               <Calendar className="w-20 h-20 mx-auto mb-6 text-muted-foreground" />
               <h2 className="text-2xl font-bold text-foreground mb-4">No Tours Scheduled</h2>
               <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
-                Browse our premium properties and schedule a virtual tour to explore investment opportunities.
+                Browse our premium properties and schedule a virtual tour to explore property opportunities.
               </p>
               <Link href="/properties">
                 <Button size="lg">
