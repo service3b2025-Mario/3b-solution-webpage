@@ -221,10 +221,10 @@ export function Footer() {
         <div className="container text-center">
           {/* FIXED: Changed from h3 to h2 for proper heading hierarchy */}
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4">
-            Ready to Start Your Investment Journey?
+            Ready to Start Your Property Journey?
           </h2>
           <p className="text-white/80 mb-6 max-w-2xl mx-auto">
-            Connect with our expert team for personalized investment guidance and exclusive property access.
+            Connect with our expert team for personalized property guidance and exclusive real estate access.
           </p>
           <Link href="/contact">
             <Button size="lg" className="bg-white text-secondary hover:bg-white/90 font-medium px-8">
