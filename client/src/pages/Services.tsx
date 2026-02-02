@@ -3,15 +3,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { TrendingUp, Building2, Users, Globe, Shield, BarChart3, Briefcase, Target, Check, ArrowRight, Landmark } from "lucide-react";
+import { TrendingUp, Building2, Users, Globe, Shield, BarChart3, Briefcase, Target, Check, ArrowRight, Landmark, Home, Key, Lightbulb, LineChart, Hammer, Award, CheckCircle } from "lucide-react";
 import { Breadcrumb } from "@/components/Breadcrumb";
 
+// Extended icon map to support more service icons
 const iconMap: Record<string, any> = {
-  TrendingUp, Building2, Users, Globe, Shield, BarChart3, Briefcase, Target
+  TrendingUp, Building2, Users, Globe, Shield, BarChart3, Briefcase, Target,
+  Landmark, Home, Key, Lightbulb, LineChart, Hammer, Award, CheckCircle
 };
 
 export default function Services() {
   const { data: services } = trpc.services.list.useQuery();
+
+  // Sort services by order
+  const sortedServices = services ? [...services].sort((a, b) => (a.order || 0) - (b.order || 0)) : [];
 
   return (
     <Layout>
@@ -30,19 +35,24 @@ export default function Services() {
         </div>
       </section>
 
-      {/* Services Grid */}
+      {/* Services Grid - Supports 4-6 services in a responsive grid */}
       <section className="py-20 bg-background">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {(services || []).map((service, index) => {
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${sortedServices.length > 4 ? 'lg:grid-cols-3' : ''} gap-8`}>
+            {sortedServices.map((service, index) => {
               const IconComponent = iconMap[service.icon || "TrendingUp"] || TrendingUp;
               const features = service.features as string[] || [];
+              const hasRichContent = service.fullDescription && service.fullDescription.includes('<');
               
               return (
-                <Card id={`service-${service.id}`} key={service.id} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group scroll-mt-24">
+                <Card 
+                  id={`service-${service.id}`} 
+                  key={service.id} 
+                  className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group scroll-mt-24"
+                >
                   <CardHeader className="pb-4">
                     <div className="flex items-start gap-4">
-                      <div className="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
+                      <div className="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center group-hover:bg-secondary/20 transition-colors flex-shrink-0">
                         <IconComponent className="w-7 h-7 text-secondary" />
                       </div>
                       <div className="flex-1">
@@ -52,14 +62,29 @@ export default function Services() {
                     </div>
                   </CardHeader>
                   <CardContent>
+                    {/* Render rich HTML content or plain text */}
                     {service.fullDescription && (
-                      <p className="text-muted-foreground mb-6">{service.fullDescription}</p>
+                      hasRichContent ? (
+                        <div 
+                          className="prose prose-sm max-w-none text-muted-foreground mb-6 
+                            prose-headings:text-foreground prose-headings:font-semibold
+                            prose-p:text-muted-foreground prose-p:leading-relaxed
+                            prose-strong:text-foreground prose-strong:font-semibold
+                            prose-ul:text-muted-foreground prose-li:text-muted-foreground
+                            prose-a:text-secondary prose-a:no-underline hover:prose-a:underline"
+                          dangerouslySetInnerHTML={{ __html: service.fullDescription }}
+                        />
+                      ) : (
+                        <p className="text-muted-foreground mb-6">{service.fullDescription}</p>
+                      )
                     )}
+                    
+                    {/* Feature bullet points */}
                     {features.length > 0 && (
                       <ul className="space-y-3">
                         {features.map((feature, i) => (
                           <li key={i} className="flex items-start gap-3">
-                            <div className="w-5 h-5 bg-secondary/10 rounded-full flex items-center justify-center mt-0.5">
+                            <div className="w-5 h-5 bg-secondary/10 rounded-full flex items-center justify-center mt-0.5 flex-shrink-0">
                               <Check className="w-3 h-3 text-secondary" />
                             </div>
                             <span className="text-sm text-muted-foreground">{feature}</span>
@@ -177,7 +202,7 @@ export default function Services() {
         </div>
       </section>
 
-      {/* Investor Profiles Section */}
+      {/* Client Profiles Section */}
       <section className="py-20 bg-muted/30">
         <div className="container">
           <div className="text-center mb-12">
@@ -213,7 +238,7 @@ export default function Services() {
                   <div className="w-14 h-14 mx-auto mb-4 bg-secondary/10 rounded-full flex items-center justify-center">
                     <Landmark className="w-7 h-7 text-secondary" />
                   </div>
-                  <h3 className="text-lg font-bold text-foreground mb-2">Institutional Investors</h3>
+                  <h3 className="text-lg font-bold text-foreground mb-2">Institutional Clients</h3>
                   <p className="text-sm text-muted-foreground mb-3">Pension Funds, Insurance, Endowments</p>
                   <div className="text-xs text-muted-foreground space-y-1">
                     <p>• $50M+ AUM</p>
@@ -247,10 +272,10 @@ export default function Services() {
                   <div className="w-14 h-14 mx-auto mb-4 bg-chart-2/10 rounded-full flex items-center justify-center">
                     <TrendingUp className="w-7 h-7 text-chart-2" />
                   </div>
-                  <h3 className="text-lg font-bold text-foreground mb-2">Individual & First-Time Investors</h3>
+                  <h3 className="text-lg font-bold text-foreground mb-2">Individual & First-Time Buyers</h3>
                   <p className="text-sm text-muted-foreground mb-3">Building wealth through real estate</p>
                   <div className="text-xs text-muted-foreground space-y-1">
-                    <p>• $100K+ investment capacity</p>
+                    <p>• $100K+ purchase capacity</p>
                     <p>• Portfolio diversification</p>
                     <p>• Expert guidance & support</p>
                   </div>
