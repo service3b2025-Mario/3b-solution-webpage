@@ -116,7 +116,7 @@ export default function DownloadGateModal({
       case "document":
         return "Document";
       case "guide":
-        return "Investment Guide";
+        return "Property Market Guide";
       default:
         return "Resource";
     }
@@ -165,7 +165,7 @@ export default function DownloadGateModal({
           </div>
 
           <div className="text-xs text-muted-foreground">
-            By downloading, you agree to receive occasional updates about investment opportunities. 
+            By downloading, you agree to receive occasional updates about property opportunities. 
             You can unsubscribe anytime.
           </div>
 
