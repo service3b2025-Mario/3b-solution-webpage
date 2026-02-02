@@ -125,7 +125,7 @@ export default function UHNWIPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Exclusive Network Access</h3>
                 <p className="text-muted-foreground">
-                  Connect with elite investor community, co-investment opportunities, and private events with industry leaders.
+                  Connect with elite investor community, co-ownership opportunities, and private events with industry leaders.
                 </p>
               </CardContent>
             </Card>
