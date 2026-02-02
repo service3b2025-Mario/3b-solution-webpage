@@ -68,10 +68,10 @@ export async function seedDatabase() {
   // Seed Site Settings
   const settingsData = [
     { key: 'hero_headline', value: 'Premium Real Estate Solutions', type: 'text' as const, category: 'home' },
-    { key: 'hero_subheadline', value: 'Exclusive Access to High-Yield Real Estate Investments', type: 'text' as const, category: 'home' },
-    { key: 'hero_description', value: 'Anchored in the Philippines, Diversified Globally\n15-30% Annual Returns Backed by Global Expertise', type: 'text' as const, category: 'home' },
+    { key: 'hero_subheadline', value: 'Exclusive Access to High-Yield Real Estate Opportunities', type: 'text' as const, category: 'home' },
+    { key: 'hero_description', value: 'Anchored in the Philippines, Diversified Globally\nTarget Returns: 15-30% (Projected based on market analysis)', type: 'text' as const, category: 'home' },
     { key: 'about_story', value: 'Founded with a vision to bridge global investors with premium real estate opportunities, 3B Solution has grown into a trusted partner for discerning investors worldwide.', type: 'text' as const, category: 'about' },
-    { key: 'mission', value: 'To provide exceptional real estate investment opportunities that deliver superior returns while maintaining the highest standards of integrity and professionalism.', type: 'text' as const, category: 'about' },
+    { key: 'mission', value: 'To provide exceptional real estate brokerage services that facilitate access to high-yield opportunities while maintaining the highest standards of integrity and professionalism.', type: 'text' as const, category: 'about' },
     { key: 'vision', value: 'To be the premier global platform connecting sophisticated investors with transformative real estate opportunities.', type: 'text' as const, category: 'about' },
     { key: 'footer_disclaimer', value: '© 2024 3B Solution. All rights reserved. Investment involves risk. Past performance is not indicative of future results.', type: 'text' as const, category: 'footer' },
   ];
@@ -80,8 +80,8 @@ export async function seedDatabase() {
   // Seed Market Reports
   const reportsData = [
     { title: 'Philippine Real Estate Market Outlook 2024', slug: 'ph-market-outlook-2024', description: 'Comprehensive analysis of the Philippine real estate market including hospitality, commercial, and residential sectors.', category: 'Market Outlook', region: 'SouthEastAsia', isActive: true, publishedAt: new Date() },
-    { title: 'Maldives Tourism & Hospitality Investment Guide', slug: 'maldives-hospitality-guide', description: 'In-depth guide to investing in Maldives hospitality sector, covering regulations, opportunities, and market dynamics.', category: 'Investment Guide', region: 'Maldives', isActive: true, publishedAt: new Date() },
-    { title: 'European Boutique Hotel Investment Trends', slug: 'europe-boutique-trends', description: 'Analysis of boutique hotel investment opportunities across major European cities.', category: 'Market Trends', region: 'Europe', isActive: true, publishedAt: new Date() },
+    { title: 'Maldives Tourism & Hospitality Property Guide', slug: 'maldives-hospitality-guide', description: 'In-depth guide to Maldives hospitality sector, covering regulations, opportunities, and market dynamics.', category: 'Property Guide', region: 'Maldives', isActive: true, publishedAt: new Date() },
+    { title: 'European Boutique Hotel Investment Trends', slug: 'europe-boutique-trends', description: 'Analysis of boutique hotel opportunities across major European cities.', category: 'Market Trends', region: 'Europe', isActive: true, publishedAt: new Date() },
   ];
   await db.insert(marketReports).values(reportsData).onDuplicateKeyUpdate({ set: { title: reportsData[0].title } });
 
@@ -140,7 +140,7 @@ export async function seedDatabase() {
 <p>We use the information we collect to:</p>
 <ul>
 <li>Provide and improve our services</li>
-<li>Communicate with you about investment opportunities</li>
+<li>Communicate with you about property opportunities</li>
 <li>Send market updates and newsletters (with your consent)</li>
 <li>Comply with legal obligations</li>
 <li>Protect our rights and prevent fraud</li>
