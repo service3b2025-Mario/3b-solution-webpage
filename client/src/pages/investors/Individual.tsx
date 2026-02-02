@@ -33,7 +33,7 @@ export default function IndividualPage() {
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/properties">
                 <Button size="lg" className="bg-secondary hover:bg-secondary/90">
-                  Start Your Investment Journey
+                  Start Your Property Journey
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
@@ -89,7 +89,7 @@ export default function IndividualPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Lower Entry Barriers</h3>
                 <p className="text-muted-foreground">
-                  Accessible investment opportunities starting from $100K with flexible financing options and co-investment structures available.
+                  Accessible property opportunities starting from $100K with flexible financing options and co-ownership structures available.
                 </p>
               </CardContent>
             </Card>
@@ -133,11 +133,11 @@ export default function IndividualPage() {
         </div>
       </section>
 
-      {/* Investment Journey */}
+      {/* Property Journey */}
       <section className="py-20 bg-muted/30">
         <div className="container">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Your Investment Journey</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Your Property Journey</h2>
             <Card>
               <CardContent className="p-8">
                 <div className="space-y-6">
@@ -148,7 +148,7 @@ export default function IndividualPage() {
                     <div>
                       <h3 className="text-lg font-semibold mb-2">Initial Consultation</h3>
                       <p className="text-muted-foreground">
-                        Meet with our investment advisors to discuss your financial goals, risk tolerance, and investment timeline. We'll assess your readiness and create a personalized strategy.
+                        Meet with our property advisors to discuss your financial goals, risk tolerance, and property timeline. We'll assess your readiness and create a personalized strategy.
                       </p>
                     </div>
                   </div>
