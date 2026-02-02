@@ -51,7 +51,7 @@ export default function FamilyOfficesPage() {
       <section className="py-20">
         <div className="container">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Family Office Investment Solutions</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Family Office Real Estate Services</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Bespoke real estate strategies tailored to multi-generational wealth preservation and family governance structures.
             </p>
@@ -77,7 +77,7 @@ export default function FamilyOfficesPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Legacy Asset Preservation</h3>
                 <p className="text-muted-foreground">
-                  Conservative investment approach focused on capital preservation, steady income generation, and inflation protection across market cycles.
+                  Conservative property approach focused on capital preservation, steady income generation, and inflation protection across market cycles.
                 </p>
               </CardContent>
             </Card>
@@ -89,7 +89,7 @@ export default function FamilyOfficesPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Exclusive Deal Flow</h3>
                 <p className="text-muted-foreground">
-                  Priority access to off-market transactions, co-investment opportunities with other family offices, and proprietary deal sourcing.
+                  Priority access to off-market transactions, co-ownership opportunities with other family offices, and proprietary deal sourcing.
                 </p>
               </CardContent>
             </Card>
@@ -137,7 +137,7 @@ export default function FamilyOfficesPage() {
       <section className="py-20 bg-muted/30">
         <div className="container">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Family Office Investment Criteria</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Family Office Client Criteria</h2>
             <Card>
               <CardContent className="p-8">
                 <div className="space-y-6">
@@ -172,7 +172,7 @@ export default function FamilyOfficesPage() {
                     <div>
                       <h3 className="text-lg font-semibold mb-2">Exclusive Deal Access</h3>
                       <p className="text-muted-foreground">
-                        Interest in off-market opportunities, co-investments with other family offices, and participation in exclusive investment syndicates.
+                        Interest in off-market opportunities, co-ownership with other family offices, and participation in exclusive property syndicates.
                       </p>
                     </div>
                   </div>
