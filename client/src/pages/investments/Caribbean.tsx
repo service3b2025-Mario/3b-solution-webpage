@@ -90,7 +90,7 @@ export default function InvestmentsCaribbean() {
             <Card className="border-2 hover:shadow-lg transition-all">
               <CardContent className="p-8 text-center">
                 <div className="text-4xl font-bold mb-2" style={{ color: '#8B4513' }}>$15M-$150M</div>
-                <div className="text-lg font-semibold mb-2">Investment Range</div>
+                <div className="text-lg font-semibold mb-2">Property Budget Range</div>
                 <p className="text-sm text-muted-foreground">
                   Exclusive island resort opportunities
                 </p>
@@ -198,7 +198,7 @@ export default function InvestmentsCaribbean() {
               Ready to Invest in the Caribbean?
             </h2>
             <p className="text-xl mb-8 text-white/90">
-              Connect with our Caribbean investment team to explore exclusive island opportunities
+              Connect with our Caribbean real estate team to explore exclusive island opportunities
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/contact">
