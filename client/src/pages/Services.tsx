@@ -89,7 +89,7 @@ export default function Services() {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {[
-              { step: "01", title: "Discovery", desc: "Understanding your investment goals, risk tolerance, and timeline" },
+              { step: "01", title: "Discovery", desc: "Understanding your motivation, risk tolerance, and timeline" },
               { step: "02", title: "Analysis", desc: "Comprehensive market research and property due diligence" },
               { step: "03", title: "Selection", desc: "Curated property recommendations matching your criteria" },
               { step: "04", title: "Execution", desc: "Seamless acquisition and ongoing asset management" },
@@ -123,7 +123,7 @@ export default function Services() {
                   "Target returns: 15-30% (projected)",
                   "Global portfolio diversification",
                   "Expert team with local market knowledge",
-                  "End-to-end investment management",
+                  "End-to-end service",
                   "Transparent reporting and communication",
                 ].map((item, index) => (
                   <div key={index} className="flex items-center gap-3">
