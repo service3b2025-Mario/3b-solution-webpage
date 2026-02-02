@@ -24,7 +24,7 @@ export default function Services() {
               Our Services
             </h1>
             <p className="text-xl text-white/80">
-              Comprehensive investment solutions designed to optimize your real estate portfolio performance
+              Comprehensive real estate services designed to optimize your property portfolio performance
             </p>
           </div>
         </div>
@@ -156,10 +156,10 @@ export default function Services() {
       <section className="py-20 bg-background">
         <div className="container text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Ready to Start Your Investment Journey?
+            Ready to Start Your Property Journey?
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Schedule a consultation with our experts to discuss your investment goals and explore opportunities.
+            Schedule a consultation with our experts to discuss your property goals and explore opportunities.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/contact">
@@ -185,7 +185,7 @@ export default function Services() {
               Who We Serve
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Tailored investment solutions for diverse investor profiles
+              Tailored real estate services for diverse client profiles
             </p>
           </div>
           
