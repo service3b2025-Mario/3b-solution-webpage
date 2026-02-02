@@ -28,7 +28,7 @@ export default function Investors() {
             </h1>
             
             <p className="text-xl text-muted-foreground mb-8">
-              3B Solution partners with qualified investors to access premium hospitality and commercial real estate opportunities across global markets
+              3B Solution partners with qualified clients to access premium hospitality and commercial real estate opportunities across global markets
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -54,7 +54,7 @@ export default function Investors() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Who We Work With</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              We serve four categories of qualified investors
+              We serve four categories of qualified clients
             </p>
           </div>
           
@@ -103,7 +103,7 @@ export default function Investors() {
             </Card>
             </Link>
 
-            {/* Institutional Investors */}
+            {/* Institutional Clients */}
             <Link href="/investors/institutional">
               <Card className="border-2 border-secondary/20 hover:border-secondary/40 transition-all cursor-pointer">
               <CardContent className="p-8">
@@ -191,14 +191,14 @@ export default function Investors() {
             </Card>
             </Link>
 
-            {/* Individual & First-Time Investors */}
+            {/* Individual & First-Time Buyers */}
             <Link href="/investors/individual">
               <Card className="border-2 border-chart-2/20 hover:border-chart-2/40 transition-all cursor-pointer">
               <CardContent className="p-8">
                 <div className="w-16 h-16 mx-auto mb-6 bg-chart-2/10 rounded-full flex items-center justify-center">
                   <TrendingUp className="w-8 h-8 text-chart-2" />
                 </div>
-                <h3 className="text-2xl font-bold text-foreground mb-4 text-center">Individual & First-Time Investors</h3>
+                <h3 className="text-2xl font-bold text-foreground mb-4 text-center">Individual & First-Time Buyers</h3>
                 <p className="text-center text-muted-foreground mb-6">Building wealth through real estate</p>
                 
                 <div className="space-y-4">
@@ -206,7 +206,7 @@ export default function Investors() {
                     <CheckCircle2 className="w-5 h-5 text-chart-2 mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="font-semibold">Investment Capacity: $100K+</p>
-                      <p className="text-sm text-muted-foreground">Entry-level qualified investors</p>
+                      <p className="text-sm text-muted-foreground">Entry-level qualified clients</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -298,7 +298,7 @@ export default function Investors() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Investor Benefits</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Why qualified investors choose 3B Solution
+              Why qualified clients choose 3B Solution
             </p>
           </div>
           
@@ -339,7 +339,7 @@ export default function Investors() {
               <CardContent className="p-6">
                 <Users className="w-12 h-12 mb-4 text-chart-2" />
                 <h3 className="text-lg font-bold text-foreground mb-2">Dedicated Support</h3>
-                <p className="text-muted-foreground">Personal relationship manager and quarterly performance reviews for all investors</p>
+                <p className="text-muted-foreground">Personal relationship manager and quarterly performance reviews for all clients</p>
               </CardContent>
             </Card>
             
