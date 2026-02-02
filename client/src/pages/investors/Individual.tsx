@@ -25,7 +25,7 @@ export default function IndividualPage() {
               <TrendingUp className="w-10 h-10 text-chart-1" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Individual & First-Time Investors
+              Individual & First-Time Buyers
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
               Building wealth through real estate with $100K+ investment capacity, expert guidance, and portfolio diversification strategies.
@@ -53,7 +53,7 @@ export default function IndividualPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose 3B Solution</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Comprehensive support and education for individual investors building wealth through premium real estate.
+              Comprehensive support and education for individual buyers building wealth through premium real estate.
             </p>
           </div>
 
@@ -65,7 +65,7 @@ export default function IndividualPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Expert Guidance & Education</h3>
                 <p className="text-muted-foreground">
-                  Comprehensive investor education, market insights, and personalized guidance from experienced real estate professionals throughout your journey.
+                  Comprehensive buyer education, market insights, and personalized guidance from experienced real estate professionals throughout your journey.
                 </p>
               </CardContent>
             </Card>
@@ -113,7 +113,7 @@ export default function IndividualPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Community & Networking</h3>
                 <p className="text-muted-foreground">
-                  Join a community of like-minded investors, attend educational workshops, and access networking events with industry experts.
+                  Join a community of like-minded buyers, attend educational workshops, and access networking events with industry experts.
                 </p>
               </CardContent>
             </Card>
