@@ -63,7 +63,7 @@ export function DownloadResourceModal({ open, onOpenChange }: DownloadResourceMo
 
   const getCategoryLabel = (category: string) => {
     const labels: Record<string, string> = {
-      investment_guide: "Investment Guide",
+      investment_guide: "Property Market Guide",
       market_report: "Market Report",
       property_brochure: "Property Brochure",
       case_study: "Case Study",
@@ -77,9 +77,9 @@ export function DownloadResourceModal({ open, onOpenChange }: DownloadResourceMo
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl">Download Investment Resources</DialogTitle>
+          <DialogTitle className="text-2xl">Download Property Resources</DialogTitle>
           <DialogDescription>
-            Select a resource and provide your contact information to access our exclusive investment materials.
+            Select a resource and provide your contact information to access our exclusive property materials.
           </DialogDescription>
         </DialogHeader>
 
@@ -181,7 +181,7 @@ export function DownloadResourceModal({ open, onOpenChange }: DownloadResourceMo
                   />
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  By downloading, you agree to receive occasional updates about investment opportunities. Unsubscribe anytime.
+                  By downloading, you agree to receive occasional updates about property opportunities. Unsubscribe anytime.
                 </p>
                 <Button
                   onClick={handleDownload}
