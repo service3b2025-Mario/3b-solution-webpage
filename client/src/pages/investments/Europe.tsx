@@ -90,7 +90,7 @@ export default function InvestmentsEurope() {
             <Card className="border-2 hover:shadow-lg transition-all">
               <CardContent className="p-8 text-center">
                 <div className="text-4xl font-bold text-primary mb-2">€5M-€50M</div>
-                <div className="text-lg font-semibold mb-2">Investment Range</div>
+                <div className="text-lg font-semibold mb-2">Property Budget Range</div>
                 <p className="text-sm text-muted-foreground">
                   Diverse ticket sizes accommodating various investment strategies
                 </p>
@@ -106,7 +106,7 @@ export default function InvestmentsEurope() {
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">Featured European Properties</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Explore our European portfolio of premium investment opportunities
+              Explore our European portfolio of premium property opportunities
             </p>
           </div>
 
@@ -198,7 +198,7 @@ export default function InvestmentsEurope() {
               Ready to Invest in Europe?
             </h2>
             <p className="text-xl mb-8 text-white/90">
-              Connect with our European investment team to explore opportunities
+              Connect with our European real estate team to explore opportunities
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/contact">
