@@ -32,7 +32,7 @@ export default function Home() {
     <Layout>
       <SEO 
         title="Luxury Real Estate Investment | 5-Star Hotels & Resorts | Target Returns 15-30% (Projected) | 3B Solution"
-        description="Premium real estate investment opportunities in 5-star hotels, luxury resorts, and commercial properties across Southeast Asia, Maldives, Europe, USA. UHNWI & institutional investors. $750M+ portfolio."
+        description="Premium real estate opportunities in 5-star hotels, luxury resorts, and commercial properties across Southeast Asia, Maldives, Europe, USA. UHNWI & institutional investors. $750M+ portfolio."
         keywords="luxury real estate investment, 5-star hotel investment, resort investment, UHNWI real estate, institutional investors, Southeast Asia property, Maldives resort, hospitality real estate"
         canonical="https://www.3bsolution.com/"
         ogImage="https://cdn.3bsolution.com/assets/hero-background.webp"
@@ -46,10 +46,10 @@ export default function Home() {
         { question: "What is the typical investment horizon?", answer: "Most investments have a 5-7 year hold period, though this can vary based on the specific opportunity." },
         { question: "How do you manage currency risk?", answer: "We employ sophisticated hedging strategies and structure deals in major currencies (USD, EUR). Our global portfolio provides natural diversification." },
         { question: "What makes Southeast Asia and Maldives attractive markets?", answer: "These regions offer strong GDP growth, rising middle class, increasing tourism, and limited supply of luxury hospitality assets." },
-        { question: "Do you offer co-investment opportunities?", answer: "Yes, we structure deals for both direct property co-investment and direct acquisition for family offices and institutional investors." },
+        { question: "Do you offer co-ownership opportunities?", answer: "Yes, we structure deals for both direct property co-ownership and direct acquisition for family offices and institutional investors." },
         { question: "What due diligence do you conduct?", answer: "We perform comprehensive due diligence including third-party valuations, environmental assessments, legal review, market analysis, and financial modeling." },
         { question: "How are properties managed?", answer: "We partner with internationally recognized hotel operators (Marriott, Hilton, Accor) and boutique luxury brands with professional asset management." },
-        { question: "How do I get started?", answer: "Schedule a private consultation with our investment team to discuss your objectives and complete the client onboarding process." }
+        { question: "How do I get started?", answer: "Schedule a private consultation with our real estate team to discuss your objectives and complete the client onboarding process." }
       ]} />
       {/* Hero Section */}
     <section className="relative min-h-screen flex items-center overflow-hidden">
@@ -108,7 +108,7 @@ export default function Home() {
               </h1>
             
               <p className="text-2xl md:text-3xl lg:text-4xl text-white/90 mb-3 font-light">
-                Exclusive Access to High-Yield Real Estate Investments
+                Exclusive Access to High-Yield Real Estate Opportunities
               </p>
               
               <p className="text-xl md:text-2xl text-white/70 mb-4 mx-auto max-w-3xl">
@@ -126,7 +126,7 @@ export default function Home() {
                 <a href="#calculator">
                   <Button size="lg" variant="outline" className="border-white/40 border-2 text-white hover:bg-white/10 font-bold px-10 h-16 text-xl">
                     <Calculator className="mr-3 h-6 w-6" />
-                    Investment Calculator
+                    Property Yield Calculator
                   </Button>
                 </a>
               </div>
@@ -235,7 +235,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Featured Properties</h2>
-              <p className="text-muted-foreground">Exclusive investment opportunities handpicked by our experts</p>
+              <p className="text-muted-foreground">Exclusive property opportunities curated by our network</p>
             </div>
             <Link href="/properties">
               <Button variant="outline" className="font-medium">
@@ -323,13 +323,13 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Investment Approach Section */}
+      {/* Our Approach Section */}
       <section className="py-20 bg-muted/30">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Investment Approach</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Our Approach</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Tailored investment solutions for every investor profile
+              Tailored real estate services for expert client profile
             </p>
           </div>
           
@@ -341,7 +341,7 @@ export default function Home() {
                   <Briefcase className="w-7 h-7 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-3">Ultra-High-Net-Worth Individuals</h3>
-                <p className="text-muted-foreground mb-4">Exclusive access to trophy assets and direct co-investment opportunities in luxury hospitality developments.</p>
+                <p className="text-muted-foreground mb-4">Exclusive access to trophy assets and direct co-acquisition opportunities in luxury hospitality developments.</p>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <ChevronRight className="w-4 h-4 text-secondary" />
@@ -399,7 +399,7 @@ export default function Home() {
                   </li>
                   <li className="flex items-center gap-2">
                     <ChevronRight className="w-4 h-4 text-secondary" />
-                    Investment education
+                    Market education
                   </li>
                   <li className="flex items-center gap-2">
                     <ChevronRight className="w-4 h-4 text-secondary" />
@@ -498,13 +498,13 @@ export default function Home() {
       {/* Value Creation Framework Section */}
       <ValueCreationSection />
 
-      {/* Downloadable Investment Guide Section */}
+      {/* Downloadable Property Market Guide Section */}
       <section className="py-20 bg-gradient-to-br from-primary to-primary/80 text-white">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Download Our Investment Guide</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Download Our Property Market Guide</h2>
             <p className="text-xl text-white/90 mb-8">
-              Get exclusive access to our comprehensive guide on luxury hospitality real estate investment. Learn our strategies, market insights, and investment criteria.
+              Get exclusive access to our comprehensive guide on luxury hospitality real estate. Learn our strategies, market insights, and property criteria.
             </p>
             
             <Card className="border-0 shadow-2xl">
@@ -514,7 +514,7 @@ export default function Home() {
                     <h4 className="font-semibold text-foreground mb-2">What's Inside:</h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li>✓ Market analysis for 5 key regions</li>
-                      <li>✓ Investment structures explained</li>
+                      <li>✓ Ownership structures explained</li>
                       <li>✓ Due diligence checklist</li>
                       <li>✓ Risk mitigation strategies</li>
                       <li>✓ Case studies with ROI breakdown</li>
@@ -539,10 +539,10 @@ export default function Home() {
                   className="w-full bg-secondary hover:bg-secondary/90 text-white font-bold"
                 >
                   <Download className="mr-2 h-5 w-5" />
-                  Download Investment Guide
+                  Download Property Market Guide
                 </Button>
                 <p className="text-xs text-muted-foreground mt-4">
-                  By downloading, you agree to receive occasional updates about investment opportunities. Unsubscribe anytime.
+                  By downloading, you agree to receive occasional updates about property opportunities. Unsubscribe anytime.
                 </p>
               </CardContent>
             </Card>
@@ -605,8 +605,8 @@ export default function Home() {
             
             <Card className="border-0 shadow-sm">
               <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">Do you offer co-investment opportunities?</h3>
-                <p className="text-muted-foreground">Yes, we structure deals for both direct property co-investment and direct acquisition. Family offices and institutional investors can invest on specific assets.</p>
+                <h3 className="text-lg font-bold text-foreground mb-3">Do you offer co-ownership opportunities?</h3>
+                <p className="text-muted-foreground">Yes, we structure deals for both direct property co-ownership and direct acquisition. Family offices and institutional investors can participate in specific assets.</p>
               </CardContent>
             </Card>
             
@@ -627,7 +627,7 @@ export default function Home() {
             <Card className="border-0 shadow-sm">
               <CardContent className="p-6">
                 <h3 className="text-lg font-bold text-foreground mb-3">How do I get started?</h3>
-                <p className="text-muted-foreground">Schedule a private consultation with our investment team to discuss your objectives, review current opportunities, and complete the client onboarding process. We'll provide a detailed investment memorandum for properties that match your criteria.</p>
+                <p className="text-muted-foreground">Schedule a private consultation with our real estate team to discuss your objectives, review current opportunities, and complete the client onboarding process. We'll provide a detailed property memorandum for properties that match your criteria.</p>
               </CardContent>
             </Card>
           </div>
@@ -639,7 +639,7 @@ export default function Home() {
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Investment Guides & Market Reports
+              Property Market Guides & Reports
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Access exclusive insights and comprehensive guides on global real estate markets
@@ -710,15 +710,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Investment Calculator Section */}
+      {/* Property Yield Calculator Section */}
       <section id="calculator" className="py-20 bg-muted/30">
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Investment Calculator
+              Property Yield Calculator
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Visualize your potential returns with our interactive investment calculator
+              Visualize your potential yields with our interactive property calculator
             </p>
           </div>
           <InvestmentCalculatorLazy />
@@ -731,7 +731,7 @@ export default function Home() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Our Services</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Comprehensive investment solutions tailored to your goals
+              Comprehensive real estate services tailored to your goals
             </p>
           </div>
           
@@ -739,7 +739,7 @@ export default function Home() {
             {(services || []).slice(0, 4).map((service, index) => {
               // Map different icons for each service
               const iconMap: Record<number, any> = {
-                0: Lightbulb,  // Investment Advisory
+                0: Lightbulb,  // Property Acquisition Advisory
                 1: Key,         // Property Acquisition
                 2: LineChart,   // Asset Management
                 3: Hammer       // Development Consulting
