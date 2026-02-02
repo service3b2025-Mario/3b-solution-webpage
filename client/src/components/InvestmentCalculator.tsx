@@ -182,7 +182,7 @@ export default function InvestmentCalculator() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calculator className="w-5 h-5 text-secondary" aria-hidden="true" />
-              Configure Your Investment
+              Configure Your Property Purchase
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-8">
@@ -234,7 +234,7 @@ export default function InvestmentCalculator() {
             <div>
               <div className="flex justify-between items-start mb-2">
                 {/* FIXED: Added proper label with htmlFor for accessibility */}
-                <label htmlFor="investment-amount" className="text-sm font-medium text-foreground">Investment Amount</label>
+                <label htmlFor="investment-amount" className="text-sm font-medium text-foreground">Purchase Amount</label>
                 <div className="flex flex-col items-end gap-2">
                   {/* Blue display - shows formatted currency amount */}
                   <span className="text-lg font-bold text-primary" aria-live="polite">{formatCurrency(displayedInvestmentAmount)}</span>
