@@ -52,7 +52,7 @@ export function InvestmentProductSchema() {
     "@context": "https://schema.org",
     "@type": "InvestmentOrSavingsProduct",
     "name": "Luxury Hospitality Real Estate Investment",
-    "description": "Premium 5-star hotel and resort investment opportunities with target returns of 15-30% (projected)",
+    "description": "Premium 5-star hotel and resort opportunities with target returns of 15-30% (projected)",
     "provider": {
       "@type": "Organization",
       "name": "3B Solution"
