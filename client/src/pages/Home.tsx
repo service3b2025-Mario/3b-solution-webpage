@@ -81,7 +81,7 @@ export default function Home() {
             {/* Investor Badge */}
             <div className="mb-6">
               <div className="inline-flex items-center gap-2 px-6 py-3 bg-secondary/20 backdrop-blur-sm border-2 border-secondary/40 rounded-full">
-                <span className="text-white font-semibold text-lg">🏆 UHNWI, Institutional & Individual Investors</span>
+                <span className="text-white font-semibold text-lg">🏆 UHNWI, Institutional & Individual Clients</span>
               </div>
             </div>
             
@@ -349,7 +349,7 @@ export default function Home() {
                   </li>
                   <li className="flex items-center gap-2">
                     <ChevronRight className="w-4 h-4 text-secondary" />
-                    Co-investment structures
+                    Co-ownership structures
                   </li>
                   <li className="flex items-center gap-2">
                     <ChevronRight className="w-4 h-4 text-secondary" />
@@ -365,7 +365,7 @@ export default function Home() {
                 <div className="w-14 h-14 mb-6 bg-secondary/10 rounded-xl flex items-center justify-center">
                   <Building2 className="w-7 h-7 text-secondary" />
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">Institutional Investors</h3>
+                <h3 className="text-xl font-bold text-foreground mb-3">Institutional Clients</h3>
                 <p className="text-muted-foreground mb-4">Institutional-grade deal flow with comprehensive due diligence and transparent reporting.</p>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
@@ -390,7 +390,7 @@ export default function Home() {
                 <div className="w-14 h-14 mb-6 bg-accent/10 rounded-xl flex items-center justify-center">
                   <Users className="w-7 h-7 text-accent" />
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">Individual Investors</h3>
+                <h3 className="text-xl font-bold text-foreground mb-3">Individual Clients</h3>
                 <p className="text-muted-foreground mb-4">Accessible entry points to premium real estate with professional management and guidance.</p>
                 <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-center gap-2">
@@ -413,7 +413,7 @@ export default function Home() {
           <div className="text-center mt-10">
             <Link href="/investors">
               <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-white">
-                Qualify as an Investor
+                Register as a Client
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
@@ -525,8 +525,8 @@ export default function Home() {
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li>✓ Ultra-high-net-worth individuals</li>
                       <li>✓ Family offices</li>
-                      <li>✓ Institutional investors</li>
-                      <li>✓ Individual & first-time investors</li>
+                      <li>✓ Institutional clients</li>
+                      <li>✓ Individual & first-time buyers</li>
                       <li>✓ Real estate fund managers</li>
                       <li>✓ Qualified clients</li>
                     </ul>
