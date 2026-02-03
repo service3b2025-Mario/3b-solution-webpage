@@ -42,7 +42,7 @@ export function GlobalProjectPortfolio() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           {/* Philippines - Main Focus */}
           <Link href="/investments/southeast-asia" className="block">
-            <Card className="relative overflow-hidden border-4 border-secondary hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu cursor-pointer h-full">
+            <Card className="relative overflow-hidden border-4 border-secondary hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu cursor-pointer h-full">
               <div className="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-3 py-1 rounded-full">
                 MAIN FOCUS
               </div>
@@ -66,7 +66,7 @@ export function GlobalProjectPortfolio() {
 
           {/* Europe */}
           <Link href="/investments/europe" className="block">
-            <Card className="overflow-hidden border-2 border-border hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu cursor-pointer h-full">
+            <Card className="overflow-hidden border-2 border-border hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu cursor-pointer h-full">
               <CardContent className="p-8 text-center h-full flex flex-col justify-between" style={{ backgroundColor: '#2B7A8B' }}>
                 <div>
                   <div className={`font-bold text-white mb-2 ${europeCount === 0 ? 'text-2xl' : 'text-5xl'}`}>
@@ -86,7 +86,7 @@ export function GlobalProjectPortfolio() {
 
           {/* Maldives */}
           <Link href="/investments/maldives" className="block">
-            <Card className="overflow-hidden border-2 border-border hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu cursor-pointer h-full">
+            <Card className="overflow-hidden border-2 border-border hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu cursor-pointer h-full">
               <CardContent className="p-8 text-center h-full flex flex-col justify-between" style={{ backgroundColor: '#0FA37F' }}>
                 <div>
                   <div className={`font-bold text-white mb-2 ${maldivesCount === 0 ? 'text-2xl' : 'text-5xl'}`}>
@@ -106,7 +106,7 @@ export function GlobalProjectPortfolio() {
 
           {/* USA */}
           <Link href="/investments/usa" className="block">
-            <Card className="overflow-hidden border-2 border-border hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu cursor-pointer h-full">
+            <Card className="overflow-hidden border-2 border-border hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu cursor-pointer h-full">
               <CardContent className="p-8 text-center bg-secondary h-full flex flex-col justify-between">
                 <div>
                   <div className={`font-bold text-white mb-2 ${usaCount === 0 ? 'text-2xl' : 'text-5xl'}`}>
@@ -126,7 +126,7 @@ export function GlobalProjectPortfolio() {
 
           {/* Caribbean */}
           <Link href="/investments/caribbean" className="block">
-            <Card className="overflow-hidden border-2 border-border hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu cursor-pointer h-full">
+            <Card className="overflow-hidden border-2 border-border hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu cursor-pointer h-full">
               <CardContent className="p-8 text-center h-full flex flex-col justify-between" style={{ backgroundColor: '#8B4513' }}>
                 <div>
                   <div className={`font-bold text-white mb-2 ${caribbeanCount === 0 ? 'text-2xl' : 'text-5xl'}`}>
