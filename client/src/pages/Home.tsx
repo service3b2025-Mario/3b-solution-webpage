@@ -190,7 +190,7 @@ export default function Home() {
                     <Building2 className="w-8 h-8 text-primary" />
                   </div>
                   <h3 className="text-2xl font-bold text-primary mb-2">Germany</h3>
-                  <p className="text-lg font-semibold text-foreground mb-4">10+ European Projects</p>
+                  <p className="text-lg font-semibold text-foreground mb-4">10+ European Properties</p>
                   <div className="text-sm text-muted-foreground space-y-1">
                     <p className="font-semibold">3B SolutionDE</p>
                     <p>Weidenweg 17</p>
@@ -209,7 +209,7 @@ export default function Home() {
                     <Globe className="w-8 h-8 text-secondary" />
                   </div>
                   <h3 className="text-2xl font-bold text-secondary mb-2">Philippines</h3>
-                  <p className="text-lg font-semibold text-foreground mb-4">Headquarters - 50+ Projects</p>
+                  <p className="text-lg font-semibold text-foreground mb-4">Headquarters - 60+ Philippine Properties</p>
                   <div className="text-sm text-muted-foreground space-y-1">
                     <p className="font-semibold">3B Solution</p>
                     <p>Makati City</p>
@@ -228,7 +228,7 @@ export default function Home() {
                     <Landmark className="w-8 h-8 text-primary" />
                   </div>
                   <h3 className="text-2xl font-bold text-primary mb-2">China</h3>
-                  <p className="text-lg font-semibold text-foreground mb-4">10+ Asian Projects</p>
+                  <p className="text-lg font-semibold text-foreground mb-4">65+ Asian Properties</p>
                   <div className="text-sm text-muted-foreground space-y-1">
                     <p className="font-semibold">3B Solution CN</p>
                     <p>Shanghai</p>
