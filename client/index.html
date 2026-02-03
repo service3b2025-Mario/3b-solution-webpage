@@ -479,5 +479,19 @@
       }
     })();
     </script>
+    
+    <!-- Tidio Chat Widget - BiBi AI Chatbot -->
+    <script>
+      // Load Tidio after page is fully loaded with 5 second delay
+      // This significantly improves mobile performance scores
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          var tidioScript = document.createElement('script');
+          tidioScript.src = '//code.tidio.co/cvpvxh6l67b1ohzzgthjoesvluguc84c.js';
+          tidioScript.async = true;
+          document.body.appendChild(tidioScript);
+        }, 5000); // 5 second delay after page load
+      });
+    </script>
   </body>
 </html>
