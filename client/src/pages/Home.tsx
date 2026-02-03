@@ -111,9 +111,18 @@ export default function Home() {
                 Exclusive Access to High-Yield Real Estate Opportunities
               </p>
               
-              <p className="text-xl md:text-2xl text-white/70 mb-4 mx-auto max-w-3xl">
+              <p className="text-xl md:text-2xl text-white/70 mb-2 mx-auto max-w-3xl">
                 Anchored in the Philippines, Diversified Globally (Europe, USA).
-                <span className="block mt-2 text-secondary font-bold text-2xl md:text-3xl">Target Returns: 15-30% (Projected based on market analysis)*</span>
+              </p>
+              
+              {/* Target Returns - Larger, on its own line */}
+              <p className="text-3xl md:text-4xl lg:text-5xl text-secondary font-bold mb-2">
+                Target Returns: 15-30%
+              </p>
+              
+              {/* Disclaimer - Smaller, italic, grey with asterisks */}
+              <p className="text-sm md:text-base text-gray-300/80 italic mb-4">
+                *Projected based on market analysis*
               </p>
               
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
