@@ -380,16 +380,30 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Bottom Bar - REMOVED legal links, only copyright and disclaimer */}
+      {/* Risk Disclaimer Section */}
+      <div className="border-t-2 border-secondary py-6">
+        <div className="container">
+          <p className="text-sm text-primary-foreground/70 leading-relaxed mb-3">
+            <strong className="text-primary-foreground/90">Important Legal Notice:</strong> 3B Solution provides real estate brokerage 
+            (Germany, licensed) and referral/management services (Philippines, SEC-registered). 
+            We are not an investment firm, fund manager, or financial advisor. Any projected 
+            returns (15-30%) represent developer estimates or market analyses and do not 
+            constitute guaranteed performance. Real estate investments involve risks including 
+            illiquidity, market fluctuations, and total loss of capital.
+          </p>
+          <div className="flex flex-wrap gap-4 text-sm text-primary-foreground/60">
+            <span><strong className="text-secondary">Germany:</strong> Licensed broker §34c GewO</span>
+            <span><strong className="text-secondary">Philippines:</strong> SEC 2023100119302-12 (not PRC-licensed broker)</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Bar - Copyright */}
       <div className="border-t border-white/10 py-6">
         <div className="container">
           <div className="flex flex-col items-center gap-4 text-sm text-primary-foreground/60">
             <p>© {new Date().getFullYear()} 3B Solution. All rights reserved.</p>
           </div>
-          <p className="text-center text-xs text-primary-foreground/50 mt-4">
-            Investment involves risk. Past performance is not indicative of future results. 
-            Please consult with a qualified financial advisor before making investment decisions.
-          </p>
         </div>
       </div>
     </footer>
