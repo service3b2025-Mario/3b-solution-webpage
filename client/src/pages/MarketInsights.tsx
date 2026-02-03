@@ -250,7 +250,7 @@ export default function MarketInsights() {
                   <div>
                     <label className="text-sm font-medium mb-2 block">Regions of Interest</label>
                     <div className="grid grid-cols-2 gap-3">
-                      {["SouthEastAsia", "Maldives", "Europe", "NorthAmerica", "MiddleEast", "Caribbean"].map((region) => (
+                      {["SouthEastAsia", "Maldives", "Europe", "NorthAmerica", "Caribbean"].map((region) => (
                         <label key={region} className="flex items-center gap-2 cursor-pointer">
                           <input
                             type="checkbox"
