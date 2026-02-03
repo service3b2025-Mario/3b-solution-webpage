@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Landmark, BarChart3, FileText, Shield, Clock, TrendingUp, ArrowRight } from "lucide-react";
+import { Landmark, BarChart3, FileText, Shield, Clock, Building, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
 import { Breadcrumb } from "@/components/Breadcrumb";
@@ -28,18 +28,18 @@ export default function InstitutionalPage() {
               Institutional Clients
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              Strategic real estate solutions for pension funds, insurance companies, and endowments managing $50M+ AUM with long-term investment horizons.
+              Strategic real estate brokerage services for organizations, funds, and endowments with substantial property acquisition capacity.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/properties">
                 <Button size="lg" className="bg-secondary hover:bg-secondary/90">
-                  View Portfolio Opportunities
+                  View Property Opportunities
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
               <Link href="/contact">
                 <Button size="lg" variant="outline">
-                  Request Property Memorandum
+                  Request Property Information
                 </Button>
               </Link>
             </div>
@@ -51,9 +51,9 @@ export default function InstitutionalPage() {
       <section className="py-20">
         <div className="container">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Institutional-Grade Real Estate Services</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Institutional-Grade Real Estate Brokerage</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Comprehensive real estate investment services designed for institutional fiduciary standards and compliance requirements.
+              Comprehensive real estate brokerage services designed to meet the standards and requirements of institutional clients.
             </p>
           </div>
 
@@ -63,9 +63,9 @@ export default function InstitutionalPage() {
                 <div className="w-14 h-14 bg-secondary/10 rounded-lg flex items-center justify-center mb-6">
                   <BarChart3 className="w-7 h-7 text-secondary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Risk-Adjusted Returns</h3>
+                <h3 className="text-xl font-semibold mb-3">Market & Risk Analysis</h3>
                 <p className="text-muted-foreground">
-                  Sophisticated portfolio construction with quantitative risk modeling, stress testing, and scenario analysis for optimal Sharpe ratios.
+                  Detailed market research, property analysis, and risk assessment to support your property acquisition decisions.
                 </p>
               </CardContent>
             </Card>
@@ -75,9 +75,9 @@ export default function InstitutionalPage() {
                 <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
                   <Clock className="w-7 h-7 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Long-Term Horizon Alignment</h3>
+                <h3 className="text-xl font-semibold mb-3">Long-Term Property Strategy</h3>
                 <p className="text-muted-foreground">
-                  Investment strategies matching 10-30 year liability profiles with stable cash flows and inflation-hedging characteristics.
+                  Property sourcing aligned with long-term ownership goals, focusing on stable markets and quality assets.
                 </p>
               </CardContent>
             </Card>
@@ -89,7 +89,7 @@ export default function InstitutionalPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Comprehensive Due Diligence</h3>
                 <p className="text-muted-foreground">
-                  Institutional-grade research, legal review, environmental assessments, and third-party valuations for every transaction.
+                  Thorough property research, legal review coordination, environmental assessments, and third-party valuations.
                 </p>
               </CardContent>
             </Card>
@@ -99,9 +99,9 @@ export default function InstitutionalPage() {
                 <div className="w-14 h-14 bg-chart-1/10 rounded-lg flex items-center justify-center mb-6">
                   <Shield className="w-7 h-7 text-chart-1" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Regulatory Compliance</h3>
+                <h3 className="text-xl font-semibold mb-3">Regulatory & ESG Awareness</h3>
                 <p className="text-muted-foreground">
-                  Full compliance with ERISA, SEC, and international regulatory frameworks including ESG reporting and fiduciary standards.
+                  Property sourcing that considers regulatory requirements and ESG criteria important to institutional buyers.
                 </p>
               </CardContent>
             </Card>
@@ -109,11 +109,11 @@ export default function InstitutionalPage() {
             <Card className="border-2 hover:border-secondary transition-colors">
               <CardContent className="p-8">
                 <div className="w-14 h-14 bg-chart-2/10 rounded-lg flex items-center justify-center mb-6">
-                  <TrendingUp className="w-7 h-7 text-chart-2" />
+                  <Building className="w-7 h-7 text-chart-2" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Portfolio Diversification</h3>
+                <h3 className="text-xl font-semibold mb-3">Property Diversification</h3>
                 <p className="text-muted-foreground">
-                  Strategic allocation across property types, geographies, and risk profiles to optimize portfolio-level returns and reduce correlation.
+                  Access to properties across different types, geographies, and markets to support your diversification goals.
                 </p>
               </CardContent>
             </Card>
@@ -123,9 +123,9 @@ export default function InstitutionalPage() {
                 <div className="w-14 h-14 bg-chart-3/10 rounded-lg flex items-center justify-center mb-6">
                   <Landmark className="w-7 h-7 text-chart-3" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Institutional Infrastructure</h3>
+                <h3 className="text-xl font-semibold mb-3">Dedicated Service Team</h3>
                 <p className="text-muted-foreground">
-                  Dedicated institutional services team, quarterly reporting, client portals, and seamless integration with custodians.
+                  Dedicated team for institutional clients, detailed property documentation, and professional reporting.
                 </p>
               </CardContent>
             </Card>
@@ -133,11 +133,11 @@ export default function InstitutionalPage() {
         </div>
       </section>
 
-      {/* Investment Criteria */}
+      {/* Client Profile */}
       <section className="py-20 bg-muted/30">
         <div className="container">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Institutional Client Criteria</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Institutional Client Profile</h2>
             <Card>
               <CardContent className="p-8">
                 <div className="space-y-6">
@@ -146,9 +146,9 @@ export default function InstitutionalPage() {
                       <span className="text-secondary font-semibold">1</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Minimum AUM: $50M+</h3>
+                      <h3 className="text-lg font-semibold mb-2">Substantial Acquisition Capacity</h3>
                       <p className="text-muted-foreground">
-                        Pension funds, insurance companies, endowments, or sovereign wealth funds with substantial assets under management.
+                        Organizations, funds, or endowments with experience managing large-scale property acquisitions and portfolios.
                       </p>
                     </div>
                   </div>
@@ -158,9 +158,9 @@ export default function InstitutionalPage() {
                       <span className="text-secondary font-semibold">2</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Fiduciary Standards Compliance</h3>
+                      <h3 className="text-lg font-semibold mb-2">Formal Governance</h3>
                       <p className="text-muted-foreground">
-                        Adherence to institutional investment policies, board approval processes, and regulatory oversight requirements.
+                        Established internal processes for property acquisition approvals and oversight.
                       </p>
                     </div>
                   </div>
@@ -170,9 +170,9 @@ export default function InstitutionalPage() {
                       <span className="text-secondary font-semibold">3</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Long-Term Investment Horizon</h3>
+                      <h3 className="text-lg font-semibold mb-2">Long-Term Ownership Strategy</h3>
                       <p className="text-muted-foreground">
-                        10+ year holding periods aligned with liability matching and strategic asset allocation frameworks.
+                        Focus on long-term property holdings aligned with organizational goals and timelines.
                       </p>
                     </div>
                   </div>
@@ -182,9 +182,9 @@ export default function InstitutionalPage() {
                       <span className="text-secondary font-semibold">4</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">ESG and Impact Considerations</h3>
+                      <h3 className="text-lg font-semibold mb-2">ESG & Impact Goals</h3>
                       <p className="text-muted-foreground">
-                        Commitment to environmental, social, and governance criteria with measurable sustainability metrics and reporting.
+                        Commitment to properties that meet specific environmental, social, and governance standards.
                       </p>
                     </div>
                   </div>
@@ -202,18 +202,18 @@ export default function InstitutionalPage() {
             <CardContent className="p-12 text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Partner with 3B Solution</h2>
               <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Request a detailed property memorandum and schedule a meeting with our institutional real estate team.
+                Request detailed property information and schedule a meeting with our institutional real estate team.
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
                 <Link href="/contact">
                   <Button size="lg" className="bg-secondary hover:bg-secondary/90">
-                    Request Property Memorandum
+                    Request Property Information
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
                 <Link href="/properties">
                   <Button size="lg" variant="outline">
-                    View Portfolio
+                    View Properties
                   </Button>
                 </Link>
               </div>
