@@ -104,7 +104,7 @@ export default function Home() {
               </div>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-4 leading-tight">
-                Premium Real Estate <span className="text-secondary">Solution</span>
+                Premium Real Estate Solution
               </h1>
             
               <p className="text-2xl md:text-3xl lg:text-4xl text-white/90 mb-3 font-light">
@@ -115,9 +115,9 @@ export default function Home() {
                 Anchored in the Philippines, Diversified Globally (Europe, USA).
               </p>
               
-              {/* Target Returns - Larger, on its own line */}
-              <p className="text-3xl md:text-4xl lg:text-5xl text-secondary font-bold mb-2">
-                Target Returns: 15-30%
+              {/* Target Returns - Larger, pulsing animation, with asterisk */}
+              <p className="text-4xl md:text-5xl lg:text-6xl text-secondary font-bold mb-2 animate-pulse">
+                Target Returns: 15-30% *
               </p>
               
               {/* Disclaimer - Smaller, italic, grey with asterisks */}
