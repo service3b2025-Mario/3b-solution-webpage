@@ -1,6 +1,7 @@
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { ArrowRight, TrendingUp, Globe, Building2, Users, MapPin, Calculator, ChevronRight, Lightbulb, Key, LineChart, Hammer, Briefcase, Landmark, Download } from "lucide-react";
@@ -582,87 +583,107 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 bg-muted/30">
+      {/* FAQ Section - Accordion Style */}
+      <section className="py-12 bg-muted/30">
         <div className="container max-w-4xl">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Frequently Asked Questions</h2>
             <p className="text-lg text-muted-foreground">
               Everything you need to know about investing with 3B Solution
             </p>
           </div>
           
-          <div className="space-y-6">
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">What is the minimum investment amount?</h3>
-                <p className="text-muted-foreground">The minimum investment varies by project, typically starting at $100,000 USD for individual properties and $10,000,000 USD for direct acquisition. We work with qualified investors to find opportunities that match their investment criteria.</p>
-              </CardContent>
-            </Card>
+          <Accordion type="single" collapsible className="space-y-3">
+            <AccordionItem value="item-1" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                What is the minimum investment amount?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                The minimum investment varies by project, typically starting at $100,000 USD for individual properties and $10,000,000 USD for direct acquisition. We work with qualified investors to find opportunities that match their investment criteria.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">What types of properties do you invest in?</h3>
-                <p className="text-muted-foreground">We specialize in luxury hospitality real estate including 5-star hotels, ultra-luxury island resorts, premium city hotels, and high-end commercial properties. Our focus is on assets with strong operator partnerships and proven revenue models.</p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-2" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                What types of properties do you invest in?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                We specialize in luxury hospitality real estate including 5-star hotels, ultra-luxury island resorts, premium city hotels, and high-end commercial properties. Our focus is on assets with strong operator partnerships and proven revenue models.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">What are the expected returns?</h3>
-                <p className="text-muted-foreground">Target returns are 15-30% (projected based on market analysis). Returns vary by property type, location, and market conditions. We provide detailed pro forma projections for each investment opportunity.</p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-3" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                What are the expected returns?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                Target returns are 15-30% (projected based on market analysis). Returns vary by property type, location, and market conditions. We provide detailed pro forma projections for each investment opportunity.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">What is the typical investment horizon?</h3>
-                <p className="text-muted-foreground">Most investments have a 5-7 year hold period, though this can vary based on the specific opportunity. We focus on value-add strategies with clear exit paths through sale to institutional buyers or hotel operators.</p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-4" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                What is the typical investment horizon?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                Most investments have a 5-7 year hold period, though this can vary based on the specific opportunity. We focus on value-add strategies with clear exit paths through sale to institutional buyers or hotel operators.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">How do you manage currency risk?</h3>
-                <p className="text-muted-foreground">Currency risk is managed through structural alignment, diversification, and long-term investment planning, rather than financial hedging.</p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-5" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                How do you manage currency risk?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                Currency risk is managed through structural alignment, diversification, and long-term investment planning, rather than financial hedging.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">What makes Southeast Asia and Maldives attractive markets?</h3>
-                <p className="text-muted-foreground">These regions offer strong GDP growth, rising middle class, increasing tourism, and limited supply of luxury hospitality assets. The Maldives specifically has government restrictions on new resort development, creating scarcity value.</p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-6" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                What makes Southeast Asia and Maldives attractive markets?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                These regions offer strong GDP growth, rising middle class, increasing tourism, and limited supply of luxury hospitality assets. The Maldives specifically has government restrictions on new resort development, creating scarcity value.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">Do you offer co-ownership opportunities?</h3>
-                <p className="text-muted-foreground">Yes, we structure deals for both direct property co-ownership and direct acquisition. Family offices and institutional investors can participate in specific assets.</p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-7" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                Do you offer co-ownership opportunities?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                Yes, we structure deals for both direct property co-ownership and direct acquisition. Family offices and institutional investors can participate in specific assets.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">What due diligence do you conduct?</h3>
-                <p className="text-muted-foreground">We perform comprehensive due diligence including third-party valuations, environmental assessments, legal review, market analysis, and financial modeling.</p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-8" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                What due diligence do you conduct?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                We perform comprehensive due diligence including third-party valuations, environmental assessments, legal review, market analysis, and financial modeling.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">How are properties managed?</h3>
-                <p className="text-muted-foreground">We partner with internationally recognized hotel operators and boutique luxury brands. </p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-9" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                How are properties managed?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                We partner with internationally recognized hotel operators and boutique luxury brands.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">How do I get started?</h3>
-                <p className="text-muted-foreground">Schedule a private consultation with our real estate team to discuss your objectives, review current opportunities, and complete the client onboarding process. We'll provide a detailed property memorandum for properties that match your criteria.</p>
-              </CardContent>
-            </Card>
-          </div>
+            <AccordionItem value="item-10" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                How do I get started?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                Schedule a private consultation with our real estate team to discuss your objectives, review current opportunities, and complete the client onboarding process. We'll provide a detailed property memorandum for properties that match your criteria.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
       </section>
 
