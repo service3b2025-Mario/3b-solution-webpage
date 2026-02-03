@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Briefcase, Users, Shield, TrendingUp, FileText, Globe, ArrowRight } from "lucide-react";
+import { Briefcase, Users, Shield, Building, FileText, Globe, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
 import { Breadcrumb } from "@/components/Breadcrumb";
@@ -28,12 +28,12 @@ export default function FamilyOfficesPage() {
               Family Offices
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              Multi-generational wealth management solutions for family offices managing $100M+ with focus on legacy planning and exclusive deal flow.
+              Tailored real estate brokerage services for family offices with focus on legacy properties and exclusive property access.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/properties">
                 <Button size="lg" className="bg-secondary hover:bg-secondary/90">
-                  Explore Opportunities
+                  Explore Properties
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
@@ -53,7 +53,7 @@ export default function FamilyOfficesPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Family Office Real Estate Services</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Bespoke real estate strategies tailored to multi-generational wealth preservation and family governance structures.
+              Bespoke real estate brokerage services tailored to multi-generational property ownership and family governance structures.
             </p>
           </div>
 
@@ -65,7 +65,7 @@ export default function FamilyOfficesPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Multi-Generational Planning</h3>
                 <p className="text-muted-foreground">
-                  Wealth transfer strategies, trust structures, and succession planning integrated with real estate holdings for seamless generational transitions.
+                  Property sourcing that considers family structures, succession planning, and long-term ownership goals across generations.
                 </p>
               </CardContent>
             </Card>
@@ -75,9 +75,9 @@ export default function FamilyOfficesPage() {
                 <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
                   <Shield className="w-7 h-7 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Legacy Asset Preservation</h3>
+                <h3 className="text-xl font-semibold mb-3">Legacy Property Selection</h3>
                 <p className="text-muted-foreground">
-                  Conservative property approach focused on capital preservation, steady income generation, and inflation protection across market cycles.
+                  Focus on quality properties in stable markets suitable for long-term family ownership and potential generational transfer.
                 </p>
               </CardContent>
             </Card>
@@ -85,11 +85,11 @@ export default function FamilyOfficesPage() {
             <Card className="border-2 hover:border-accent transition-colors">
               <CardContent className="p-8">
                 <div className="w-14 h-14 bg-secondary/10 rounded-lg flex items-center justify-center mb-6">
-                  <TrendingUp className="w-7 h-7 text-secondary" />
+                  <Building className="w-7 h-7 text-secondary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Exclusive Deal Flow</h3>
+                <h3 className="text-xl font-semibold mb-3">Exclusive Property Access</h3>
                 <p className="text-muted-foreground">
-                  Priority access to off-market transactions, co-ownership opportunities with other family offices, and proprietary deal sourcing.
+                  Priority access to off-market properties, co-ownership opportunities with other family offices, and exclusive listings.
                 </p>
               </CardContent>
             </Card>
@@ -99,9 +99,9 @@ export default function FamilyOfficesPage() {
                 <div className="w-14 h-14 bg-chart-1/10 rounded-lg flex items-center justify-center mb-6">
                   <FileText className="w-7 h-7 text-chart-1" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Customized Reporting</h3>
+                <h3 className="text-xl font-semibold mb-3">Customized Documentation</h3>
                 <p className="text-muted-foreground">
-                  Tailored performance reporting, tax optimization strategies, and consolidated statements aligned with family office accounting systems.
+                  Tailored property reports, detailed documentation, and information aligned with family office requirements.
                 </p>
               </CardContent>
             </Card>
@@ -111,9 +111,9 @@ export default function FamilyOfficesPage() {
                 <div className="w-14 h-14 bg-chart-2/10 rounded-lg flex items-center justify-center mb-6">
                   <Globe className="w-7 h-7 text-chart-2" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Global Diversification</h3>
+                <h3 className="text-xl font-semibold mb-3">Global Property Access</h3>
                 <p className="text-muted-foreground">
-                  International property portfolios across stable jurisdictions with favorable tax treaties and residency planning opportunities.
+                  International property sourcing across stable jurisdictions with consideration for residency and lifestyle opportunities.
                 </p>
               </CardContent>
             </Card>
@@ -133,11 +133,11 @@ export default function FamilyOfficesPage() {
         </div>
       </section>
 
-      {/* Investment Criteria */}
+      {/* Client Profile */}
       <section className="py-20 bg-muted/30">
         <div className="container">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Family Office Client Criteria</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Family Office Client Profile</h2>
             <Card>
               <CardContent className="p-8">
                 <div className="space-y-6">
@@ -146,9 +146,9 @@ export default function FamilyOfficesPage() {
                       <span className="text-accent font-semibold">1</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Minimum Family Wealth: $100M+</h3>
+                      <h3 className="text-lg font-semibold mb-2">Substantial Property Portfolio</h3>
                       <p className="text-muted-foreground">
-                        Established family offices with substantial multi-generational wealth and formal governance structures.
+                        Established family offices with experience managing significant property holdings and formal governance structures.
                       </p>
                     </div>
                   </div>
@@ -160,7 +160,7 @@ export default function FamilyOfficesPage() {
                     <div>
                       <h3 className="text-lg font-semibold mb-2">Legacy Planning Focus</h3>
                       <p className="text-muted-foreground">
-                        Long-term wealth preservation strategy spanning multiple generations with emphasis on capital protection and tax efficiency.
+                        Long-term property ownership goals spanning multiple generations with emphasis on quality and stability.
                       </p>
                     </div>
                   </div>
@@ -170,9 +170,9 @@ export default function FamilyOfficesPage() {
                       <span className="text-accent font-semibold">3</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Exclusive Deal Access</h3>
+                      <h3 className="text-lg font-semibold mb-2">Exclusive Property Interest</h3>
                       <p className="text-muted-foreground">
-                        Interest in off-market opportunities, co-ownership with other family offices, and participation in exclusive property syndicates.
+                        Interest in off-market opportunities, co-ownership with other family offices, and exclusive property access.
                       </p>
                     </div>
                   </div>
@@ -182,9 +182,9 @@ export default function FamilyOfficesPage() {
                       <span className="text-accent font-semibold">4</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Governance and Reporting</h3>
+                      <h3 className="text-lg font-semibold mb-2">Governance and Documentation</h3>
                       <p className="text-muted-foreground">
-                        Established family governance framework with investment committee oversight and customized reporting requirements.
+                        Established family governance framework with property committee oversight and customized reporting needs.
                       </p>
                     </div>
                   </div>
@@ -202,7 +202,7 @@ export default function FamilyOfficesPage() {
             <CardContent className="p-12 text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Build Your Family's Real Estate Legacy</h2>
               <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Connect with our family office specialists to discuss bespoke investment strategies and exclusive opportunities.
+                Connect with our family office specialists to discuss your property goals and exclusive opportunities.
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
                 <Link href="/contact">
