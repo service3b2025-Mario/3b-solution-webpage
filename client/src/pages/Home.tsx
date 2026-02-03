@@ -182,54 +182,60 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {/* Germany */}
-            <Card className="group hover:shadow-xl transition-all duration-300 border border-border bg-card">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Building2 className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-2xl font-bold text-primary mb-2">Germany</h3>
-                <p className="text-lg font-semibold text-foreground mb-4">10+ European Projects</p>
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p className="font-semibold">3B SolutionDE</p>
-                  <p>Weidenweg 17</p>
-                  <p>15806 Zossen</p>
-                  <p>Germany</p>
-                </div>
-              </CardContent>
-            </Card>
+            <Link href="/contact">
+              <Card className="group hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu border border-border bg-card cursor-pointer h-full">
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Building2 className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-primary mb-2">Germany</h3>
+                  <p className="text-lg font-semibold text-foreground mb-4">10+ European Projects</p>
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    <p className="font-semibold">3B SolutionDE</p>
+                    <p>Weidenweg 17</p>
+                    <p>15806 Zossen</p>
+                    <p>Germany</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
 
             {/* Philippines - Highlighted */}
-            <Card className="group hover:shadow-xl transition-all duration-300 border-4 border-secondary bg-card shadow-lg">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-secondary/10 flex items-center justify-center">
-                  <Globe className="w-8 h-8 text-secondary" />
-                </div>
-                <h3 className="text-2xl font-bold text-secondary mb-2">Philippines</h3>
-                <p className="text-lg font-semibold text-foreground mb-4">Headquarters - 50+ Projects</p>
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p className="font-semibold">3B Solution</p>
-                  <p>Makati City</p>
-                  <p>Metro Manila</p>
-                  <p>Philippines</p>
-                </div>
-              </CardContent>
-            </Card>
+            <Link href="/contact">
+              <Card className="group hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu border-4 border-secondary bg-card shadow-lg cursor-pointer h-full">
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Globe className="w-8 h-8 text-secondary" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-secondary mb-2">Philippines</h3>
+                  <p className="text-lg font-semibold text-foreground mb-4">Headquarters - 50+ Projects</p>
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    <p className="font-semibold">3B Solution</p>
+                    <p>Makati City</p>
+                    <p>Metro Manila</p>
+                    <p>Philippines</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
 
             {/* China */}
-            <Card className="group hover:shadow-xl transition-all duration-300 border border-border bg-card">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Landmark className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-2xl font-bold text-primary mb-2">China</h3>
-                <p className="text-lg font-semibold text-foreground mb-4">10+ Asian Projects</p>
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p className="font-semibold">3B Solution CN</p>
-                  <p>Shanghai</p>
-                  <p>China</p>
-                </div>
-              </CardContent>
-            </Card>
+            <Link href="/contact">
+              <Card className="group hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu border border-border bg-card cursor-pointer h-full">
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Landmark className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-primary mb-2">China</h3>
+                  <p className="text-lg font-semibold text-foreground mb-4">10+ Asian Projects</p>
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    <p className="font-semibold">3B Solution CN</p>
+                    <p>Shanghai</p>
+                    <p>China</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>
@@ -272,7 +278,7 @@ export default function Home() {
                   }
                 }}
               >
-                <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden border-0">
+                <Card className="group hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu overflow-hidden border-0">
                   <div 
                     className="h-56 bg-gradient-to-br from-primary/20 to-secondary/20 relative overflow-hidden"
                     onClick={(e) => {
@@ -344,79 +350,85 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* UHNWI */}
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-8">
-                <div className="w-14 h-14 mb-6 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <Briefcase className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">Ultra-High-Net-Worth Individuals</h3>
-                <p className="text-muted-foreground mb-4">Exclusive access to trophy assets and direct co-acquisition opportunities in luxury hospitality developments.</p>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Direct property ownership
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Co-ownership structures
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Personalized advisory
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
+            <Link href="/investors/uhnwi">
+              <Card className="group border-0 shadow-lg hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu cursor-pointer h-full">
+                <CardContent className="p-8">
+                  <div className="w-14 h-14 mb-6 bg-primary/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Briefcase className="w-7 h-7 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-3">Ultra-High-Net-Worth Individuals</h3>
+                  <p className="text-muted-foreground mb-4">Exclusive access to trophy assets and direct co-acquisition opportunities in luxury hospitality developments.</p>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-center gap-2">
+                      <ChevronRight className="w-4 h-4 text-secondary" />
+                      Direct property ownership
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <ChevronRight className="w-4 h-4 text-secondary" />
+                      Co-ownership structures
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <ChevronRight className="w-4 h-4 text-secondary" />
+                      Personalized advisory
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </Link>
 
             {/* Institutional */}
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-8">
-                <div className="w-14 h-14 mb-6 bg-secondary/10 rounded-xl flex items-center justify-center">
-                  <Building2 className="w-7 h-7 text-secondary" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">Institutional Clients</h3>
-                <p className="text-muted-foreground mb-4">Institutional-grade deal flow with comprehensive due diligence and transparent reporting.</p>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Direct acquisition
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Portfolio allocation
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Quarterly reporting
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
+            <Link href="/investors/institutional">
+              <Card className="group border-0 shadow-lg hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu cursor-pointer h-full">
+                <CardContent className="p-8">
+                  <div className="w-14 h-14 mb-6 bg-secondary/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Building2 className="w-7 h-7 text-secondary" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-3">Institutional Clients</h3>
+                  <p className="text-muted-foreground mb-4">Institutional-grade deal flow with comprehensive due diligence and transparent reporting.</p>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-center gap-2">
+                      <ChevronRight className="w-4 h-4 text-secondary" />
+                      Direct acquisition
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <ChevronRight className="w-4 h-4 text-secondary" />
+                      Portfolio allocation
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <ChevronRight className="w-4 h-4 text-secondary" />
+                      Quarterly reporting
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </Link>
 
             {/* Individual */}
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-8">
-                <div className="w-14 h-14 mb-6 bg-accent/10 rounded-xl flex items-center justify-center">
-                  <Users className="w-7 h-7 text-accent" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">Individual Clients</h3>
-                <p className="text-muted-foreground mb-4">Accessible entry points to premium real estate with professional management and guidance.</p>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Fractional ownership
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Market education
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Dedicated support
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
+            <Link href="/investors/individual">
+              <Card className="group border-0 shadow-lg hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu cursor-pointer h-full">
+                <CardContent className="p-8">
+                  <div className="w-14 h-14 mb-6 bg-accent/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Users className="w-7 h-7 text-accent" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground mb-3">Individual Clients</h3>
+                  <p className="text-muted-foreground mb-4">Accessible entry points to premium real estate with professional management and guidance.</p>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-center gap-2">
+                      <ChevronRight className="w-4 h-4 text-secondary" />
+                      Fractional ownership
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <ChevronRight className="w-4 h-4 text-secondary" />
+                      Market education
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <ChevronRight className="w-4 h-4 text-secondary" />
+                      Dedicated support
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
           
           <div className="text-center mt-10">
@@ -663,7 +675,7 @@ export default function Home() {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                   {featuredReports.map((report) => (
-                    <Card key={report.id} className="group hover:shadow-xl transition-all duration-300 border-0 overflow-hidden">
+                    <Card key={report.id} className="group hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu border-0 overflow-hidden">
                       <div className="h-40 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center relative overflow-hidden">
                         {report.thumbnailUrl ? (
                           <img 
@@ -757,9 +769,9 @@ export default function Home() {
               
               return (
                 <Link key={service.id} href={`/services#service-${service.id}`}>
-                  <Card className="group hover:shadow-lg transition-all duration-300 border-0 bg-card cursor-pointer h-full">
+                  <Card className="group hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu border-0 bg-card cursor-pointer h-full">
                     <CardContent className="p-6 text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 bg-secondary/10 rounded-xl flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
+                      <div className="w-16 h-16 mx-auto mb-4 bg-secondary/10 rounded-xl flex items-center justify-center group-hover:bg-secondary/20 group-hover:scale-110 transition-all">
                         <IconComponent className="w-8 h-8 text-secondary" />
                       </div>
                       <h3 className="font-semibold text-foreground mb-2">{service.title}</h3>
