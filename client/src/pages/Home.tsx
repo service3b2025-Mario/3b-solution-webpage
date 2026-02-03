@@ -183,7 +183,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {/* Germany */}
             <Link href="/contact">
-              <Card className="group hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu border border-border bg-card cursor-pointer h-full">
+              <Card className="group hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu border border-border bg-card cursor-pointer h-full">
                 <CardContent className="p-8 text-center">
                   <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Building2 className="w-8 h-8 text-primary" />
@@ -202,7 +202,7 @@ export default function Home() {
 
             {/* Philippines - Highlighted */}
             <Link href="/contact">
-              <Card className="group hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu border-4 border-secondary bg-card shadow-lg cursor-pointer h-full">
+              <Card className="group hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu border-4 border-secondary bg-card shadow-lg cursor-pointer h-full">
                 <CardContent className="p-8 text-center">
                   <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Globe className="w-8 h-8 text-secondary" />
@@ -221,7 +221,7 @@ export default function Home() {
 
             {/* China */}
             <Link href="/contact">
-              <Card className="group hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu border border-border bg-card cursor-pointer h-full">
+              <Card className="group hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu border border-border bg-card cursor-pointer h-full">
                 <CardContent className="p-8 text-center">
                   <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Landmark className="w-8 h-8 text-primary" />
@@ -278,7 +278,7 @@ export default function Home() {
                   }
                 }}
               >
-                <Card className="group hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu overflow-hidden border-0">
+                <Card className="group hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu overflow-hidden border-0">
                   <div 
                     className="h-56 bg-gradient-to-br from-primary/20 to-secondary/20 relative overflow-hidden"
                     onClick={(e) => {
@@ -348,28 +348,24 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* UHNWI */}
             <Link href="/investors/uhnwi">
-              <Card className="group border-0 shadow-lg hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu cursor-pointer h-full">
-                <CardContent className="p-8">
-                  <div className="w-14 h-14 mb-6 bg-primary/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Briefcase className="w-7 h-7 text-primary" />
+              <Card className="group border-0 shadow-lg hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu cursor-pointer h-full">
+                <CardContent className="p-6">
+                  <div className="w-12 h-12 mb-4 bg-primary/10 rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-3 transition-all">
+                    <Users className="w-6 h-6 text-primary" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">Ultra-High-Net-Worth Individuals</h3>
-                  <p className="text-muted-foreground mb-4">Exclusive access to trophy assets and direct co-acquisition opportunities in luxury hospitality developments.</p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-center gap-2">
-                      <ChevronRight className="w-4 h-4 text-secondary" />
-                      Direct property ownership
+                  <h3 className="text-lg font-bold text-foreground mb-2">UHNWI</h3>
+                  <p className="text-sm text-muted-foreground mb-3">Ultra High Net Worth Individuals</p>
+                  <ul className="space-y-1 text-xs text-muted-foreground">
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
+                      Direct ownership
                     </li>
-                    <li className="flex items-center gap-2">
-                      <ChevronRight className="w-4 h-4 text-secondary" />
-                      Co-ownership structures
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <ChevronRight className="w-4 h-4 text-secondary" />
-                      Personalized advisory
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
+                      Co-acquisition
                     </li>
                   </ul>
                 </CardContent>
@@ -378,24 +374,20 @@ export default function Home() {
 
             {/* Institutional */}
             <Link href="/investors/institutional">
-              <Card className="group border-0 shadow-lg hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu cursor-pointer h-full">
-                <CardContent className="p-8">
-                  <div className="w-14 h-14 mb-6 bg-secondary/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Building2 className="w-7 h-7 text-secondary" />
+              <Card className="group border-0 shadow-lg hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu cursor-pointer h-full">
+                <CardContent className="p-6">
+                  <div className="w-12 h-12 mb-4 bg-secondary/10 rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-3 transition-all">
+                    <Building2 className="w-6 h-6 text-secondary" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">Institutional Clients</h3>
-                  <p className="text-muted-foreground mb-4">Institutional-grade deal flow with comprehensive due diligence and transparent reporting.</p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-center gap-2">
-                      <ChevronRight className="w-4 h-4 text-secondary" />
-                      Direct acquisition
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <ChevronRight className="w-4 h-4 text-secondary" />
+                  <h3 className="text-lg font-bold text-foreground mb-2">Institutional</h3>
+                  <p className="text-sm text-muted-foreground mb-3">Pension Funds, Insurance, Endowments</p>
+                  <ul className="space-y-1 text-xs text-muted-foreground">
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
                       Portfolio allocation
                     </li>
-                    <li className="flex items-center gap-2">
-                      <ChevronRight className="w-4 h-4 text-secondary" />
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
                       Quarterly reporting
                     </li>
                   </ul>
@@ -403,27 +395,46 @@ export default function Home() {
               </Card>
             </Link>
 
-            {/* Individual */}
-            <Link href="/investors/individual">
-              <Card className="group border-0 shadow-lg hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu cursor-pointer h-full">
-                <CardContent className="p-8">
-                  <div className="w-14 h-14 mb-6 bg-accent/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Users className="w-7 h-7 text-accent" />
+            {/* Family Offices - NEW */}
+            <Link href="/investors/family-offices">
+              <Card className="group border-0 shadow-lg hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu cursor-pointer h-full">
+                <CardContent className="p-6">
+                  <div className="w-12 h-12 mb-4 bg-chart-1/10 rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-3 transition-all">
+                    <Globe className="w-6 h-6 text-chart-1" />
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">Individual Clients</h3>
-                  <p className="text-muted-foreground mb-4">Accessible entry points to premium real estate with professional management and guidance.</p>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-center gap-2">
-                      <ChevronRight className="w-4 h-4 text-secondary" />
+                  <h3 className="text-lg font-bold text-foreground mb-2">Family Offices</h3>
+                  <p className="text-sm text-muted-foreground mb-3">Multi-generational Wealth Management</p>
+                  <ul className="space-y-1 text-xs text-muted-foreground">
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
+                      Legacy planning
+                    </li>
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
+                      Wealth preservation
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Individual & First-Time Buyers */}
+            <Link href="/investors/individual">
+              <Card className="group border-0 shadow-lg hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu cursor-pointer h-full">
+                <CardContent className="p-6">
+                  <div className="w-12 h-12 mb-4 bg-accent/10 rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-3 transition-all">
+                    <TrendingUp className="w-6 h-6 text-accent" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground mb-2">Individual & First-Time Buyers</h3>
+                  <p className="text-sm text-muted-foreground mb-3">Building wealth through real estate</p>
+                  <ul className="space-y-1 text-xs text-muted-foreground">
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
                       Fractional ownership
                     </li>
-                    <li className="flex items-center gap-2">
-                      <ChevronRight className="w-4 h-4 text-secondary" />
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
                       Market education
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <ChevronRight className="w-4 h-4 text-secondary" />
-                      Dedicated support
                     </li>
                   </ul>
                 </CardContent>
@@ -675,7 +686,7 @@ export default function Home() {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                   {featuredReports.map((report) => (
-                    <Card key={report.id} className="group hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu border-0 overflow-hidden">
+                    <Card key={report.id} className="group hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu border-0 overflow-hidden">
                       <div className="h-40 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center relative overflow-hidden">
                         {report.thumbnailUrl ? (
                           <img 
@@ -769,7 +780,7 @@ export default function Home() {
               
               return (
                 <Link key={service.id} href={`/services#service-${service.id}`}>
-                  <Card className="group hover:shadow-2xl hover:scale-105 hover:-translate-y-2 transition-all duration-300 transform-gpu border-0 bg-card cursor-pointer h-full">
+                  <Card className="group hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu border-0 bg-card cursor-pointer h-full">
                     <CardContent className="p-6 text-center">
                       <div className="w-16 h-16 mx-auto mb-4 bg-secondary/10 rounded-xl flex items-center justify-center group-hover:bg-secondary/20 group-hover:scale-110 transition-all">
                         <IconComponent className="w-8 h-8 text-secondary" />
