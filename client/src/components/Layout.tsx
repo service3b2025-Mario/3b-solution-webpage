@@ -5,6 +5,7 @@ import { Menu, Phone, Mail, MapPin, Linkedin, Facebook, User, Heart, Bookmark, L
 import { Instagram } from "lucide-react";
 import { BackToTop } from "@/components/BackToTop";
 import { ChatWidget } from "@/components/ChatWidget";
+import { MobileContactMenu } from "@/components/MobileContactMenu";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
@@ -424,6 +425,7 @@ export default function Layout({ children }: LayoutProps) {
       <Footer />
       <BackToTop />
       <ChatWidget />
+      <MobileContactMenu />
     </div>
   );
 }
