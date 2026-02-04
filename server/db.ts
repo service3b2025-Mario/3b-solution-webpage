@@ -2,7 +2,7 @@ import { eq, desc, asc, and, or, like, sql, inArray, gte, lte } from "drizzle-or
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { 
-  InsertUser, users, 
+  InsertUser, users, User,
   properties, Property, InsertProperty,
   services, Service, InsertService,
   locations, Location, InsertLocation,
@@ -25,7 +25,9 @@ import {
   downloadTags, DownloadTag, InsertDownloadTag,
   downloadTagAssignments, DownloadTagAssignment, InsertDownloadTagAssignment,
   resources, Resource, InsertResource,
-  whatsappClicks
+  whatsappClicks,
+  userSessions, UserSession, InsertUserSession,
+  auditLogs, AuditLog, InsertAuditLog
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
