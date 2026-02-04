@@ -15,17 +15,35 @@ import { sendResourceDownloadEmail } from "./emailService";
 import { handleNewLeadNotifications } from "./leadEmailService";
 import { whatsappRouter } from "./whatsapp/whatsappRouters";
 import * as externalAnalytics from "./externalAnalytics";
+import { userRouter } from "./userRouters";
+import * as userMgmt from "./userManagement";
 
-// Admin procedure - requires admin role
+// Admin procedure - requires admin role (supports both 'admin' and 'Admin')
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== 'admin') {
+  const role = ctx.user.role as string;
+  if (role !== 'admin' && role !== 'Admin') {
     throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
   }
   return next({ ctx });
 });
 
+// Permission-based procedure factory for granular access control
+function requirePermission(permission: string) {
+  return protectedProcedure.use(({ ctx, next }) => {
+    const role = ctx.user.role as userMgmt.UserRole;
+    if (!userMgmt.hasPermission(role, permission)) {
+      throw new TRPCError({ 
+        code: 'FORBIDDEN', 
+        message: `You don't have permission to perform this action` 
+      });
+    }
+    return next({ ctx });
+  });
+}
+
 export const appRouter = router({
   system: systemRouter,
+  users: userRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
