@@ -4,8 +4,28 @@ import { setCookie, getCookie, deleteCookie } from "hono/cookie";
 import { db } from "../db";
 import { adminUsers } from "../../drizzle/schema";
 import { eq, and, or, isNull, lt } from "drizzle-orm";
-import * as argon2 from "argon2";
 import crypto from "crypto";
+
+// Password hashing using Node.js built-in crypto (no external dependencies)
+const hashPassword = async (password: string): Promise<string> => {
+  const salt = crypto.randomBytes(32).toString("hex");
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(password, salt, 100000, 64, "sha512", (err, derivedKey) => {
+      if (err) reject(err);
+      resolve(`${salt}:${derivedKey.toString("hex")}`);
+    });
+  });
+};
+
+const verifyPassword = async (password: string, hash: string): Promise<boolean> => {
+  const [salt, key] = hash.split(":");
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(password, salt, 100000, 64, "sha512", (err, derivedKey) => {
+      if (err) reject(err);
+      resolve(key === derivedKey.toString("hex"));
+    });
+  });
+};
 
 // Legacy admin credentials (fallback)
 const LEGACY_ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@3bsolution.com";
@@ -19,6 +39,9 @@ const MAX_FAILED_ATTEMPTS = 5;
 const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes in milliseconds
 
 export const oauthApp = new Hono();
+
+// Export hash function for use in adminUserRouters
+export { hashPassword, verifyPassword };
 
 // Helper to create JWT token
 const createToken = async (user: {
@@ -79,8 +102,8 @@ oauthApp.post("/login", async (c) => {
         return c.json({ success: false, error: "Account is deactivated. Contact administrator." }, 403);
       }
 
-      // Verify password
-      const isValid = await argon2.verify(dbUser.passwordHash, password);
+      // Verify password using our crypto-based function
+      const isValid = await verifyPassword(password, dbUser.passwordHash);
 
       if (!isValid) {
         // Increment failed attempts
@@ -174,44 +197,6 @@ oauthApp.post("/login", async (c) => {
           mustChangePassword: false,
         },
       });
-    }
-
-    // Check environment variable users (ADMIN_USERS format: email:password:name:role,...)
-    const envUsers = process.env.ADMIN_USERS;
-    if (envUsers) {
-      const userEntries = envUsers.split(",");
-      for (const entry of userEntries) {
-        const [userEmail, userPassword, userName, userRole] = entry.split(":");
-        if (userEmail?.toLowerCase().trim() === normalizedEmail && userPassword === password) {
-          const token = await createToken({
-            id: -1, // Env user ID
-            email: userEmail,
-            name: userName || userEmail,
-            role: userRole || "admin",
-            mustChangePassword: false,
-          });
-
-          setCookie(c, "app_session_id", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "Lax",
-            maxAge: SESSION_DURATION,
-            path: "/",
-          });
-
-          return c.json({
-            success: true,
-            redirectUrl: "/admin",
-            user: {
-              id: -1,
-              email: userEmail,
-              name: userName || userEmail,
-              role: userRole || "admin",
-              mustChangePassword: false,
-            },
-          });
-        }
-      }
     }
 
     return c.json({ success: false, error: "Invalid email or password" }, 401);
