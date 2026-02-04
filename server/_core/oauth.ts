@@ -1,7 +1,6 @@
 import { Express, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import cookieParser from "cookie-parser";
 
 // Cookie name for session management
 const COOKIE_NAME = "app_session_id";
@@ -39,11 +38,21 @@ const SESSION_DURATION = 8 * 60 * 60; // 8 hours in seconds
 // Export COOKIE_NAME for use in other files
 export { COOKIE_NAME };
 
+// Helper function to parse cookies from request
+function parseCookies(req: Request): Record<string, string> {
+  const cookieHeader = req.headers.cookie || "";
+  const cookies: Record<string, string> = {};
+  cookieHeader.split(";").forEach((cookie) => {
+    const [name, ...rest] = cookie.trim().split("=");
+    if (name && rest.length > 0) {
+      cookies[name] = decodeURIComponent(rest.join("="));
+    }
+  });
+  return cookies;
+}
+
 // Register OAuth routes on Express app
 export const registerOAuthRoutes = (app: Express) => {
-  // Add cookie parser middleware
-  app.use(cookieParser());
-
   // Login endpoint
   app.post("/api/auth/login", async (req: Request, res: Response) => {
     try {
@@ -120,7 +129,8 @@ export const registerOAuthRoutes = (app: Express) => {
   // Get current user endpoint
   app.get("/api/auth/me", (req: Request, res: Response) => {
     try {
-      const token = req.cookies[COOKIE_NAME];
+      const cookies = parseCookies(req);
+      const token = cookies[COOKIE_NAME];
       if (!token) {
         console.log("[Auth] Missing session cookie");
         return res.json({ user: null });
