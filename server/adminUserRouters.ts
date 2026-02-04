@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure } from "./_core/trpc";
-import { db } from "./db";
+import { getDb } from "./db";
 import { adminUsers } from "../drizzle/schema";
 import { eq, ne, and, desc } from "drizzle-orm";
 import { hashPassword } from "./_core/oauth";
 
 // Admin procedure - requires admin role
-const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
+const adminProcedure = protectedProcedure.use(({ ctx, next } ) => {
   if (ctx.user.role !== 'admin') {
     throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
   }
@@ -17,6 +17,9 @@ const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
 export const adminUserRouter = router({
   // List all admin users
   list: adminProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+    
     try {
       const users = await db
         .select({
@@ -46,21 +49,25 @@ export const adminUserRouter = router({
     .input(z.object({
       email: z.string().email(),
       name: z.string().min(1),
-      role: z.enum(['admin', 'director', 'dataEditor', 'propertySpecialist', 'salesSpecialist']),
       password: z.string().min(8),
+      role: z.enum(['admin', 'director', 'dataEditor', 'propertySpecialist', 'salesSpecialist']),
     }))
     .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+      
       try {
-        const { email, name, role, password } = input;
+        const { email, name, password, role } = input;
 
         // Check if email already exists
-        const [existing] = await db
-          .select()
+        const existing = await db
+          .select({ id: adminUsers.id })
           .from(adminUsers)
-          .where(eq(adminUsers.email, email.toLowerCase().trim()));
+          .where(eq(adminUsers.email, email))
+          .limit(1);
 
-        if (existing) {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Email already exists' });
+        if (existing.length > 0) {
+          throw new TRPCError({ code: 'CONFLICT', message: 'Email already exists' });
         }
 
         // Hash password
@@ -70,24 +77,18 @@ export const adminUserRouter = router({
         const [newUser] = await db
           .insert(adminUsers)
           .values({
-            email: email.toLowerCase().trim(),
-            name: name.trim(),
-            role,
+            email,
+            name,
             passwordHash,
+            role,
             isActive: true,
             mustChangePassword: true,
-            failedLoginAttempts: 0,
-            createdAt: new Date(),
-            updatedAt: new Date(),
           })
           .returning({
             id: adminUsers.id,
             email: adminUsers.email,
             name: adminUsers.name,
             role: adminUsers.role,
-            isActive: adminUsers.isActive,
-            mustChangePassword: adminUsers.mustChangePassword,
-            createdAt: adminUsers.createdAt,
           });
 
         return newUser;
@@ -102,37 +103,39 @@ export const adminUserRouter = router({
   update: adminProcedure
     .input(z.object({
       id: z.number(),
-      email: z.string().email(),
-      name: z.string().min(1),
-      role: z.enum(['admin', 'director', 'dataEditor', 'propertySpecialist', 'salesSpecialist']),
+      email: z.string().email().optional(),
+      name: z.string().min(1).optional(),
+      role: z.enum(['admin', 'director', 'dataEditor', 'propertySpecialist', 'salesSpecialist']).optional(),
       isActive: z.boolean().optional(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+      
       try {
-        const { id, email, name, role, isActive } = input;
+        const { id, ...updates } = input;
 
-        // Check if email already exists for another user
-        const [existing] = await db
-          .select()
-          .from(adminUsers)
-          .where(and(
-            eq(adminUsers.email, email.toLowerCase().trim()),
-            ne(adminUsers.id, id)
-          ));
+        // Prevent self-deactivation
+        if (ctx.user.id === id && updates.isActive === false) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Cannot deactivate your own account' });
+        }
 
-        if (existing) {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Email already exists' });
+        // Check if email is being changed and if it already exists
+        if (updates.email) {
+          const existing = await db
+            .select({ id: adminUsers.id })
+            .from(adminUsers)
+            .where(and(eq(adminUsers.email, updates.email), ne(adminUsers.id, id)))
+            .limit(1);
+
+          if (existing.length > 0) {
+            throw new TRPCError({ code: 'CONFLICT', message: 'Email already exists' });
+          }
         }
 
         const [updatedUser] = await db
           .update(adminUsers)
-          .set({
-            email: email.toLowerCase().trim(),
-            name: name.trim(),
-            role,
-            isActive: isActive !== undefined ? isActive : true,
-            updatedAt: new Date(),
-          })
+          .set(updates)
           .where(eq(adminUsers.id, id))
           .returning({
             id: adminUsers.id,
@@ -154,13 +157,16 @@ export const adminUserRouter = router({
       }
     }),
 
-  // Reset user password
+  // Reset password
   resetPassword: adminProcedure
     .input(z.object({
       id: z.number(),
       newPassword: z.string().min(8),
     }))
     .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+      
       try {
         const { id, newPassword } = input;
 
@@ -173,7 +179,6 @@ export const adminUserRouter = router({
             mustChangePassword: true,
             failedLoginAttempts: 0,
             lockedUntil: null,
-            updatedAt: new Date(),
           })
           .where(eq(adminUsers.id, id))
           .returning({ id: adminUsers.id });
@@ -190,12 +195,15 @@ export const adminUserRouter = router({
       }
     }),
 
-  // Unlock user account
-  unlock: adminProcedure
+  // Unlock account
+  unlockAccount: adminProcedure
     .input(z.object({
       id: z.number(),
     }))
     .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+      
       try {
         const { id } = input;
 
@@ -204,7 +212,6 @@ export const adminUserRouter = router({
           .set({
             failedLoginAttempts: 0,
             lockedUntil: null,
-            updatedAt: new Date(),
           })
           .where(eq(adminUsers.id, id))
           .returning({ id: adminUsers.id });
@@ -227,6 +234,9 @@ export const adminUserRouter = router({
       id: z.number(),
     }))
     .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Database not available' });
+      
       try {
         const { id } = input;
 
