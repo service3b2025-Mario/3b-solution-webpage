@@ -24,7 +24,8 @@ import {
   downloads, Download, InsertDownload,
   downloadTags, DownloadTag, InsertDownloadTag,
   downloadTagAssignments, DownloadTagAssignment, InsertDownloadTagAssignment,
-  resources, Resource, InsertResource
+  resources, Resource, InsertResource,
+  whatsappClicks
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -75,7 +76,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   if (!values.lastSignedIn) values.lastSignedIn = new Date();
   if (Object.keys(updateSet).length === 0) updateSet.lastSignedIn = new Date();
 
-  await db.insert(users).values(values).onDuplicateKeyUpdate({ set: updateSet });
+  await db.insert(users).values(values).onConflictDoUpdate({ target: users.openId, set: updateSet });
 }
 
 export async function getUserByOpenId(openId: string) {
@@ -83,6 +84,12 @@ export async function getUserByOpenId(openId: string) {
   if (!db) return undefined;
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
   return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateUserRole(openId: string, role: 'user' | 'admin'): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(users).set({ role }).where(eq(users.openId, openId));
 }
 
 // Properties operations
@@ -318,8 +325,8 @@ export async function createProperty(data: InsertProperty) {
   });
   
   try {
-    const result = await db.insert(properties).values(sanitizedData);
-    return result[0].insertId;
+        const result = await db.insert(properties).values(sanitizedData).returning({ id: properties.id });
+    return result[0]?.id ?? null;
   } catch (error: any) {
     console.error('[createProperty] Database insertion failed:');
     console.error('Error message:', error.message);
@@ -340,8 +347,13 @@ export async function updateProperty(id: number, data: Partial<InsertProperty>) 
   
   // Convert empty arrays to null for JSON fields
   if (Array.isArray(sanitizedData.images) && sanitizedData.images.length === 0) {
-    sanitizedData.images = null as any;
+  sanitizedData.images = null as any;
+  // SAFEGUARD: Auto-clear mainImage when all images are deleted
+  // This ensures data consistency even if client doesn't explicitly clear it
+  if (sanitizedData.mainImage === undefined) {
+    sanitizedData.mainImage = null as any;
   }
+}
   if (Array.isArray(sanitizedData.features) && sanitizedData.features.length === 0) {
     sanitizedData.features = null as any;
   }
@@ -649,8 +661,24 @@ export async function incrementReportDownloads(id: number) {
 export async function createLead(data: InsertLead) {
   const db = await getDb();
   if (!db) return null;
-  const result = await db.insert(leads).values(data);
-  return result[0].insertId;
+  
+  try {
+    // Insert the lead
+    await db.insert(leads).values(data);
+    
+    // Query the last inserted lead by email and timestamp
+    // This is needed because postgres-js doesn't return insertId like MySQL
+    const [lastInserted] = await db.select({ id: leads.id })
+      .from(leads)
+      .where(eq(leads.email, data.email))
+      .orderBy(desc(leads.createdAt))
+      .limit(1);
+    
+    return lastInserted?.id || null;
+  } catch (error) {
+    console.error('[createLead] Error inserting lead:', error);
+    throw error;
+  }
 }
 
 export async function getLeads(filters?: { status?: string; source?: string; limit?: number; offset?: number }) {
@@ -827,8 +855,20 @@ export async function getAllSettings() {
 export async function upsertSetting(key: string, value: string, type: 'text' | 'number' | 'json' | 'html' = 'text', category?: string) {
   const db = await getDb();
   if (!db) return false;
-  await db.insert(siteSettings).values({ key, value, type, category })
-    .onDuplicateKeyUpdate({ set: { value, type, category } });
+  
+  // Check if setting exists
+  const existing = await db.select().from(siteSettings).where(eq(siteSettings.key, key)).limit(1);
+  
+  if (existing.length > 0) {
+    // Update existing setting
+    await db.update(siteSettings)
+      .set({ value, type, category })
+      .where(eq(siteSettings.key, key));
+  } else {
+    // Insert new setting
+    await db.insert(siteSettings).values({ key, value, type, category });
+  }
+  
   return true;
 }
 
@@ -900,7 +940,7 @@ export async function upsertFxRate(data: InsertFxRate) {
   const db = await getDb();
   if (!db) return false;
   await db.insert(fxRates).values(data)
-    .onDuplicateKeyUpdate({ set: { rate: data.rate, fetchedAt: data.fetchedAt } });
+    .onConflictDoUpdate({ target: fxRates.currency, set: { rate: data.rate, fetchedAt: data.fetchedAt } });
   return true;
 }
 
@@ -1646,4 +1686,267 @@ export async function incrementResourceDownloadCount(id: number) {
     .where(eq(resources.id, id));
 }
 
+// ========== Enhanced Admin Data Reset Functions ==========
 
+// Time period options for filtering
+export type TimePeriod = 
+  | 'all' 
+  | 'last_day' 
+  | 'last_week' 
+  | 'last_2_weeks' 
+  | 'last_3_weeks' 
+  | 'last_1_month' 
+  | 'last_3_months' 
+  | 'last_6_months' 
+  | 'last_9_months' 
+  | 'last_12_months';
+
+// Data types that can be reset
+export type DataType = 
+  | 'leads' 
+  | 'bookings' 
+  | 'downloads' 
+  | 'tourFeedback' 
+  | 'analyticsEvents' 
+  | 'whatsappClicks' 
+  | 'marketAlerts';
+
+// Helper function to get date threshold based on time period
+function getDateThreshold(period: TimePeriod ): Date | null {
+  if (period === 'all') return null;
+  
+  const now = new Date();
+  const threshold = new Date(now);
+  
+  switch (period) {
+    case 'last_day':
+      threshold.setDate(now.getDate() - 1);
+      break;
+    case 'last_week':
+      threshold.setDate(now.getDate() - 7);
+      break;
+    case 'last_2_weeks':
+      threshold.setDate(now.getDate() - 14);
+      break;
+    case 'last_3_weeks':
+      threshold.setDate(now.getDate() - 21);
+      break;
+    case 'last_1_month':
+      threshold.setMonth(now.getMonth() - 1);
+      break;
+    case 'last_3_months':
+      threshold.setMonth(now.getMonth() - 3);
+      break;
+    case 'last_6_months':
+      threshold.setMonth(now.getMonth() - 6);
+      break;
+    case 'last_9_months':
+      threshold.setMonth(now.getMonth() - 9);
+      break;
+    case 'last_12_months':
+      threshold.setMonth(now.getMonth() - 12);
+      break;
+  }
+  
+  return threshold;
+}
+
+// Get counts of data by type and time period
+export async function getTestDataCountsByPeriod(period: TimePeriod = 'all') {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const threshold = getDateThreshold(period);
+  
+  try {
+    
+    // Build queries with optional date filter
+    const dateFilter = threshold ? gte(leads.createdAt, threshold) : undefined;
+    const bookingsDateFilter = threshold ? gte(bookings.createdAt, threshold) : undefined;
+    const downloadsDateFilter = threshold ? gte(downloads.createdAt, threshold) : undefined;
+    const feedbackDateFilter = threshold ? gte(tourFeedback.createdAt, threshold) : undefined;
+    const analyticsDateFilter = threshold ? gte(analyticsEvents.createdAt, threshold) : undefined;
+    const whatsappDateFilter = threshold ? gte(whatsappClicks.createdAt, threshold) : undefined;
+    const alertsDateFilter = threshold ? gte(marketAlerts.createdAt, threshold) : undefined;
+    
+    const [
+      leadsCount,
+      bookingsCount,
+      downloadsCount,
+      feedbackCount,
+      analyticsCount,
+      whatsappCount,
+      alertsCount,
+    ] = await Promise.all([
+      dateFilter 
+        ? db.select({ count: sql<number>`count(*)` }).from(leads).where(dateFilter)
+        : db.select({ count: sql<number>`count(*)` }).from(leads),
+      bookingsDateFilter
+        ? db.select({ count: sql<number>`count(*)` }).from(bookings).where(bookingsDateFilter)
+        : db.select({ count: sql<number>`count(*)` }).from(bookings),
+      downloadsDateFilter
+        ? db.select({ count: sql<number>`count(*)` }).from(downloads).where(downloadsDateFilter)
+        : db.select({ count: sql<number>`count(*)` }).from(downloads),
+      feedbackDateFilter
+        ? db.select({ count: sql<number>`count(*)` }).from(tourFeedback).where(feedbackDateFilter)
+        : db.select({ count: sql<number>`count(*)` }).from(tourFeedback),
+      analyticsDateFilter
+        ? db.select({ count: sql<number>`count(*)` }).from(analyticsEvents).where(analyticsDateFilter)
+        : db.select({ count: sql<number>`count(*)` }).from(analyticsEvents),
+      whatsappDateFilter
+        ? db.select({ count: sql<number>`count(*)` }).from(whatsappClicks).where(whatsappDateFilter)
+        : db.select({ count: sql<number>`count(*)` }).from(whatsappClicks),
+      alertsDateFilter
+        ? db.select({ count: sql<number>`count(*)` }).from(marketAlerts).where(alertsDateFilter)
+        : db.select({ count: sql<number>`count(*)` }).from(marketAlerts),
+    ]);
+    
+    return {
+      leads: Number(leadsCount[0]?.count || 0),
+      bookings: Number(bookingsCount[0]?.count || 0),
+      downloads: Number(downloadsCount[0]?.count || 0),
+      tourFeedback: Number(feedbackCount[0]?.count || 0),
+      analyticsEvents: Number(analyticsCount[0]?.count || 0),
+      whatsappClicks: Number(whatsappCount[0]?.count || 0),
+      marketAlerts: Number(alertsCount[0]?.count || 0),
+      period,
+      threshold: threshold?.toISOString() || null,
+    };
+  } catch (error) {
+    console.error("[Admin] Error getting test data counts:", error);
+    return null;
+  }
+}
+
+// Reset specific data types with optional time period filter
+export async function resetDataByTypeAndPeriod(
+  dataTypes: DataType[],
+  period: TimePeriod = 'all'
+) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const threshold = getDateThreshold(period);
+  const results: Record<string, number> = {};
+  
+  try {
+    
+    // Reset leads
+    if (dataTypes.includes('leads')) {
+      if (threshold) {
+        const result = await db.delete(leads).where(gte(leads.createdAt, threshold));
+        results.leads = result.rowCount || 0;
+      } else {
+        const result = await db.delete(leads);
+        results.leads = result.rowCount || 0;
+      }
+    }
+    
+    // Reset bookings
+    if (dataTypes.includes('bookings')) {
+      if (threshold) {
+        const result = await db.delete(bookings).where(gte(bookings.createdAt, threshold));
+        results.bookings = result.rowCount || 0;
+      } else {
+        const result = await db.delete(bookings);
+        results.bookings = result.rowCount || 0;
+      }
+    }
+    
+    // Reset downloads (need to delete tag assignments first)
+    if (dataTypes.includes('downloads')) {
+      if (threshold) {
+        // Get download IDs to delete
+        const downloadsToDelete = await db
+          .select({ id: downloads.id })
+          .from(downloads)
+          .where(gte(downloads.createdAt, threshold));
+        
+        const downloadIds = downloadsToDelete.map(d => d.id);
+        
+        if (downloadIds.length > 0) {
+          // Delete tag assignments for these downloads
+          await db.delete(downloadTagAssignments).where(inArray(downloadTagAssignments.downloadId, downloadIds));
+          // Delete downloads
+          const result = await db.delete(downloads).where(inArray(downloads.id, downloadIds));
+          results.downloads = result.rowCount || 0;
+        } else {
+          results.downloads = 0;
+        }
+      } else {
+        // Delete all tag assignments first
+        await db.delete(downloadTagAssignments);
+        const result = await db.delete(downloads);
+        results.downloads = result.rowCount || 0;
+      }
+    }
+    
+    // Reset tour feedback
+    if (dataTypes.includes('tourFeedback')) {
+      if (threshold) {
+        const result = await db.delete(tourFeedback).where(gte(tourFeedback.createdAt, threshold));
+        results.tourFeedback = result.rowCount || 0;
+      } else {
+        const result = await db.delete(tourFeedback);
+        results.tourFeedback = result.rowCount || 0;
+      }
+    }
+    
+    // Reset analytics events
+    if (dataTypes.includes('analyticsEvents')) {
+      if (threshold) {
+        const result = await db.delete(analyticsEvents).where(gte(analyticsEvents.createdAt, threshold));
+        results.analyticsEvents = result.rowCount || 0;
+      } else {
+        const result = await db.delete(analyticsEvents);
+        results.analyticsEvents = result.rowCount || 0;
+      }
+    }
+    
+    // Reset WhatsApp clicks
+    if (dataTypes.includes('whatsappClicks')) {
+      if (threshold) {
+        const result = await db.delete(whatsappClicks).where(gte(whatsappClicks.createdAt, threshold));
+        results.whatsappClicks = result.rowCount || 0;
+      } else {
+        const result = await db.delete(whatsappClicks);
+        results.whatsappClicks = result.rowCount || 0;
+      }
+    }
+    
+    // Reset market alerts
+    if (dataTypes.includes('marketAlerts')) {
+      if (threshold) {
+        const result = await db.delete(marketAlerts).where(gte(marketAlerts.createdAt, threshold));
+        results.marketAlerts = result.rowCount || 0;
+      } else {
+        const result = await db.delete(marketAlerts);
+        results.marketAlerts = result.rowCount || 0;
+      }
+    }
+    
+    console.log("[Admin] Data reset completed:", { dataTypes, period, results });
+    return results;
+  } catch (error) {
+    console.error("[Admin] Error resetting data:", error);
+    throw error;
+  }
+}
+
+// Legacy function for backward compatibility - resets all data
+export async function resetAllTestData() {
+  return resetDataByTypeAndPeriod([
+    'leads',
+    'bookings',
+    'downloads',
+    'tourFeedback',
+    'analyticsEvents',
+    'whatsappClicks',
+    'marketAlerts',
+  ], 'all');
+}
+
+// Legacy function for backward compatibility
+export async function getTestDataCounts() {
+  return getTestDataCountsByPeriod('all');
+}
