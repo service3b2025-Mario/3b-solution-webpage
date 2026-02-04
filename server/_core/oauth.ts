@@ -7,7 +7,7 @@ import { eq, and, or, isNull, lt } from "drizzle-orm";
 import crypto from "crypto";
 
 // Password hashing using Node.js built-in crypto (no external dependencies)
-const hashPassword = async (password: string): Promise<string> => {
+export const hashPassword = async (password: string): Promise<string> => {
   const salt = crypto.randomBytes(32).toString("hex");
   return new Promise((resolve, reject) => {
     crypto.pbkdf2(password, salt, 100000, 64, "sha512", (err, derivedKey) => {
@@ -17,7 +17,7 @@ const hashPassword = async (password: string): Promise<string> => {
   });
 };
 
-const verifyPassword = async (password: string, hash: string): Promise<boolean> => {
+export const verifyPassword = async (password: string, hash: string): Promise<boolean> => {
   const [salt, key] = hash.split(":");
   return new Promise((resolve, reject) => {
     crypto.pbkdf2(password, salt, 100000, 64, "sha512", (err, derivedKey) => {
