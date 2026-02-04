@@ -186,6 +186,7 @@ export const registerOAuthRoutes = (app: Express) => {
     try {
       const token = req.cookies[COOKIE_NAME];
       if (!token) {
+        console.log("[Auth] Missing session cookie");
         return res.json({ user: null });
       }
 
