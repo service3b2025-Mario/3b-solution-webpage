@@ -39,6 +39,8 @@ import { CustomerExpansion } from "@/components/crm/CustomerExpansion";
 import { WhatsAppSettings } from "@/components/admin/WhatsAppSettings";
 import { ResetDataButton } from "@/components/admin/ResetDataButton";
 import { EnhancedAnalyticsDashboard } from "@/components/analytics/EnhancedAnalyticsDashboard";
+import { UserManagement } from "@/components/admin/UserManagement";
+import { Shield } from "lucide-react";
 
 const sidebarItems = [
   { id: "dashboard", label: "Dashboard", icon: BarChart3 },
@@ -54,9 +56,10 @@ const sidebarItems = [
   { id: "team", label: "Team", icon: Users },
   { id: "content", label: "Content", icon: FileText },
   { id: "analytics", label: "Analytics", icon: TrendingUp },
-  { id: "api-credentials", label: "API Credentials", icon: Settings },
+  { id: "user-management", label: "User Management", icon: Shield, adminOnly: true },
+  { id: "api-credentials", label: "API Credentials", icon: Settings, adminOnly: true },
   { id: "whatsapp", label: "WhatsApp", icon: Phone },
-  { id: "settings", label: "Settings", icon: Settings },
+  { id: "settings", label: "Settings", icon: Settings, adminOnly: true },
 ];
 
 export default function Admin() {
@@ -212,6 +215,7 @@ export default function Admin() {
           {section === "content" && <ContentManagement />}
           {section === "analytics" && <EnhancedAnalyticsDashboard />}
           {section === "api-credentials" && <APICredentials />}
+          {section === "user-management" && <UserManagement />}
           {section === "settings" && <SettingsSection />}
           {section === "crm-dashboard" && <CRMDashboard />}
           {section === "sales-funnel" && <SalesFunnelAnalytics />}
