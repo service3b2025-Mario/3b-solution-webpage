@@ -6,6 +6,27 @@ import cookieParser from "cookie-parser";
 // Cookie name for session management
 const COOKIE_NAME = "app_session_id";
 
+// Password hashing using Node.js built-in crypto (no external dependencies)
+export const hashPassword = async (password: string): Promise<string> => {
+  const salt = crypto.randomBytes(32).toString("hex");
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(password, salt, 100000, 64, "sha512", (err, derivedKey) => {
+      if (err) reject(err);
+      resolve(`${salt}:${derivedKey.toString("hex")}`);
+    });
+  });
+};
+
+export const verifyPassword = async (password: string, hash: string): Promise<boolean> => {
+  const [salt, key] = hash.split(":");
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(password, salt, 100000, 64, "sha512", (err, derivedKey) => {
+      if (err) reject(err);
+      resolve(key === derivedKey.toString("hex"));
+    });
+  });
+};
+
 // Legacy admin credentials (fallback)
 const LEGACY_ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@3bsolution.com";
 const LEGACY_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "3BSolution2025!";
