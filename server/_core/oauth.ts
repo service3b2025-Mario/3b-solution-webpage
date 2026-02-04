@@ -1,5 +1,5 @@
 import { Express, Request, Response } from "express";
-import { sign, verify } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { getDb } from "../db";
 import { adminUsers } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
