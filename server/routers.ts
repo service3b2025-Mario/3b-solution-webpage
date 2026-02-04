@@ -12,38 +12,17 @@ import { generateMeetingLink } from "./meetingLinks";
 import { sendBookingConfirmation, sendReschedulingNotification } from "./tourNotifications";
 import { notifyOwner } from "./_core/notification";
 import { sendResourceDownloadEmail } from "./emailService";
-import { handleNewLeadNotifications } from "./leadEmailService";
-import { whatsappRouter } from "./whatsapp/whatsappRouters";
-import * as externalAnalytics from "./externalAnalytics";
-import { userRouter } from "./userRouters";
-import * as userMgmt from "./userManagement";
 
-// Admin procedure - requires admin role (supports both 'admin' and 'Admin')
+// Admin procedure - requires admin role
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  const role = ctx.user.role as string;
-  if (role !== 'admin' && role !== 'Admin') {
+  if (ctx.user.role !== 'admin') {
     throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
   }
   return next({ ctx });
 });
 
-// Permission-based procedure factory for granular access control
-function requirePermission(permission: string) {
-  return protectedProcedure.use(({ ctx, next }) => {
-    const role = ctx.user.role as userMgmt.UserRole;
-    if (!userMgmt.hasPermission(role, permission)) {
-      throw new TRPCError({ 
-        code: 'FORBIDDEN', 
-        message: `You don't have permission to perform this action` 
-      });
-    }
-    return next({ ctx });
-  });
-}
-
 export const appRouter = router({
   system: systemRouter,
-  users: userRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -382,41 +361,7 @@ export const appRouter = router({
       utmMedium: z.string().optional(),
       utmCampaign: z.string().optional(),
       propertyId: z.number().optional(),
-    })).mutation(async ({ input }) => {
-      // Create the lead in database
-      const leadId = await db.createLead(input);
-      
-      // Send email notifications to both 3B Solution team AND the lead
-      try {
-        // Use comprehensive notification service
-        const notificationResult = await handleNewLeadNotifications({
-          leadId,
-          firstName: input.firstName,
-          lastName: input.lastName,
-          email: input.email,
-          phone: input.phone,
-          company: input.company,
-          investorType: input.investorType,
-          investmentRange: input.investmentRange,
-          interestedRegions: input.interestedRegions,
-          interestedPropertyTypes: input.interestedPropertyTypes,
-          message: input.message,
-          source: input.source,
-          sourcePage: input.sourcePage,
-        });
-        
-        console.log('[Leads] Notifications sent:', {
-          email: input.email,
-          teamNotified: notificationResult.teamNotified,
-          confirmationSent: notificationResult.confirmationSent,
-        });
-      } catch (notifyError) {
-        // Don't fail the lead creation if notification fails
-        console.error('[Leads] Failed to send notifications:', notifyError);
-      }
-      
-      return leadId;
-    }),
+    })).mutation(({ input }) => db.createLead(input)),
     list: adminProcedure.input(z.object({
       status: z.string().optional(),
       source: z.string().optional(),
@@ -666,63 +611,6 @@ export const appRouter = router({
     salesFunnel: adminProcedure.query(() => db.getSalesFunnelStats()),
     recentUsers: adminProcedure.input(z.object({ limit: z.number().optional() }).optional()).query(({ input }) => db.getRecentUsers(input?.limit || 10)),
     userEngagement: adminProcedure.input(z.object({ userId: z.string() })).query(({ input }) => db.getUserEngagement(input.userId)),
-    
-    // External Analytics - Google Analytics & Cloudflare
-    external: adminProcedure.input(z.object({
-      startDate: z.string(),
-      endDate: z.string(),
-    })).query(async ({ input }) => {
-      return externalAnalytics.getCombinedAnalytics(input.startDate, input.endDate);
-    }),
-    
-    googleAnalytics: router({
-      metrics: adminProcedure.input(z.object({
-        startDate: z.string(),
-        endDate: z.string(),
-      })).query(({ input }) => externalAnalytics.getGAMetrics(input.startDate, input.endDate)),
-      
-      trafficSources: adminProcedure.input(z.object({
-        startDate: z.string(),
-        endDate: z.string(),
-      })).query(({ input }) => externalAnalytics.getGATrafficSources(input.startDate, input.endDate)),
-      
-      topPages: adminProcedure.input(z.object({
-        startDate: z.string(),
-        endDate: z.string(),
-      })).query(({ input }) => externalAnalytics.getGATopPages(input.startDate, input.endDate)),
-      
-      countries: adminProcedure.input(z.object({
-        startDate: z.string(),
-        endDate: z.string(),
-      })).query(({ input }) => externalAnalytics.getGACountryData(input.startDate, input.endDate)),
-      
-      devices: adminProcedure.input(z.object({
-        startDate: z.string(),
-        endDate: z.string(),
-      })).query(({ input }) => externalAnalytics.getGADeviceData(input.startDate, input.endDate)),
-      
-      timeSeries: adminProcedure.input(z.object({
-        startDate: z.string(),
-        endDate: z.string(),
-      })).query(({ input }) => externalAnalytics.getGATimeSeries(input.startDate, input.endDate)),
-    }),
-    
-    cloudflare: router({
-      metrics: adminProcedure.input(z.object({
-        startDate: z.string(),
-        endDate: z.string(),
-      })).query(({ input }) => externalAnalytics.getCloudflareMetrics(input.startDate, input.endDate)),
-      
-      countries: adminProcedure.input(z.object({
-        startDate: z.string(),
-        endDate: z.string(),
-      })).query(({ input }) => externalAnalytics.getCloudflareCountryData(input.startDate, input.endDate)),
-      
-      timeSeries: adminProcedure.input(z.object({
-        startDate: z.string(),
-        endDate: z.string(),
-      })).query(({ input }) => externalAnalytics.getCloudflareTimeSeries(input.startDate, input.endDate)),
-    }),
   }),
 
   // FX Rates
@@ -748,7 +636,7 @@ export const appRouter = router({
     create: adminProcedure.input(z.object({
       slug: z.string(),
       title: z.string(),
-      content: z.string().optional(),  // JSON format: {en: "...", de: "...", zh: "..."}
+      content: z.string().optional(),
       metaTitle: z.string().optional(),
       metaDescription: z.string().optional(),
       isActive: z.boolean().optional(),
@@ -758,7 +646,7 @@ export const appRouter = router({
       id: z.number(),
       slug: z.string().optional(),
       title: z.string().optional(),
-      content: z.string().optional(),  // JSON format: {en: "...", de: "...", zh: "..."}
+      content: z.string().optional(),
       metaTitle: z.string().optional(),
       metaDescription: z.string().optional(),
       isActive: z.boolean().optional(),
@@ -784,7 +672,7 @@ export const appRouter = router({
       const fileKey = `properties/${timestamp}-${randomStr}.${ext}`;
       
       // Upload to S3
-      const result = await storagePut(buffer, input.contentType, fileKey);
+      const result = await storagePut(fileKey, buffer, input.contentType);
       
       return result;
     }),
@@ -804,7 +692,7 @@ export const appRouter = router({
       const fileKey = `properties/videos/${timestamp}-${randomStr}.${ext}`;
       
       // Upload to S3
-      const result = await storagePut(buffer, input.contentType, fileKey);
+      const result = await storagePut(fileKey, buffer, input.contentType);
       
       return result;
     }),
@@ -1090,79 +978,6 @@ export const appRouter = router({
           title: resource.title,
         };
       }),
-  }),
-
-    // WhatsApp Team Accounts
-  whatsapp: whatsappRouter,
-
-  // Admin Data Management - Enhanced with time periods and data type selection
-  adminData: router({
-    // Get counts of all test data with optional time period filter
-    getCounts: adminProcedure
-      .input(z.object({
-        period: z.enum([
-          'all',
-          'last_day',
-          'last_week',
-          'last_2_weeks',
-          'last_3_weeks',
-          'last_1_month',
-          'last_3_months',
-          'last_6_months',
-          'last_9_months',
-          'last_12_months',
-        ]).optional().default('all'),
-      }).optional())
-      .query(async ({ input }) => {
-        const period = input?.period || 'all';
-        return db.getTestDataCountsByPeriod(period);
-      }),
-    
-    // Reset selected data types with optional time period filter
-    resetByTypeAndPeriod: adminProcedure
-      .input(z.object({
-        dataTypes: z.array(z.enum([
-          'leads',
-          'bookings',
-          'downloads',
-          'tourFeedback',
-          'analyticsEvents',
-          'whatsappClicks',
-          'marketAlerts',
-        ])),
-        period: z.enum([
-          'all',
-          'last_day',
-          'last_week',
-          'last_2_weeks',
-          'last_3_weeks',
-          'last_1_month',
-          'last_3_months',
-          'last_6_months',
-          'last_9_months',
-          'last_12_months',
-        ]).optional().default('all'),
-      }))
-      .mutation(async ({ input }) => {
-        const results = await db.resetDataByTypeAndPeriod(input.dataTypes, input.period);
-        return {
-          success: true,
-          deleted: results,
-          dataTypes: input.dataTypes,
-          period: input.period,
-          message: 'Selected data has been reset successfully',
-        };
-      }),
-    
-    // Legacy endpoint - Reset all test data (for backward compatibility)
-    resetAll: adminProcedure.mutation(async () => {
-      const results = await db.resetAllTestData();
-      return {
-        success: true,
-        deleted: results,
-        message: 'All test data has been reset successfully',
-      };
-    }),
   }),
 });
 
