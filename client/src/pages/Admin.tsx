@@ -29,6 +29,7 @@ import BookingConfirmationModal from "@/components/BookingConfirmationModal";
 import FeedbackAnalytics from "./admin/FeedbackAnalytics";
 import ContentManagement from "./admin/ContentManagement";
 import { TeamMemberEditDialog } from "@/components/TeamMemberEditDialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { DownloadAnalytics } from "@/components/DownloadAnalytics";
 import { RealPropertyNameWidget } from "@/components/RealPropertyNameWidget";
 import { AdminLoginForm } from "@/components/AdminLoginForm";
@@ -481,8 +482,28 @@ function BookingsSection({ bookings, canUpdate, canDelete }: any) {
   );
 }
 
-// Team Section with RBAC
+// Team Section with RBAC and working dialogs
 function TeamSection({ teamMembers, canCreate, canUpdate, canDelete }: any) {
+  const [editingMember, setEditingMember] = useState<any>(null);
+  const [isAddingMember, setIsAddingMember] = useState(false);
+  const utils = trpc.useUtils();
+  
+  const deleteMember = trpc.team.delete.useMutation({
+    onSuccess: () => {
+      utils.team.list.invalidate();
+      toast.success("Team member deleted successfully");
+    },
+    onError: () => {
+      toast.error("Failed to delete team member");
+    },
+  });
+
+  const handleDelete = (member: any) => {
+    if (confirm(`Are you sure you want to delete ${member.name}?`)) {
+      deleteMember.mutate({ id: member.id });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -491,23 +512,30 @@ function TeamSection({ teamMembers, canCreate, canUpdate, canDelete }: any) {
           <p className="text-muted-foreground">Manage your team</p>
         </div>
         {canCreate && (
-          <Button>
+          <Button onClick={() => setIsAddingMember(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Add Team Member
           </Button>
         )}
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {teamMembers?.map((member: any) => (
           <Card key={member.id}>
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                  <span className="text-xl font-bold text-primary">
-                    {member.name?.charAt(0) || "?"}
-                  </span>
-                </div>
+                {member.photo ? (
+                  <img 
+                    src={member.photo} 
+                    alt={member.name}
+                    className="w-16 h-16 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                    <span className="text-xl font-bold text-primary">
+                      {member.name?.charAt(0) || "?"}
+                    </span>
+                  </div>
+                )}
                 <div>
                   <h3 className="font-semibold">{member.name}</h3>
                   <p className="text-sm text-muted-foreground">{member.role}</p>
@@ -516,13 +544,22 @@ function TeamSection({ teamMembers, canCreate, canUpdate, canDelete }: any) {
               {(canUpdate || canDelete) && (
                 <div className="flex gap-2 mt-4">
                   {canUpdate && (
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setEditingMember(member)}
+                    >
                       <Edit className="w-4 h-4 mr-2" />
                       Edit
                     </Button>
                   )}
                   {canDelete && (
-                    <Button variant="outline" size="sm" className="text-destructive">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-destructive"
+                      onClick={() => handleDelete(member)}
+                    >
                       <Trash2 className="w-4 h-4 mr-2" />
                       Delete
                     </Button>
@@ -533,9 +570,119 @@ function TeamSection({ teamMembers, canCreate, canUpdate, canDelete }: any) {
           </Card>
         ))}
       </div>
+
+      {/* Edit Dialog */}
+      {editingMember && (
+        <TeamMemberEditDialog
+          member={editingMember}
+          open={!!editingMember}
+          onOpenChange={(open) => {
+            if (!open) setEditingMember(null);
+          }}
+        />
+      )}
+
+      {/* Add Dialog */}
+      {isAddingMember && (
+        <TeamMemberAddDialog
+          open={isAddingMember}
+          onOpenChange={setIsAddingMember}
+        />
+      )}
     </div>
   );
 }
+
+// Add Team Member Dialog
+function TeamMemberAddDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
+  const [shortBio, setShortBio] = useState("");
+  const [bio, setBio] = useState("");
+  const [photo, setPhoto] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  
+  const utils = trpc.useUtils();
+  
+  const createMember = trpc.team.create.useMutation({
+    onSuccess: () => {
+      utils.team.list.invalidate();
+      onOpenChange(false);
+      toast.success("Team member added successfully");
+      setName(""); setRole(""); setShortBio(""); setBio(""); setPhoto(""); setEmail(""); setPhone("");
+    },
+    onError: () => {
+      toast.error("Failed to add team member");
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createMember.mutate({ name, role, shortBio, bio, photo, email, phone });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Add Team Member</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label>Photo</Label>
+            {photo ? (
+              <div className="flex items-center gap-4">
+                <div className="w-24 h-24 rounded-full overflow-hidden bg-muted">
+                  <img src={photo} alt={name} className="w-full h-full object-cover" />
+                </div>
+                <Button type="button" variant="outline" size="sm" onClick={() => setPhoto("")} className="text-destructive">
+                  Remove Photo
+                </Button>
+              </div>
+            ) : (
+              <MediaUpload onUploadComplete={(urls) => { if (urls.length > 0) setPhoto(urls[0]); }} maxFiles={1} accept={{ "image/*": [".png", ".jpg", ".jpeg", ".webp"] }} />
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="add-name">Name *</Label>
+              <Input id="add-name" value={name} onChange={(e) => setName(e.target.value)} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="add-role">Role *</Label>
+              <Input id="add-role" value={role} onChange={(e) => setRole(e.target.value)} required />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="add-email">Email</Label>
+              <Input id="add-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="add-phone">Phone</Label>
+              <Input id="add-phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="add-shortBio">Short Bio</Label>
+            <Input id="add-shortBio" value={shortBio} onChange={(e) => setShortBio(e.target.value)} placeholder="Brief description for cards" />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="add-bio">Full Bio</Label>
+            <Textarea id="add-bio" value={bio} onChange={(e) => setBio(e.target.value)} rows={4} placeholder="Detailed biography" />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+            <Button type="submit" disabled={createMember.isPending}>
+              {createMember.isPending ? "Adding..." : "Add Team Member"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}}
 
 // Settings Section
 function SettingsSection({ isAdmin }: { isAdmin: boolean }) {
