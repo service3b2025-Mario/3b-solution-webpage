@@ -48,12 +48,11 @@ import {
   Edit,
   Trash2,
   Key,
-  Lock,
   Unlock,
   Shield,
   CheckCircle,
   XCircle,
-  AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 
 // Role display names and colors
@@ -92,7 +91,6 @@ export function UserManagement() {
     password: "",
     confirmPassword: "",
     role: "salesSpecialist" as RoleKey,
-    isActive: true,
   });
 
   // Form state for edit user
@@ -112,12 +110,12 @@ export function UserManagement() {
   const utils = trpc.useUtils();
 
   // Fetch users
-  const { data: users, isLoading, error } = trpc.adminUser.list.useQuery();
+  const { data: users, isLoading, refetch } = trpc.adminUsers.list.useQuery();
 
   // Mutations
-  const createUser = trpc.adminUser.create.useMutation({
+  const createUser = trpc.adminUsers.create.useMutation({
     onSuccess: () => {
-      utils.adminUser.list.invalidate();
+      utils.adminUsers.list.invalidate();
       setIsAddDialogOpen(false);
       setNewUser({
         email: "",
@@ -125,7 +123,6 @@ export function UserManagement() {
         password: "",
         confirmPassword: "",
         role: "salesSpecialist",
-        isActive: true,
       });
       toast.success("User created successfully");
     },
@@ -134,9 +131,9 @@ export function UserManagement() {
     },
   });
 
-  const updateUser = trpc.adminUser.update.useMutation({
+  const updateUser = trpc.adminUsers.update.useMutation({
     onSuccess: () => {
-      utils.adminUser.list.invalidate();
+      utils.adminUsers.list.invalidate();
       setIsEditDialogOpen(false);
       setSelectedUser(null);
       toast.success("User updated successfully");
@@ -146,9 +143,32 @@ export function UserManagement() {
     },
   });
 
-  const deleteUser = trpc.adminUser.delete.useMutation({
+  const resetPasswordMutation = trpc.adminUsers.resetPassword.useMutation({
     onSuccess: () => {
-      utils.adminUser.list.invalidate();
+      utils.adminUsers.list.invalidate();
+      setIsResetPasswordDialogOpen(false);
+      setSelectedUser(null);
+      setResetPassword({ newPassword: "", confirmPassword: "" });
+      toast.success("Password reset successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to reset password");
+    },
+  });
+
+  const unlockUser = trpc.adminUsers.unlock.useMutation({
+    onSuccess: () => {
+      utils.adminUsers.list.invalidate();
+      toast.success("Account unlocked successfully");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to unlock account");
+    },
+  });
+
+  const deleteUser = trpc.adminUsers.delete.useMutation({
+    onSuccess: () => {
+      utils.adminUsers.list.invalidate();
       setIsDeleteDialogOpen(false);
       setSelectedUser(null);
       toast.success("User deleted successfully");
@@ -158,51 +178,30 @@ export function UserManagement() {
     },
   });
 
-  const resetUserPassword = trpc.adminUser.resetPassword.useMutation({
-    onSuccess: () => {
-      utils.adminUser.list.invalidate();
-      setIsResetPasswordDialogOpen(false);
-      setSelectedUser(null);
-      setResetPassword({ newPassword: "", confirmPassword: "" });
-      toast.success("Password reset successfully. User must change password on next login.");
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to reset password");
-    },
-  });
-
-  const unlockAccount = trpc.adminUser.unlockAccount.useMutation({
-    onSuccess: () => {
-      utils.adminUser.list.invalidate();
-      toast.success("Account unlocked successfully");
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to unlock account");
-    },
-  });
-
   // Handlers
   const handleCreateUser = () => {
-    const passwordValidation = validatePassword(newUser.password);
-    if (!passwordValidation.valid) {
-      toast.error("Password requirements: " + passwordValidation.errors.join(", "));
-      return;
-    }
     if (newUser.password !== newUser.confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
+
+    const validation = validatePassword(newUser.password);
+    if (!validation.valid) {
+      toast.error("Password requirements not met: " + validation.errors.join(", "));
+      return;
+    }
+
     createUser.mutate({
       email: newUser.email,
       name: newUser.name,
       password: newUser.password,
       role: newUser.role,
-      isActive: newUser.isActive,
     });
   };
 
-  const handleEditUser = () => {
+  const handleUpdateUser = () => {
     if (!selectedUser) return;
+
     updateUser.mutate({
       id: selectedUser.id,
       email: editUser.email,
@@ -214,19 +213,26 @@ export function UserManagement() {
 
   const handleResetPassword = () => {
     if (!selectedUser) return;
-    const passwordValidation = validatePassword(resetPassword.newPassword);
-    if (!passwordValidation.valid) {
-      toast.error("Password requirements: " + passwordValidation.errors.join(", "));
-      return;
-    }
+
     if (resetPassword.newPassword !== resetPassword.confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
-    resetUserPassword.mutate({
+
+    const validation = validatePassword(resetPassword.newPassword);
+    if (!validation.valid) {
+      toast.error("Password requirements not met: " + validation.errors.join(", "));
+      return;
+    }
+
+    resetPasswordMutation.mutate({
       id: selectedUser.id,
       newPassword: resetPassword.newPassword,
     });
+  };
+
+  const handleUnlockAccount = (user: any) => {
+    unlockUser.mutate({ id: user.id });
   };
 
   const handleDeleteUser = () => {
@@ -256,421 +262,336 @@ export function UserManagement() {
     setIsDeleteDialogOpen(true);
   };
 
-  // Password strength indicator
-  const PasswordStrength = ({ password }: { password: string }) => {
-    const validation = validatePassword(password);
-    if (!password) return null;
-    
-    return (
-      <div className="mt-2 space-y-1">
-        <p className="text-xs font-medium text-muted-foreground">Password requirements:</p>
-        <div className="grid grid-cols-2 gap-1 text-xs">
-          {[
-            { check: password.length >= 8, label: "8+ characters" },
-            { check: /[A-Z]/.test(password), label: "Uppercase letter" },
-            { check: /[a-z]/.test(password), label: "Lowercase letter" },
-            { check: /[0-9]/.test(password), label: "Number" },
-            { check: /[^A-Za-z0-9]/.test(password), label: "Special character" },
-          ].map((req, i) => (
-            <div key={i} className={`flex items-center gap-1 ${req.check ? "text-green-600" : "text-muted-foreground"}`}>
-              {req.check ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
-              {req.label}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+  const isAccountLocked = (user: any) => {
+    return user.lockedUntil && new Date(user.lockedUntil) > new Date();
   };
 
-  if (error) {
-    return (
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex items-center gap-2 text-amber-600">
-            <AlertCircle className="w-5 h-5" />
-            <p>User management is not available. The database table may not be created yet.</p>
-          </div>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Run the database migration to enable this feature.
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Shield className="w-8 h-8 text-primary" />
-            User Management
-          </h1>
-          <p className="text-muted-foreground">
-            Manage admin users and their access permissions
-          </p>
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5" />
+            <CardTitle>User Management</CardTitle>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => refetch()}>
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
+            <Button onClick={() => setIsAddDialogOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add User
+            </Button>
+          </div>
         </div>
-        <Button onClick={() => setIsAddDialogOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          Add User
-        </Button>
-      </div>
-
-      {/* Users Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="w-5 h-5" />
-            Admin Users
-          </CardTitle>
-          <CardDescription>
-            {users?.length || 0} users with dashboard access
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="text-center py-8 text-muted-foreground">Loading users...</div>
-          ) : users?.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No users found. Add your first user to get started.
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Last Login</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+        <CardDescription>
+          Manage admin panel users and their access permissions
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <div className="text-center py-8">Loading users...</div>
+        ) : !users || users.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">
+            No users found. Click "Add User" to create the first admin user.
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Last Login</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell className="font-medium">{user.name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>
+                    <Badge className={ROLES[user.role as RoleKey]?.color || "bg-gray-500"}>
+                      {ROLES[user.role as RoleKey]?.label || user.role}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {user.isActive ? (
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <XCircle className="h-4 w-4 text-red-500" />
+                      )}
+                      {isAccountLocked(user) && (
+                        <Badge variant="destructive" className="text-xs">
+                          Locked
+                        </Badge>
+                      )}
+                      {user.mustChangePassword && (
+                        <Badge variant="outline" className="text-xs">
+                          Must Change Password
+                        </Badge>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {user.lastLogin
+                      ? new Date(user.lastLogin).toLocaleDateString()
+                      : "Never"}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => openEditDialog(user)}>
+                          <Edit className="h-4 w-4 mr-2" />
+                          Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => openResetPasswordDialog(user)}>
+                          <Key className="h-4 w-4 mr-2" />
+                          Reset Password
+                        </DropdownMenuItem>
+                        {isAccountLocked(user) && (
+                          <DropdownMenuItem onClick={() => handleUnlockAccount(user)}>
+                            <Unlock className="h-4 w-4 mr-2" />
+                            Unlock Account
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem
+                          onClick={() => openDeleteDialog(user)}
+                          className="text-red-600"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users?.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-sm font-semibold text-primary">
-                            {user.name?.charAt(0)?.toUpperCase() || "?"}
-                          </span>
-                        </div>
-                        <div>
-                          <p className="font-medium">{user.name}</p>
-                          <p className="text-sm text-muted-foreground">{user.email}</p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={`${ROLES[user.role as RoleKey]?.color || "bg-gray-500"} text-white`}>
-                        {ROLES[user.role as RoleKey]?.label || user.role}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col gap-1">
-                        {user.isActive ? (
-                          <Badge variant="outline" className="text-green-600 border-green-600 w-fit">
-                            <CheckCircle className="w-3 h-3 mr-1" />
-                            Active
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline" className="text-red-600 border-red-600 w-fit">
-                            <XCircle className="w-3 h-3 mr-1" />
-                            Inactive
-                          </Badge>
-                        )}
-                        {user.lockedUntil && new Date(user.lockedUntil) > new Date() && (
-                          <Badge variant="outline" className="text-amber-600 border-amber-600 w-fit">
-                            <Lock className="w-3 h-3 mr-1" />
-                            Locked
-                          </Badge>
-                        )}
-                        {user.mustChangePassword && (
-                          <Badge variant="outline" className="text-blue-600 border-blue-600 w-fit">
-                            <Key className="w-3 h-3 mr-1" />
-                            Must change password
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {user.lastLogin
-                        ? new Date(user.lastLogin).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
-                        : "Never"}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreVertical className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => openEditDialog(user)}>
-                            <Edit className="w-4 h-4 mr-2" />
-                            Edit User
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => openResetPasswordDialog(user)}>
-                            <Key className="w-4 h-4 mr-2" />
-                            Reset Password
-                          </DropdownMenuItem>
-                          {user.lockedUntil && new Date(user.lockedUntil) > new Date() && (
-                            <DropdownMenuItem onClick={() => unlockAccount.mutate({ id: user.id })}>
-                              <Unlock className="w-4 h-4 mr-2" />
-                              Unlock Account
-                            </DropdownMenuItem>
-                          )}
-                          <DropdownMenuItem
-                            onClick={() => openDeleteDialog(user)}
-                            className="text-red-600"
-                          >
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Delete User
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+              ))}
+            </TableBody>
+          </Table>
+        )}
 
-      {/* Add User Dialog */}
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Add New User</DialogTitle>
-            <DialogDescription>
-              Create a new admin user with dashboard access
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="new-name">Full Name *</Label>
-              <Input
-                id="new-name"
-                value={newUser.name}
-                onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                placeholder="John Doe"
-              />
+        {/* Add User Dialog */}
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New User</DialogTitle>
+              <DialogDescription>
+                Create a new admin panel user with specific role permissions.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input
+                  id="name"
+                  value={newUser.name}
+                  onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                  placeholder="John Doe"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={newUser.email}
+                  onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                  placeholder="john@3bsolution.com"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="role">Role</Label>
+                <Select
+                  value={newUser.role}
+                  onValueChange={(value: RoleKey) => setNewUser({ ...newUser, role: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(ROLES).map(([key, { label }]) => (
+                      <SelectItem key={key} value={key}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={newUser.password}
+                  onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  placeholder="••••••••"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={newUser.confirmPassword}
+                  onChange={(e) => setNewUser({ ...newUser, confirmPassword: e.target.value })}
+                  placeholder="••••••••"
+                />
+              </div>
+              <div className="text-xs text-muted-foreground">
+                Password must have: 8+ characters, uppercase, lowercase, number, special character
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="new-email">Email Address *</Label>
-              <Input
-                id="new-email"
-                type="email"
-                value={newUser.email}
-                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                placeholder="john@3bsolution.com"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="new-role">Role *</Label>
-              <Select
-                value={newUser.role}
-                onValueChange={(value: RoleKey) => setNewUser({ ...newUser, role: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(ROLES).map(([key, { label }]) => (
-                    <SelectItem key={key} value={key}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="new-password">Initial Password *</Label>
-              <Input
-                id="new-password"
-                type="password"
-                value={newUser.password}
-                onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                placeholder="••••••••"
-              />
-              <PasswordStrength password={newUser.password} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="new-confirm-password">Confirm Password *</Label>
-              <Input
-                id="new-confirm-password"
-                type="password"
-                value={newUser.confirmPassword}
-                onChange={(e) => setNewUser({ ...newUser, confirmPassword: e.target.value })}
-                placeholder="••••••••"
-              />
-              {newUser.confirmPassword && newUser.password !== newUser.confirmPassword && (
-                <p className="text-xs text-red-600">Passwords do not match</p>
-              )}
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleCreateUser} disabled={createUser.isPending}>
-              {createUser.isPending ? "Creating..." : "Create User"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleCreateUser} disabled={createUser.isPending}>
+                <Shield className="h-4 w-4 mr-2" />
+                {createUser.isPending ? "Creating..." : "Create User"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
-      {/* Edit User Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Edit User</DialogTitle>
-            <DialogDescription>
-              Update user information and permissions
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-name">Full Name *</Label>
-              <Input
-                id="edit-name"
-                value={editUser.name}
-                onChange={(e) => setEditUser({ ...editUser, name: e.target.value })}
-              />
+        {/* Edit User Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit User</DialogTitle>
+              <DialogDescription>
+                Update user information and permissions.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="edit-name">Full Name</Label>
+                <Input
+                  id="edit-name"
+                  value={editUser.name}
+                  onChange={(e) => setEditUser({ ...editUser, name: e.target.value })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="edit-email">Email</Label>
+                <Input
+                  id="edit-email"
+                  type="email"
+                  value={editUser.email}
+                  onChange={(e) => setEditUser({ ...editUser, email: e.target.value })}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="edit-role">Role</Label>
+                <Select
+                  value={editUser.role}
+                  onValueChange={(value: RoleKey) => setEditUser({ ...editUser, role: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(ROLES).map(([key, { label }]) => (
+                      <SelectItem key={key} value={key}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="edit-active"
+                  checked={editUser.isActive}
+                  onChange={(e) => setEditUser({ ...editUser, isActive: e.target.checked })}
+                  className="h-4 w-4"
+                />
+                <Label htmlFor="edit-active">Account Active</Label>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-email">Email Address *</Label>
-              <Input
-                id="edit-email"
-                type="email"
-                value={editUser.email}
-                onChange={(e) => setEditUser({ ...editUser, email: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-role">Role *</Label>
-              <Select
-                value={editUser.role}
-                onValueChange={(value: RoleKey) => setEditUser({ ...editUser, role: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select role" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.entries(ROLES).map(([key, { label }]) => (
-                    <SelectItem key={key} value={key}>
-                      {label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="edit-active"
-                checked={editUser.isActive}
-                onChange={(e) => setEditUser({ ...editUser, isActive: e.target.checked })}
-                className="rounded"
-              />
-              <Label htmlFor="edit-active">Account is active</Label>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleEditUser} disabled={updateUser.isPending}>
-              {updateUser.isPending ? "Saving..." : "Save Changes"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleUpdateUser} disabled={updateUser.isPending}>
+                {updateUser.isPending ? "Saving..." : "Save Changes"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
-      {/* Reset Password Dialog */}
-      <Dialog open={isResetPasswordDialogOpen} onOpenChange={setIsResetPasswordDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Reset Password</DialogTitle>
-            <DialogDescription>
-              Set a new password for {selectedUser?.name}. They will be required to change it on next login.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="reset-password">New Password *</Label>
-              <Input
-                id="reset-password"
-                type="password"
-                value={resetPassword.newPassword}
-                onChange={(e) => setResetPassword({ ...resetPassword, newPassword: e.target.value })}
-                placeholder="••••••••"
-              />
-              <PasswordStrength password={resetPassword.newPassword} />
+        {/* Reset Password Dialog */}
+        <Dialog open={isResetPasswordDialogOpen} onOpenChange={setIsResetPasswordDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Reset Password</DialogTitle>
+              <DialogDescription>
+                Set a new password for {selectedUser?.name}. They will be required to change it on next login.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="new-password">New Password</Label>
+                <Input
+                  id="new-password"
+                  type="password"
+                  value={resetPassword.newPassword}
+                  onChange={(e) => setResetPassword({ ...resetPassword, newPassword: e.target.value })}
+                  placeholder="••••••••"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="confirm-new-password">Confirm New Password</Label>
+                <Input
+                  id="confirm-new-password"
+                  type="password"
+                  value={resetPassword.confirmPassword}
+                  onChange={(e) => setResetPassword({ ...resetPassword, confirmPassword: e.target.value })}
+                  placeholder="••••••••"
+                />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="reset-confirm-password">Confirm Password *</Label>
-              <Input
-                id="reset-confirm-password"
-                type="password"
-                value={resetPassword.confirmPassword}
-                onChange={(e) => setResetPassword({ ...resetPassword, confirmPassword: e.target.value })}
-                placeholder="••••••••"
-              />
-              {resetPassword.confirmPassword && resetPassword.newPassword !== resetPassword.confirmPassword && (
-                <p className="text-xs text-red-600">Passwords do not match</p>
-              )}
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsResetPasswordDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleResetPassword} disabled={resetUserPassword.isPending}>
-              {resetUserPassword.isPending ? "Resetting..." : "Reset Password"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsResetPasswordDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleResetPassword} disabled={resetPasswordMutation.isPending}>
+                {resetPasswordMutation.isPending ? "Resetting..." : "Reset Password"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
-      {/* Delete User Dialog */}
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Delete User</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete {selectedUser?.name}? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <div className="flex items-center gap-2 text-red-800">
-              <AlertCircle className="w-5 h-5" />
-              <p className="font-medium">Warning</p>
-            </div>
-            <p className="text-sm text-red-700 mt-1">
-              This will permanently remove the user's access to the admin dashboard.
-            </p>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleDeleteUser} disabled={deleteUser.isPending}>
-              {deleteUser.isPending ? "Deleting..." : "Delete User"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+        {/* Delete User Dialog */}
+        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete User</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete {selectedUser?.name}? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={handleDeleteUser} disabled={deleteUser.isPending}>
+                {deleteUser.isPending ? "Deleting..." : "Delete User"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </CardContent>
+    </Card>
   );
 }
-
-export default UserManagement;
