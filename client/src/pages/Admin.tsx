@@ -41,6 +41,8 @@ import { WhatsAppSettings } from "@/components/admin/WhatsAppSettings";
 import { ResetDataButton } from "@/components/admin/ResetDataButton";
 import { EnhancedAnalyticsDashboard } from "@/components/analytics/EnhancedAnalyticsDashboard";
 import { useRBAC, type Resource } from "@/hooks/useRBAC";
+import { UserManagement } from "@/components/admin/UserManagement";
+import { ChangePasswordDialog } from "@/components/admin/ChangePasswordDialog";
 
 // Sidebar items with resource mapping for RBAC
 const allSidebarItems = [
@@ -59,6 +61,7 @@ const allSidebarItems = [
   { id: "analytics", label: "Analytics", icon: TrendingUp, resource: "dashboards" as Resource },
   { id: "api-credentials", label: "API Credentials", icon: Settings, resource: "apiCredentials" as Resource },
   { id: "whatsapp", label: "WhatsApp", icon: Phone, resource: "systemSettings" as Resource },
+  { id: "user-management", label: "User Management", icon: UserCog, resource: "userManagement" as Resource },
   { id: "settings", label: "Settings", icon: Settings, resource: "systemSettings" as Resource },
 ];
 
@@ -281,6 +284,7 @@ export default function Admin() {
           {section === "analytics" && canAccess("dashboards") && <EnhancedAnalyticsDashboard />}
           {section === "api-credentials" && canAccess("apiCredentials") && <APICredentials />}
           {section === "whatsapp" && canAccess("systemSettings") && <WhatsAppSettings />}
+          {section === "user-management" && canAccess("userManagement") && <UserManagement />}
           {section === "settings" && canAccess("systemSettings") && <SettingsSection isAdmin={isAdmin} />}
         </div>
       </main>
