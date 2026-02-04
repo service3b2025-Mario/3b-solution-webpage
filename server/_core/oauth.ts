@@ -1,244 +1,277 @@
-import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
-import type { Express, Request, Response } from "express";
-import * as db from "../db";
-import { getSessionCookieOptions } from "./cookies";
-import { sdk } from "./sdk";
-import { createHash } from "crypto";
+import { Hono } from "hono";
+import { sign, verify } from "hono/jwt";
+import { setCookie, getCookie, deleteCookie } from "hono/cookie";
+import { db } from "../db";
+import { adminUsers } from "../../drizzle/schema";
+import { eq, and, or, isNull, lt } from "drizzle-orm";
+import * as argon2 from "argon2";
+import crypto from "crypto";
 
-// Extended role type for RBAC
-type Role = 'admin' | 'director' | 'dataEditor' | 'propertySpecialist' | 'salesSpecialist';
+// Legacy admin credentials (fallback)
+const LEGACY_ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@3bsolution.com";
+const LEGACY_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "3BSolution2025!";
+const LEGACY_ADMIN_NAME = process.env.ADMIN_NAME || "Admin User";
 
-function getQueryParam(req: Request, key: string): string | undefined {
-  const value = req.query[key];
-  return typeof value === "string" ? value : undefined;
-}
+// JWT configuration
+const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString("hex");
+const SESSION_DURATION = 8 * 60 * 60; // 8 hours in seconds
+const MAX_FAILED_ATTEMPTS = 5;
+const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes in milliseconds
 
-// Simple password hashing function
-function hashPassword(password: string): string {
-  return createHash('sha256').update(password).digest('hex');
-}
+export const oauthApp = new Hono();
 
-// User configuration interface
-interface UserConfig {
+// Helper to create JWT token
+const createToken = async (user: {
+  id: number;
   email: string;
-  passwordHash: string;
   name: string;
-  role: Role;
-}
+  role: string;
+  mustChangePassword?: boolean;
+}) => {
+  const payload = {
+    sub: user.id.toString(),
+    email: user.email,
+    name: user.name,
+    role: user.role,
+    mustChangePassword: user.mustChangePassword || false,
+    exp: Math.floor(Date.now() / 1000) + SESSION_DURATION,
+  };
+  return await sign(payload, JWT_SECRET);
+};
 
-// Parse users from environment variable
-// Format: email1:password1:name1:role1,email2:password2:name2:role2
-function parseUsersFromEnv(): UserConfig[] {
-  const usersEnv = process.env.ADMIN_USERS;
-  
-  if (!usersEnv) {
-    // Fallback to legacy single admin credentials
-    return [{
-      email: process.env.ADMIN_EMAIL || "admin@3bsolution.com",
-      passwordHash: process.env.ADMIN_PASSWORD_HASH || hashPassword("3BSolution2025!"),
-      name: process.env.ADMIN_NAME || "Admin User",
-      role: 'admin' as Role,
-    }];
-  }
-  
-  const users: UserConfig[] = [];
-  const userEntries = usersEnv.split(',');
-  
-  for (const entry of userEntries) {
-    const parts = entry.trim().split(':');
-    if (parts.length >= 4) {
-      const [email, password, name, role] = parts;
-      users.push({
-        email: email.trim(),
-        passwordHash: hashPassword(password.trim()),
-        name: name.trim(),
-        role: (role.trim() as Role) || 'admin',
+// Login endpoint
+oauthApp.post("/login", async (c) => {
+  try {
+    const body = await c.req.json();
+    const { email, password } = body;
+
+    if (!email || !password) {
+      return c.json({ success: false, error: "Email and password are required" }, 400);
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // First, try database user
+    let dbUser = null;
+    try {
+      const [user] = await db
+        .select()
+        .from(adminUsers)
+        .where(eq(adminUsers.email, normalizedEmail));
+      dbUser = user;
+    } catch (e) {
+      // Database table might not exist yet, continue to legacy check
+      console.log("Database user lookup failed, trying legacy auth");
+    }
+
+    if (dbUser) {
+      // Check if account is locked
+      if (dbUser.lockedUntil && new Date(dbUser.lockedUntil) > new Date()) {
+        const remainingMinutes = Math.ceil((new Date(dbUser.lockedUntil).getTime() - Date.now()) / 60000);
+        return c.json({
+          success: false,
+          error: `Account is locked. Try again in ${remainingMinutes} minutes.`,
+        }, 403);
+      }
+
+      // Check if account is active
+      if (!dbUser.isActive) {
+        return c.json({ success: false, error: "Account is deactivated. Contact administrator." }, 403);
+      }
+
+      // Verify password
+      const isValid = await argon2.verify(dbUser.passwordHash, password);
+
+      if (!isValid) {
+        // Increment failed attempts
+        const newAttempts = (dbUser.failedLoginAttempts || 0) + 1;
+        const updates: any = { failedLoginAttempts: newAttempts };
+
+        if (newAttempts >= MAX_FAILED_ATTEMPTS) {
+          updates.lockedUntil = new Date(Date.now() + LOCKOUT_DURATION);
+        }
+
+        await db.update(adminUsers).set(updates).where(eq(adminUsers.id, dbUser.id));
+
+        const attemptsLeft = MAX_FAILED_ATTEMPTS - newAttempts;
+        if (attemptsLeft > 0) {
+          return c.json({
+            success: false,
+            error: `Invalid password. ${attemptsLeft} attempts remaining.`,
+          }, 401);
+        } else {
+          return c.json({
+            success: false,
+            error: "Account locked due to too many failed attempts. Try again in 15 minutes.",
+          }, 403);
+        }
+      }
+
+      // Successful login - reset failed attempts and update last login
+      await db.update(adminUsers).set({
+        failedLoginAttempts: 0,
+        lockedUntil: null,
+        lastLogin: new Date(),
+      }).where(eq(adminUsers.id, dbUser.id));
+
+      // Create token
+      const token = await createToken({
+        id: dbUser.id,
+        email: dbUser.email,
+        name: dbUser.name,
+        role: dbUser.role,
+        mustChangePassword: dbUser.mustChangePassword,
+      });
+
+      // Set cookie
+      setCookie(c, "app_session_id", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+        maxAge: SESSION_DURATION,
+        path: "/",
+      });
+
+      return c.json({
+        success: true,
+        redirectUrl: dbUser.mustChangePassword ? "/admin/change-password" : "/admin",
+        user: {
+          id: dbUser.id,
+          email: dbUser.email,
+          name: dbUser.name,
+          role: dbUser.role,
+          mustChangePassword: dbUser.mustChangePassword,
+        },
       });
     }
-  }
-  
-  // Always include the default admin if no users configured
-  if (users.length === 0) {
-    users.push({
-      email: process.env.ADMIN_EMAIL || "admin@3bsolution.com",
-      passwordHash: process.env.ADMIN_PASSWORD_HASH || hashPassword("3BSolution2025!"),
-      name: process.env.ADMIN_NAME || "Admin User",
-      role: 'admin' as Role,
-    });
-  }
-  
-  return users;
-}
 
-// Get all configured users
-const CONFIGURED_USERS = parseUsersFromEnv();
-
-// Session duration: 8 hours for better security
-const SESSION_DURATION_MS = 8 * 60 * 60 * 1000;
-
-export function registerOAuthRoutes(app: Express) {
-  // Email/Password Login endpoint
-  app.post("/api/oauth/login", async (req: Request, res: Response) => {
-    try {
-      const { email, password } = req.body;
-
-      if (!email || !password) {
-        res.status(400).json({ error: "Email and password are required" });
-        return;
-      }
-
-      // Check credentials against all configured users
-      const passwordHash = hashPassword(password);
-      const matchedUser = CONFIGURED_USERS.find(
-        user => user.email.toLowerCase() === email.toLowerCase() && user.passwordHash === passwordHash
-      );
-      
-      if (!matchedUser) {
-        // Log failed attempt (for security monitoring)
-        console.log(`[Auth] Failed login attempt for email: ${email}`);
-        res.status(401).json({ error: "Invalid email or password" });
-        return;
-      }
-
-      // Generate a unique openId for this user
-      const userOpenId = `user_${hashPassword(matchedUser.email).substring(0, 16)}`;
-
-      // Upsert the user in the database
-      await db.upsertUser({
-        openId: userOpenId,
-        name: matchedUser.name,
-        email: matchedUser.email,
-        loginMethod: "email",
-        lastSignedIn: new Date(),
+    // Fallback to legacy admin credentials
+    if (normalizedEmail === LEGACY_ADMIN_EMAIL.toLowerCase() && password === LEGACY_ADMIN_PASSWORD) {
+      const token = await createToken({
+        id: 0, // Legacy user ID
+        email: LEGACY_ADMIN_EMAIL,
+        name: LEGACY_ADMIN_NAME,
+        role: "admin",
+        mustChangePassword: false,
       });
 
-      // Ensure the user has the correct role
-      const user = await db.getUserByOpenId(userOpenId);
-      const dbRole = matchedUser.role === 'admin' || matchedUser.role === 'director' ? 'admin' : 'user';
-      if (user && user.role !== dbRole) {
-        await db.updateUserRole(userOpenId, dbRole);
-      }
-
-      // Create session token with user role info
-      const sessionToken = await sdk.createSessionToken(userOpenId, {
-        name: matchedUser.name,
-        expiresInMs: SESSION_DURATION_MS,
-        // Store role in session metadata
-        metadata: { role: matchedUser.role },
+      setCookie(c, "app_session_id", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+        maxAge: SESSION_DURATION,
+        path: "/",
       });
 
-      const cookieOptions = getSessionCookieOptions(req);
-      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: SESSION_DURATION_MS });
-
-      // Log successful login
-      console.log(`[Auth] Successful login for: ${matchedUser.email} (${matchedUser.role})`);
-
-      res.json({ 
-        success: true, 
+      return c.json({
+        success: true,
         redirectUrl: "/admin",
         user: {
-          name: matchedUser.name,
-          email: matchedUser.email,
-          role: matchedUser.role,
+          id: 0,
+          email: LEGACY_ADMIN_EMAIL,
+          name: LEGACY_ADMIN_NAME,
+          role: "admin",
+          mustChangePassword: false,
+        },
+      });
+    }
+
+    // Check environment variable users (ADMIN_USERS format: email:password:name:role,...)
+    const envUsers = process.env.ADMIN_USERS;
+    if (envUsers) {
+      const userEntries = envUsers.split(",");
+      for (const entry of userEntries) {
+        const [userEmail, userPassword, userName, userRole] = entry.split(":");
+        if (userEmail?.toLowerCase().trim() === normalizedEmail && userPassword === password) {
+          const token = await createToken({
+            id: -1, // Env user ID
+            email: userEmail,
+            name: userName || userEmail,
+            role: userRole || "admin",
+            mustChangePassword: false,
+          });
+
+          setCookie(c, "app_session_id", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "Lax",
+            maxAge: SESSION_DURATION,
+            path: "/",
+          });
+
+          return c.json({
+            success: true,
+            redirectUrl: "/admin",
+            user: {
+              id: -1,
+              email: userEmail,
+              name: userName || userEmail,
+              role: userRole || "admin",
+              mustChangePassword: false,
+            },
+          });
         }
-      });
-    } catch (error) {
-      console.error("[Auth] Login failed", error);
-      res.status(500).json({ error: "Login failed" });
-    }
-  });
-
-  // Get current user info endpoint
-  app.get("/api/oauth/me", async (req: Request, res: Response) => {
-    try {
-      // Get user from session
-      const sessionCookie = req.cookies[COOKIE_NAME];
-      if (!sessionCookie) {
-        res.status(401).json({ error: "Not authenticated" });
-        return;
       }
-
-      const sessionData = await sdk.verifySessionToken(sessionCookie);
-      if (!sessionData || !sessionData.openId) {
-        res.status(401).json({ error: "Invalid session" });
-        return;
-      }
-
-      const user = await db.getUserByOpenId(sessionData.openId);
-      if (!user) {
-        res.status(401).json({ error: "User not found" });
-        return;
-      }
-
-      // Find the user's role from config
-      const configUser = CONFIGURED_USERS.find(
-        u => u.email.toLowerCase() === user.email?.toLowerCase()
-      );
-
-      res.json({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: configUser?.role || (user.role === 'admin' ? 'admin' : 'user'),
-      });
-    } catch (error) {
-      console.error("[Auth] Get user info failed", error);
-      res.status(500).json({ error: "Failed to get user info" });
-    }
-  });
-
-  // Logout endpoint
-  app.post("/api/oauth/logout", async (req: Request, res: Response) => {
-    try {
-      const cookieOptions = getSessionCookieOptions(req);
-      res.clearCookie(COOKIE_NAME, cookieOptions);
-      console.log("[Auth] User logged out");
-      res.json({ success: true });
-    } catch (error) {
-      console.error("[Auth] Logout failed", error);
-      res.status(500).json({ error: "Logout failed" });
-    }
-  });
-
-  // OAuth callback (existing functionality)
-  app.get("/api/oauth/callback", async (req: Request, res: Response) => {
-    const code = getQueryParam(req, "code");
-    const state = getQueryParam(req, "state");
-
-    if (!code || !state) {
-      res.status(400).json({ error: "code and state are required" });
-      return;
     }
 
-    try {
-      const tokenResponse = await sdk.exchangeCodeForToken(code, state);
-      const userInfo = await sdk.getUserInfo(tokenResponse.accessToken);
+    return c.json({ success: false, error: "Invalid email or password" }, 401);
+  } catch (error) {
+    console.error("Login error:", error);
+    return c.json({ success: false, error: "Login failed. Please try again." }, 500);
+  }
+});
 
-      if (!userInfo.openId) {
-        res.status(400).json({ error: "openId missing from user info" });
-        return;
-      }
+// Logout endpoint
+oauthApp.post("/logout", async (c) => {
+  deleteCookie(c, "app_session_id", { path: "/" });
+  return c.json({ success: true });
+});
 
-      await db.upsertUser({
-        openId: userInfo.openId,
-        name: userInfo.name || null,
-        email: userInfo.email ?? null,
-        loginMethod: userInfo.loginMethod ?? userInfo.platform ?? null,
-        lastSignedIn: new Date(),
-      });
-
-      const sessionToken = await sdk.createSessionToken(userInfo.openId, {
-        name: userInfo.name || "",
-        expiresInMs: SESSION_DURATION_MS,
-      });
-
-      const cookieOptions = getSessionCookieOptions(req);
-      res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: SESSION_DURATION_MS });
-
-      res.redirect(302, "/");
-    } catch (error) {
-      console.error("[OAuth] Callback failed", error);
-      res.status(500).json({ error: "OAuth callback failed" });
+// Get current user endpoint
+oauthApp.get("/me", async (c) => {
+  try {
+    const token = getCookie(c, "app_session_id");
+    if (!token) {
+      return c.json({ user: null });
     }
-  });
-}
+
+    const payload = await verify(token, JWT_SECRET);
+    if (!payload || !payload.sub) {
+      return c.json({ user: null });
+    }
+
+    return c.json({
+      user: {
+        id: parseInt(payload.sub as string),
+        email: payload.email,
+        name: payload.name,
+        role: payload.role,
+        mustChangePassword: payload.mustChangePassword,
+      },
+    });
+  } catch (error) {
+    deleteCookie(c, "app_session_id", { path: "/" });
+    return c.json({ user: null });
+  }
+});
+
+// Verify token helper for SDK
+export const verifyToken = async (token: string) => {
+  try {
+    const payload = await verify(token, JWT_SECRET);
+    if (!payload || !payload.sub) {
+      return null;
+    }
+    return {
+      id: parseInt(payload.sub as string),
+      email: payload.email as string,
+      name: payload.name as string,
+      role: payload.role as string,
+      mustChangePassword: payload.mustChangePassword as boolean,
+    };
+  } catch {
+    return null;
+  }
+};
+
+export default oauthApp;
