@@ -1,26 +1,16 @@
 import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, json } from "drizzle-orm/mysql-core";
 
 // Core user table backing auth flow
-// Roles: Admin (full access), Director (strategic oversight), DataEditor (content), 
-// PropertySpecialist (properties), SalesSpecialist (leads/CRM)
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
   openId: varchar("openId", { length: 64 }).notNull().unique(),
   name: text("name"),
-  email: varchar("email", { length: 320 }).unique(),
-  passwordHash: varchar("passwordHash", { length: 255 }),
+  email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "Admin", "Director", "DataEditor", "PropertySpecialist", "SalesSpecialist"]).default("user").notNull(),
-  isActive: boolean("isActive").default(true).notNull(),
-  mfaSecret: varchar("mfaSecret", { length: 64 }),
-  mfaEnabled: boolean("mfaEnabled").default(false).notNull(),
-  failedLoginAttempts: int("failedLoginAttempts").default(0),
-  lockedUntil: timestamp("lockedUntil"),
-  lastPasswordChange: timestamp("lastPasswordChange"),
+  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
-  createdBy: int("createdBy"),
 });
 
 export type User = typeof users.$inferSelect;
@@ -388,7 +378,7 @@ export const legalPages = mysqlTable("legal_pages", {
   id: int("id").autoincrement().primaryKey(),
   slug: varchar("slug", { length: 100 }).notNull().unique(),
   title: varchar("title", { length: 255 }).notNull(),
-  content: text("content"),  // Stores JSON with {en, de, zh} for multi-language support
+  content: text("content"),
   metaTitle: varchar("meta_title", { length: 255 }),
   metaDescription: text("meta_description"),
   isActive: boolean("is_active").default(true),
@@ -495,78 +485,3 @@ export const resources = mysqlTable("resources", {
 
 export type Resource = typeof resources.$inferSelect;
 export type InsertResource = typeof resources.$inferInsert;
-
-// WhatsApp Team Accounts Table
-export const whatsappAccounts = mysqlTable("whatsapp_accounts", {
-  id: int("id").autoincrement().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  role: varchar("role", { length: 100 }).notNull(),
-  title: varchar("title", { length: 255 }),
-  phoneNumber: varchar("phone_number", { length: 50 }).notNull(),
-  countryCode: varchar("country_code", { length: 10 }).notNull().default("+49"),
-  displayOrder: int("display_order").default(0),
-  isActive: boolean("is_active").default(true),
-  isVisible: boolean("is_visible").default(true),
-  avatarUrl: text("avatar_url"),
-  teamMemberId: int("team_member_id"),
-  defaultMessage: text("default_message"),
-  visibleOnPages: text("visible_on_pages"),
-  totalClicks: int("total_clicks").default(0),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
-});
-
-export type WhatsAppAccount = typeof whatsappAccounts.$inferSelect;
-export type InsertWhatsAppAccount = typeof whatsappAccounts.$inferInsert;
-
-// WhatsApp Click Tracking Table
-export const whatsappClicks = mysqlTable("whatsapp_clicks", {
-  id: int("id").autoincrement().primaryKey(),
-  accountId: int("account_id").notNull(),
-  pagePath: varchar("page_path", { length: 255 }),
-  pageTitle: varchar("page_title", { length: 255 }),
-  propertyId: int("property_id"),
-  visitorId: varchar("visitor_id", { length: 100 }),
-  userAgent: text("user_agent"),
-  referrer: text("referrer"),
-  utmSource: varchar("utm_source", { length: 100 }),
-  utmMedium: varchar("utm_medium", { length: 100 }),
-  utmCampaign: varchar("utm_campaign", { length: 100 }),
-  clickedAt: timestamp("clicked_at").defaultNow().notNull(),
-});
-
-export type WhatsAppClick = typeof whatsappClicks.$inferSelect;
-export type InsertWhatsAppClick = typeof whatsappClicks.$inferInsert;
-
-// User Sessions Table - for managing active sessions
-export const userSessions = mysqlTable("user_sessions", {
-  id: int("id").autoincrement().primaryKey(),
-  userId: int("userId").notNull(),
-  sessionToken: varchar("sessionToken", { length: 512 }).notNull().unique(),
-  ipAddress: varchar("ipAddress", { length: 45 }),
-  userAgent: text("userAgent"),
-  expiresAt: timestamp("expiresAt").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  lastActivityAt: timestamp("lastActivityAt").defaultNow().notNull(),
-  isRevoked: boolean("isRevoked").default(false).notNull(),
-});
-
-export type UserSession = typeof userSessions.$inferSelect;
-export type InsertUserSession = typeof userSessions.$inferInsert;
-
-// Audit Log Table - for tracking all admin actions
-export const auditLogs = mysqlTable("audit_logs", {
-  id: int("id").autoincrement().primaryKey(),
-  userId: int("userId"),
-  userEmail: varchar("userEmail", { length: 320 }),
-  action: varchar("action", { length: 100 }).notNull(),
-  entityType: varchar("entityType", { length: 100 }),
-  entityId: int("entityId"),
-  details: json("details").$type<Record<string, any>>(),
-  ipAddress: varchar("ipAddress", { length: 45 }),
-  userAgent: text("userAgent"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-});
-
-export type AuditLog = typeof auditLogs.$inferSelect;
-export type InsertAuditLog = typeof auditLogs.$inferInsert;
