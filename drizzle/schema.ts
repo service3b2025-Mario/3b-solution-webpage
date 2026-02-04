@@ -527,3 +527,29 @@ export const whatsappClicks = mysqlTable("whatsapp_clicks", {
 
 export type WhatsAppClick = typeof whatsappClicks.$inferSelect;
 export type InsertWhatsAppClick = typeof whatsappClicks.$inferInsert;
+
+// ============================================
+// ADMIN USERS TABLE - For User Management
+// ============================================
+// This is a NEW table that doesn't modify existing tables
+// Safe to add without affecting existing data
+
+export const adminUsers = mysqlTable("admin_users", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  passwordHash: text("password_hash").notNull(),
+  role: mysqlEnum("role", ["admin", "director", "dataEditor", "propertySpecialist", "salesSpecialist"]).notNull().default("salesSpecialist"),
+  isActive: boolean("is_active").default(true).notNull(),
+  mustChangePassword: boolean("must_change_password").default(true).notNull(),
+  failedLoginAttempts: int("failed_login_attempts").default(0).notNull(),
+  lockedUntil: timestamp("locked_until"),
+  lastLogin: timestamp("last_login"),
+  lastPasswordChange: timestamp("last_password_change"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  createdBy: int("created_by"), // ID of admin who created this user
+});
+
+export type AdminUser = typeof adminUsers.$inferSelect;
+export type InsertAdminUser = typeof adminUsers.$inferInsert;
