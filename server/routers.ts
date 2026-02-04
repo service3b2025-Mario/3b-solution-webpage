@@ -1,4 +1,4 @@
-import { COOKIE_NAME } from "@shared/const";
+import { COOKIE_NAME } from "./_core/oauth";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
@@ -15,6 +15,7 @@ import { sendResourceDownloadEmail } from "./emailService";
 import { handleNewLeadNotifications } from "./leadEmailService";
 import { whatsappRouter } from "./whatsapp/whatsappRouters";
 import * as externalAnalytics from "./externalAnalytics";
+import { adminUserRouter } from "./adminUserRouters";
 
 // Admin procedure - requires admin role
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -26,6 +27,7 @@ const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
 
 export const appRouter = router({
   system: systemRouter,
+  adminUsers: adminUserRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
@@ -35,7 +37,6 @@ export const appRouter = router({
       return { success: true } as const;
     }),
   }),
-
   // Properties
   properties: router({
     list: publicProcedure.input(z.object({
