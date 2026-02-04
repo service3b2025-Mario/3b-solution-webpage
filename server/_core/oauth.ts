@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 import crypto from "crypto";
 import { COOKIE_NAME } from "./cookies";
 
-// Password hashing using Node.js built-in crypto (no external dependencies)
+// Password hashing using Node.js built-in crypto (no external dependencies )
 export const hashPassword = async (password: string): Promise<string> => {
   const salt = crypto.randomBytes(32).toString("hex");
   return new Promise((resolve, reject) => {
@@ -50,8 +50,6 @@ export const registerOAuthRoutes = (app: Express) => {
         return res.status(400).json({ error: "Email and password are required" });
       }
 
-      const db = await getDb();
-
       // Check for legacy admin first
       if (email === LEGACY_ADMIN_EMAIL && password === LEGACY_ADMIN_PASSWORD) {
         const token = jwt.sign(
@@ -87,6 +85,7 @@ export const registerOAuthRoutes = (app: Express) => {
       }
 
       // Check database for user
+      const db = await getDb();
       if (!db) {
         return res.status(500).json({ error: "Database not available" });
       }
@@ -220,7 +219,7 @@ export const registerOAuthRoutes = (app: Express) => {
 
       const payload = jwt.verify(token, JWT_SECRET) as any;
       if (!payload || !payload.sub) {
-        return res.status(401).json({ error: "Invalid session" });
+        return res.status(401).json({ error: "Invalid token" });
       }
 
       const { currentPassword, newPassword } = req.body;
@@ -270,7 +269,7 @@ export const registerOAuthRoutes = (app: Express) => {
         .set({
           passwordHash: newPasswordHash,
           mustChangePassword: false,
-          updatedAt: new Date(),
+          lastPasswordChange: new Date(),
         })
         .where(eq(adminUsers.id, userId));
 
