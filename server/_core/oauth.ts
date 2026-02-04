@@ -35,7 +35,7 @@ const LEGACY_ADMIN_NAME = process.env.ADMIN_NAME || "Admin User";
 // JWT configuration
 const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString("hex");
 const SESSION_DURATION = 8 * 60 * 60; // 8 hours in seconds
-const COOKIE_NAME = "admin_session";
+export const COOKIE_NAME = "admin_session";
 
 // Create Hono app for OAuth routes
 const oauthApp = new Hono();
