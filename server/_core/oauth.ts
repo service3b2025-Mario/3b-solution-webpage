@@ -54,7 +54,7 @@ export const registerOAuthRoutes = (app: Express) => {
 
       // Check for legacy admin first
       if (email === LEGACY_ADMIN_EMAIL && password === LEGACY_ADMIN_PASSWORD) {
-        const token = sign(
+        const token = jwt.sign(
           {
             sub: "0",
             email: LEGACY_ADMIN_EMAIL,
@@ -140,7 +140,7 @@ export const registerOAuthRoutes = (app: Express) => {
         .where(eq(adminUsers.id, user.id));
 
       // Generate JWT token
-      const token = sign(
+      const token = jwt.sign(
         {
           sub: user.id.toString(),
           email: user.email,
@@ -190,7 +190,7 @@ export const registerOAuthRoutes = (app: Express) => {
         return res.json({ user: null });
       }
 
-      const payload = verify(token, JWT_SECRET) as any;
+      const payload = jwt.verify(token, JWT_SECRET) as any;
       if (!payload || !payload.sub) {
         return res.json({ user: null });
       }
@@ -218,7 +218,7 @@ export const registerOAuthRoutes = (app: Express) => {
         return res.status(401).json({ error: "Not authenticated" });
       }
 
-      const payload = verify(token, JWT_SECRET) as any;
+      const payload = jwt.verify(token, JWT_SECRET) as any;
       if (!payload || !payload.sub) {
         return res.status(401).json({ error: "Invalid session" });
       }
@@ -285,7 +285,7 @@ export const registerOAuthRoutes = (app: Express) => {
 // Verify token helper for SDK
 export const verifyToken = async (token: string) => {
   try {
-    const payload = verify(token, JWT_SECRET) as any;
+    const payload = jwt.verify(token, JWT_SECRET) as any;
     if (!payload || !payload.sub) {
       return null;
     }
