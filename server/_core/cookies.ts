@@ -1,4 +1,6 @@
 import type { CookieOptions, Request } from "express";
+// Cookie name for session management
+export const COOKIE_NAME = "app_session_id";
 
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
 
