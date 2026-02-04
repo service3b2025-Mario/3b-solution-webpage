@@ -4,21 +4,21 @@ import * as db from "../db";
 import { getSessionCookieOptions } from "./cookies";
 import { createHash, randomBytes } from "crypto";
 import { SignJWT } from "jose";
-import * as userMgmt from "../userManagement";
 
 function getQueryParam(req: Request, key: string): string | undefined {
   const value = req.query[key];
   return typeof value === "string" ? value : undefined;
 }
 
-// Simple password hashing function (legacy - kept for backward compatibility)
+// Simple password hashing function
 function hashPassword(password: string): string {
   return createHash('sha256').update(password).digest('hex');
 }
 
-// Legacy admin credentials - used as fallback if no users exist in database
-const LEGACY_ADMIN_CREDENTIALS = {
+// Admin credentials - these should be set via environment variables in production
+const ADMIN_CREDENTIALS = {
   email: process.env.ADMIN_EMAIL || "admin@3bsolution.com",
+  // Default password is "3BSolution2025!" - CHANGE THIS IN PRODUCTION via ADMIN_PASSWORD_HASH env var
   passwordHash: process.env.ADMIN_PASSWORD_HASH || hashPassword("3BSolution2025!"),
   name: process.env.ADMIN_NAME || "Admin User",
 };
@@ -29,11 +29,11 @@ function getJwtSecret(): Uint8Array {
   return new TextEncoder().encode(secret);
 }
 
-// Session duration: 8 hours for regular sessions
+// Session duration: 8 hours
 const SESSION_DURATION_MS = 8 * 60 * 60 * 1000;
 
 // Create a simple session token
-async function createSimpleSessionToken(openId: string, name: string, role: string): Promise<string> {
+async function createSimpleSessionToken(openId: string, name: string, role: string = "Admin"): Promise<string> {
   const secretKey = getJwtSecret();
   const expirationTime = Math.floor((Date.now() + SESSION_DURATION_MS) / 1000);
   
@@ -49,12 +49,10 @@ async function createSimpleSessionToken(openId: string, name: string, role: stri
 }
 
 export function registerOAuthRoutes(app: Express) {
-  // Email/Password Login endpoint - now uses multi-user system
+  // Email/Password Login endpoint
   app.post("/api/oauth/login", async (req: Request, res: Response) => {
     try {
       const { email, password } = req.body;
-      const ipAddress = req.ip || req.headers['x-forwarded-for'] as string || req.socket.remoteAddress;
-      const userAgent = req.headers['user-agent'];
 
       console.log("[Auth] Login attempt for:", email);
 
@@ -64,89 +62,77 @@ export function registerOAuthRoutes(app: Express) {
         return;
       }
 
-      // First, try the new multi-user authentication system
-      const loginResult = await userMgmt.handleLogin(email, password, ipAddress, userAgent);
+      // Check legacy admin credentials FIRST (always works, no database dependency)
+      const passwordHash = hashPassword(password);
       
-      if (loginResult.success && loginResult.user) {
-        console.log("[Auth] Multi-user login successful for:", email);
-        
-        // Create JWT session token
-        const sessionToken = await createSimpleSessionToken(
-          loginResult.user.openId,
-          loginResult.user.name || email,
-          loginResult.user.role
-        );
+      if (email === ADMIN_CREDENTIALS.email && passwordHash === ADMIN_CREDENTIALS.passwordHash) {
+        console.log("[Auth] Legacy admin credentials valid, creating session...");
+
+        // Generate a unique openId for this admin user
+        const adminOpenId = `admin_${hashPassword(email).substring(0, 16)}`;
+
+        // Try to upsert the admin user in the database (non-blocking)
+        try {
+          await db.upsertUser({
+            openId: adminOpenId,
+            name: ADMIN_CREDENTIALS.name,
+            email: email,
+            loginMethod: "email",
+            lastSignedIn: new Date(),
+            role: "Admin",
+          });
+          console.log("[Auth] User upserted successfully");
+        } catch (dbError) {
+          console.error("[Auth] Database error (non-fatal):", dbError);
+          // Continue even if DB fails - we can still create a session
+        }
+
+        // Create session token
+        const sessionToken = await createSimpleSessionToken(adminOpenId, ADMIN_CREDENTIALS.name, "Admin");
 
         const cookieOptions = getSessionCookieOptions(req);
         res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: SESSION_DURATION_MS });
-
-        // Log the login action
-        await userMgmt.logAuditAction({
-          userId: loginResult.user.id,
-          userEmail: email,
-          action: 'login_success',
-          details: { loginMethod: 'email' },
-          ipAddress,
-          userAgent,
-        });
 
         console.log("[Auth] Login successful, sending response");
         res.json({ success: true, redirectUrl: "/admin" });
         return;
       }
 
-      // If multi-user login failed, try legacy admin credentials as fallback
-      // This ensures backward compatibility during migration
-      const legacyPasswordHash = hashPassword(password);
-      
-      if (email === LEGACY_ADMIN_CREDENTIALS.email && 
-          legacyPasswordHash === LEGACY_ADMIN_CREDENTIALS.passwordHash) {
-        console.log("[Auth] Legacy admin login successful");
+      // If legacy credentials didn't match, try multi-user system (if database supports it)
+      try {
+        const userMgmt = await import("../userManagement");
+        const ipAddress = req.ip || req.headers['x-forwarded-for'] as string || req.socket.remoteAddress;
+        const userAgent = req.headers['user-agent'];
         
-        // Generate a unique openId for legacy admin
-        const adminOpenId = `admin_${hashPassword(email).substring(0, 16)}`;
+        const loginResult = await userMgmt.handleLogin(email, password, ipAddress, userAgent);
+        
+        if (loginResult.success && loginResult.user) {
+          console.log("[Auth] Multi-user login successful for:", email);
+          
+          const sessionToken = await createSimpleSessionToken(
+            loginResult.user.openId,
+            loginResult.user.name || email,
+            loginResult.user.role
+          );
 
-        // Upsert the legacy admin user in database
-        try {
-          await db.upsertUser({
-            openId: adminOpenId,
-            name: LEGACY_ADMIN_CREDENTIALS.name,
-            email: email,
-            loginMethod: "email",
-            lastSignedIn: new Date(),
-            role: "Admin", // Use new role format
-          });
-        } catch (dbError) {
-          console.error("[Auth] Database error (non-fatal):", dbError);
+          const cookieOptions = getSessionCookieOptions(req);
+          res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: SESSION_DURATION_MS });
+
+          res.json({ success: true, redirectUrl: "/admin" });
+          return;
         }
-
-        // Create session token
-        const sessionToken = await createSimpleSessionToken(
-          adminOpenId, 
-          LEGACY_ADMIN_CREDENTIALS.name,
-          "Admin"
-        );
-
-        const cookieOptions = getSessionCookieOptions(req);
-        res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: SESSION_DURATION_MS });
-
-        res.json({ success: true, redirectUrl: "/admin" });
+        
+        // Multi-user login failed
+        console.log("[Auth] Invalid credentials for:", email);
+        res.status(401).json({ error: loginResult.error || "Invalid email or password" });
+        return;
+      } catch (multiUserError) {
+        // Multi-user system not available (database not migrated yet)
+        console.log("[Auth] Multi-user system not available, falling back to legacy only");
+        console.log("[Auth] Invalid credentials for:", email);
+        res.status(401).json({ error: "Invalid email or password" });
         return;
       }
-
-      // Both authentication methods failed
-      console.log("[Auth] Invalid credentials for:", email);
-      
-      // Log failed attempt
-      await userMgmt.logAuditAction({
-        userEmail: email,
-        action: 'login_failed',
-        details: { reason: loginResult.error || 'Invalid credentials' },
-        ipAddress,
-        userAgent,
-      });
-
-      res.status(401).json({ error: loginResult.error || "Invalid email or password" });
     } catch (error) {
       console.error("[Auth] Login failed with error:", error);
       res.status(500).json({ error: "Login failed: " + (error instanceof Error ? error.message : "Unknown error") });
