@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 import crypto from "crypto";
 import { COOKIE_NAME } from "./cookies";
 
-// Password hashing using Node.js built-in crypto (no external dependencies )
+// Password hashing using Node.js built-in crypto (no external dependencies)
 export const hashPassword = async (password: string): Promise<string> => {
   const salt = crypto.randomBytes(32).toString("hex");
   return new Promise((resolve, reject) => {
@@ -70,7 +70,7 @@ export const registerOAuthRoutes = (app: Express) => {
           secure: process.env.NODE_ENV === "production",
           sameSite: "lax",
           maxAge: SESSION_DURATION * 1000,
-        } );
+        });
 
         return res.json({
           success: true,
@@ -157,7 +157,7 @@ export const registerOAuthRoutes = (app: Express) => {
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         maxAge: SESSION_DURATION * 1000,
-      } );
+      });
 
       return res.json({
         success: true,
