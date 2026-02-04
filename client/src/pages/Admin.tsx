@@ -682,7 +682,7 @@ function TeamMemberAddDialog({ open, onOpenChange }: { open: boolean; onOpenChan
       </DialogContent>
     </Dialog>
   );
-}}
+}
 
 // Settings Section
 function SettingsSection({ isAdmin }: { isAdmin: boolean }) {
