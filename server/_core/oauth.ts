@@ -176,7 +176,7 @@ export const registerOAuthRoutes = (app: Express) => {
   });
 
   // Logout endpoint
-  app.post("/api/auth/logout", async (req: Request, res: Response) => {
+  app.post("/api/auth/logout", (req: Request, res: Response) => {
     res.clearCookie(COOKIE_NAME, { path: "/" });
     return res.json({ success: true });
   });
