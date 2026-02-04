@@ -1,12 +1,12 @@
 import { Hono } from "hono";
 import { sign, verify } from "hono/jwt";
 import { setCookie, getCookie, deleteCookie } from "hono/cookie";
-import { db } from "../db";
+import { getDb } from "../db";
 import { adminUsers } from "../../drizzle/schema";
 import { eq, and, or, isNull, lt } from "drizzle-orm";
 import crypto from "crypto";
 
-// Password hashing using Node.js built-in crypto (no external dependencies)
+// Password hashing using Node.js built-in crypto (no external dependencies )
 export const hashPassword = async (password: string): Promise<string> => {
   const salt = crypto.randomBytes(32).toString("hex");
   return new Promise((resolve, reject) => {
@@ -35,160 +35,46 @@ const LEGACY_ADMIN_NAME = process.env.ADMIN_NAME || "Admin User";
 // JWT configuration
 const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString("hex");
 const SESSION_DURATION = 8 * 60 * 60; // 8 hours in seconds
-const MAX_FAILED_ATTEMPTS = 5;
-const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes in milliseconds
+const COOKIE_NAME = "admin_session";
 
-export const oauthApp = new Hono();
-
-// Export hash function for use in adminUserRouters
-export { hashPassword, verifyPassword };
-
-// Helper to create JWT token
-const createToken = async (user: {
-  id: number;
-  email: string;
-  name: string;
-  role: string;
-  mustChangePassword?: boolean;
-}) => {
-  const payload = {
-    sub: user.id.toString(),
-    email: user.email,
-    name: user.name,
-    role: user.role,
-    mustChangePassword: user.mustChangePassword || false,
-    exp: Math.floor(Date.now() / 1000) + SESSION_DURATION,
-  };
-  return await sign(payload, JWT_SECRET);
-};
+// Create Hono app for OAuth routes
+const oauthApp = new Hono();
 
 // Login endpoint
 oauthApp.post("/login", async (c) => {
   try {
-    const body = await c.req.json();
-    const { email, password } = body;
+    const { email, password } = await c.req.json();
 
     if (!email || !password) {
-      return c.json({ success: false, error: "Email and password are required" }, 400);
+      return c.json({ error: "Email and password are required" }, 400);
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
-
-    // First, try database user
-    let dbUser = null;
-    try {
-      const [user] = await db
-        .select()
-        .from(adminUsers)
-        .where(eq(adminUsers.email, normalizedEmail));
-      dbUser = user;
-    } catch (e) {
-      // Database table might not exist yet, continue to legacy check
-      console.log("Database user lookup failed, trying legacy auth");
-    }
-
-    if (dbUser) {
-      // Check if account is locked
-      if (dbUser.lockedUntil && new Date(dbUser.lockedUntil) > new Date()) {
-        const remainingMinutes = Math.ceil((new Date(dbUser.lockedUntil).getTime() - Date.now()) / 60000);
-        return c.json({
-          success: false,
-          error: `Account is locked. Try again in ${remainingMinutes} minutes.`,
-        }, 403);
-      }
-
-      // Check if account is active
-      if (!dbUser.isActive) {
-        return c.json({ success: false, error: "Account is deactivated. Contact administrator." }, 403);
-      }
-
-      // Verify password using our crypto-based function
-      const isValid = await verifyPassword(password, dbUser.passwordHash);
-
-      if (!isValid) {
-        // Increment failed attempts
-        const newAttempts = (dbUser.failedLoginAttempts || 0) + 1;
-        const updates: any = { failedLoginAttempts: newAttempts };
-
-        if (newAttempts >= MAX_FAILED_ATTEMPTS) {
-          updates.lockedUntil = new Date(Date.now() + LOCKOUT_DURATION);
-        }
-
-        await db.update(adminUsers).set(updates).where(eq(adminUsers.id, dbUser.id));
-
-        const attemptsLeft = MAX_FAILED_ATTEMPTS - newAttempts;
-        if (attemptsLeft > 0) {
-          return c.json({
-            success: false,
-            error: `Invalid password. ${attemptsLeft} attempts remaining.`,
-          }, 401);
-        } else {
-          return c.json({
-            success: false,
-            error: "Account locked due to too many failed attempts. Try again in 15 minutes.",
-          }, 403);
-        }
-      }
-
-      // Successful login - reset failed attempts and update last login
-      await db.update(adminUsers).set({
-        failedLoginAttempts: 0,
-        lockedUntil: null,
-        lastLogin: new Date(),
-      }).where(eq(adminUsers.id, dbUser.id));
-
-      // Create token
-      const token = await createToken({
-        id: dbUser.id,
-        email: dbUser.email,
-        name: dbUser.name,
-        role: dbUser.role,
-        mustChangePassword: dbUser.mustChangePassword,
-      });
-
-      // Set cookie
-      setCookie(c, "app_session_id", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
-        maxAge: SESSION_DURATION,
-        path: "/",
-      });
-
-      return c.json({
-        success: true,
-        redirectUrl: dbUser.mustChangePassword ? "/admin/change-password" : "/admin",
-        user: {
-          id: dbUser.id,
-          email: dbUser.email,
-          name: dbUser.name,
-          role: dbUser.role,
-          mustChangePassword: dbUser.mustChangePassword,
+    const db = await getDb();
+    
+    // Check for legacy admin first
+    if (email === LEGACY_ADMIN_EMAIL && password === LEGACY_ADMIN_PASSWORD) {
+      const token = await sign(
+        {
+          sub: "0",
+          email: LEGACY_ADMIN_EMAIL,
+          name: LEGACY_ADMIN_NAME,
+          role: "admin",
+          mustChangePassword: false,
+          exp: Math.floor(Date.now() / 1000) + SESSION_DURATION,
         },
-      });
-    }
+        JWT_SECRET
+      );
 
-    // Fallback to legacy admin credentials
-    if (normalizedEmail === LEGACY_ADMIN_EMAIL.toLowerCase() && password === LEGACY_ADMIN_PASSWORD) {
-      const token = await createToken({
-        id: 0, // Legacy user ID
-        email: LEGACY_ADMIN_EMAIL,
-        name: LEGACY_ADMIN_NAME,
-        role: "admin",
-        mustChangePassword: false,
-      });
-
-      setCookie(c, "app_session_id", token, {
+      setCookie(c, COOKIE_NAME, token, {
+        path: "/",
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "Lax",
         maxAge: SESSION_DURATION,
-        path: "/",
-      });
+      } );
 
       return c.json({
         success: true,
-        redirectUrl: "/admin",
         user: {
           id: 0,
           email: LEGACY_ADMIN_EMAIL,
@@ -199,23 +85,106 @@ oauthApp.post("/login", async (c) => {
       });
     }
 
-    return c.json({ success: false, error: "Invalid email or password" }, 401);
+    // Check database for user
+    if (!db) {
+      return c.json({ error: "Database not available" }, 500);
+    }
+
+    const [user] = await db
+      .select()
+      .from(adminUsers)
+      .where(eq(adminUsers.email, email))
+      .limit(1);
+
+    if (!user) {
+      return c.json({ error: "Invalid email or password" }, 401);
+    }
+
+    // Check if account is locked
+    if (user.lockedUntil && new Date(user.lockedUntil) > new Date()) {
+      return c.json({ error: "Account is locked. Please try again later." }, 423);
+    }
+
+    // Check if account is active
+    if (!user.isActive) {
+      return c.json({ error: "Account is disabled" }, 403);
+    }
+
+    // Verify password
+    const isValidPassword = await verifyPassword(password, user.passwordHash);
+    if (!isValidPassword) {
+      // Increment failed login attempts
+      const failedAttempts = (user.failedLoginAttempts || 0) + 1;
+      const lockUntil = failedAttempts >= 5 ? new Date(Date.now() + 15 * 60 * 1000) : null;
+
+      await db
+        .update(adminUsers)
+        .set({
+          failedLoginAttempts: failedAttempts,
+          lockedUntil: lockUntil,
+        })
+        .where(eq(adminUsers.id, user.id));
+
+      return c.json({ error: "Invalid email or password" }, 401);
+    }
+
+    // Reset failed login attempts and update last login
+    await db
+      .update(adminUsers)
+      .set({
+        failedLoginAttempts: 0,
+        lockedUntil: null,
+        lastLogin: new Date(),
+      })
+      .where(eq(adminUsers.id, user.id));
+
+    // Generate JWT token
+    const token = await sign(
+      {
+        sub: user.id.toString(),
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        mustChangePassword: user.mustChangePassword,
+        exp: Math.floor(Date.now() / 1000) + SESSION_DURATION,
+      },
+      JWT_SECRET
+    );
+
+    setCookie(c, COOKIE_NAME, token, {
+      path: "/",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+      maxAge: SESSION_DURATION,
+    } );
+
+    return c.json({
+      success: true,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        mustChangePassword: user.mustChangePassword,
+      },
+    });
   } catch (error) {
     console.error("Login error:", error);
-    return c.json({ success: false, error: "Login failed. Please try again." }, 500);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
 // Logout endpoint
 oauthApp.post("/logout", async (c) => {
-  deleteCookie(c, "app_session_id", { path: "/" });
+  deleteCookie(c, COOKIE_NAME, { path: "/" });
   return c.json({ success: true });
 });
 
 // Get current user endpoint
 oauthApp.get("/me", async (c) => {
   try {
-    const token = getCookie(c, "app_session_id");
+    const token = getCookie(c, COOKIE_NAME);
     if (!token) {
       return c.json({ user: null });
     }
@@ -235,8 +204,79 @@ oauthApp.get("/me", async (c) => {
       },
     });
   } catch (error) {
-    deleteCookie(c, "app_session_id", { path: "/" });
+    deleteCookie(c, COOKIE_NAME, { path: "/" });
     return c.json({ user: null });
+  }
+});
+
+// Change password endpoint
+oauthApp.post("/change-password", async (c) => {
+  try {
+    const token = getCookie(c, COOKIE_NAME);
+    if (!token) {
+      return c.json({ error: "Not authenticated" }, 401);
+    }
+
+    const payload = await verify(token, JWT_SECRET);
+    if (!payload || !payload.sub) {
+      return c.json({ error: "Invalid session" }, 401);
+    }
+
+    const { currentPassword, newPassword } = await c.req.json();
+
+    if (!currentPassword || !newPassword) {
+      return c.json({ error: "Current and new password are required" }, 400);
+    }
+
+    if (newPassword.length < 8) {
+      return c.json({ error: "New password must be at least 8 characters" }, 400);
+    }
+
+    const db = await getDb();
+    if (!db) {
+      return c.json({ error: "Database not available" }, 500);
+    }
+
+    const userId = parseInt(payload.sub as string);
+    
+    // Handle legacy admin
+    if (userId === 0) {
+      if (currentPassword !== LEGACY_ADMIN_PASSWORD) {
+        return c.json({ error: "Current password is incorrect" }, 401);
+      }
+      return c.json({ error: "Cannot change password for legacy admin" }, 400);
+    }
+
+    const [user] = await db
+      .select()
+      .from(adminUsers)
+      .where(eq(adminUsers.id, userId))
+      .limit(1);
+
+    if (!user) {
+      return c.json({ error: "User not found" }, 404);
+    }
+
+    const isValidPassword = await verifyPassword(currentPassword, user.passwordHash);
+    if (!isValidPassword) {
+      return c.json({ error: "Current password is incorrect" }, 401);
+    }
+
+    const newPasswordHash = await hashPassword(newPassword);
+
+    await db
+      .update(adminUsers)
+      .set({
+        passwordHash: newPasswordHash,
+        mustChangePassword: false,
+        updatedAt: new Date(),
+      })
+      .where(eq(adminUsers.id, userId));
+
+    return c.json({ success: true });
+  } catch (error) {
+    console.error("Change password error:", error);
+    return c.json({ error: "Internal server error" }, 500);
   }
 });
 
@@ -257,6 +297,11 @@ export const verifyToken = async (token: string) => {
   } catch {
     return null;
   }
+};
+
+// Register OAuth routes helper
+export const registerOAuthRoutes = (app: Hono) => {
+  app.route("/api/auth", oauthApp);
 };
 
 export default oauthApp;
