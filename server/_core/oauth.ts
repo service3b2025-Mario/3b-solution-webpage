@@ -1,8 +1,11 @@
 import { Express, Request, Response } from "express";
 import crypto from "crypto";
 import { SignJWT, jwtVerify } from "jose";
-import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+import { COOKIE_NAME as SHARED_COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { ENV } from "./env";
+
+// Re-export COOKIE_NAME for other files that import from oauth
+export const COOKIE_NAME = SHARED_COOKIE_NAME;
 
 // Password hashing using Node.js built-in crypto (no external dependencies)
 export const hashPassword = async (password: string): Promise<string> => {
