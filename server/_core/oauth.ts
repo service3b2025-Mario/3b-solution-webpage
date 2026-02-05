@@ -39,35 +39,39 @@ const SESSION_DURATION = 8 * 60 * 60; // 8 hours in seconds
 export { COOKIE_NAME };
 
 // Helper function to parse cookies from request
-function parseCookies(req: Request): Record<string, string> {
+const parseCookies = (req: Request): Record<string, string> => {
   const cookieHeader = req.headers.cookie || "";
   const cookies: Record<string, string> = {};
   cookieHeader.split(";").forEach((cookie) => {
     const [name, ...rest] = cookie.trim().split("=");
     if (name && rest.length > 0) {
-      cookies[name] = decodeURIComponent(rest.join("="));
+      cookies[name] = rest.join("=");
     }
   });
   return cookies;
-}
+};
 
 // Register OAuth routes on Express app
 export const registerOAuthRoutes = (app: Express) => {
+  console.log("[Auth] Registering OAuth routes...");
+
   // Login endpoint
-  app.post("/api/auth/login", async (req: Request, res: Response) => {
+  app.post("/api/oauth/login", async (req: Request, res: Response) => {
+    console.log("[Auth] Login attempt received");
     try {
       const { email, password } = req.body;
 
-      console.log("[Auth] Login attempt for:", email);
-
       if (!email || !password) {
+        console.log("[Auth] Missing email or password");
         return res.status(400).json({ error: "Email and password are required" });
       }
 
-      // Check for legacy admin first (this always works without database)
+      console.log("[Auth] Checking credentials for:", email);
+
+      // Check legacy admin credentials
       if (email === LEGACY_ADMIN_EMAIL && password === LEGACY_ADMIN_PASSWORD) {
         console.log("[Auth] Legacy admin login successful");
-        
+
         const token = jwt.sign(
           {
             sub: "0",
@@ -81,11 +85,11 @@ export const registerOAuthRoutes = (app: Express) => {
         );
 
         res.cookie(COOKIE_NAME, token, {
-          path: "/",
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "lax",
           maxAge: SESSION_DURATION * 1000,
+          path: "/",
         } );
 
         return res.json({
@@ -100,10 +104,8 @@ export const registerOAuthRoutes = (app: Express) => {
         });
       }
 
-      // If not legacy admin, return error (database users disabled for now)
-      console.log("[Auth] Login failed - invalid credentials");
+      console.log("[Auth] Invalid credentials");
       return res.status(401).json({ error: "Invalid email or password" });
-
     } catch (error) {
       console.error("[Auth] Login error:", error);
       return res.status(500).json({ error: "Internal server error" });
@@ -111,28 +113,20 @@ export const registerOAuthRoutes = (app: Express) => {
   });
 
   // Logout endpoint
-  app.post("/api/auth/logout", (req: Request, res: Response) => {
-    try {
-      res.clearCookie(COOKIE_NAME, {
-        path: "/",
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-      } );
-      return res.json({ success: true });
-    } catch (error) {
-      console.error("[Auth] Logout error:", error);
-      return res.status(500).json({ error: "Internal server error" });
-    }
+  app.post("/api/oauth/logout", (req: Request, res: Response) => {
+    console.log("[Auth] Logout request received");
+    res.clearCookie(COOKIE_NAME, { path: "/" });
+    return res.json({ success: true });
   });
 
   // Get current user endpoint
-  app.get("/api/auth/me", (req: Request, res: Response) => {
+  app.get("/api/oauth/me", (req: Request, res: Response) => {
     try {
       const cookies = parseCookies(req);
       const token = cookies[COOKIE_NAME];
+
       if (!token) {
-        console.log("[Auth] Missing session cookie");
+        console.log("[Auth] No session cookie found");
         return res.json({ user: null });
       }
 
@@ -157,7 +151,7 @@ export const registerOAuthRoutes = (app: Express) => {
   });
 
   // Change password endpoint (disabled for legacy admin)
-  app.post("/api/auth/change-password", (req: Request, res: Response) => {
+  app.post("/api/oauth/change-password", (req: Request, res: Response) => {
     return res.status(400).json({ error: "Password change not available for legacy admin" });
   });
 
