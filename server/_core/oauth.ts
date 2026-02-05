@@ -1,9 +1,8 @@
 import { Express, Request, Response } from "express";
-import jwt from "jsonwebtoken";
 import crypto from "crypto";
-
-// Cookie name for session management
-const COOKIE_NAME = "app_session_id";
+import { SignJWT, jwtVerify } from "jose";
+import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+import { ENV } from "./env";
 
 // Password hashing using Node.js built-in crypto (no external dependencies)
 export const hashPassword = async (password: string): Promise<string> => {
@@ -31,12 +30,14 @@ const LEGACY_ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@3bsolution.com";
 const LEGACY_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "3BSolution2025!";
 const LEGACY_ADMIN_NAME = process.env.ADMIN_NAME || "Admin User";
 
-// JWT configuration
-const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString("hex");
-const SESSION_DURATION = 8 * 60 * 60; // 8 hours in seconds
+// Session duration
+const SESSION_DURATION_MS = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
 
-// Export COOKIE_NAME for use in other files
-export { COOKIE_NAME };
+// Helper function to get session secret
+const getSessionSecret = () => {
+  const secret = ENV.cookieSecret || process.env.COOKIE_SECRET || crypto.randomBytes(32).toString("hex");
+  return new TextEncoder().encode(secret);
+};
 
 // Helper function to parse cookies from request
 const parseCookies = (req: Request): Record<string, string> => {
@@ -49,6 +50,21 @@ const parseCookies = (req: Request): Record<string, string> => {
     }
   });
   return cookies;
+};
+
+// Create session token compatible with SDK
+const createSessionToken = async (openId: string, name: string): Promise<string> => {
+  const secretKey = getSessionSecret();
+  const expirationSeconds = Math.floor((Date.now() + SESSION_DURATION_MS) / 1000);
+  
+  return new SignJWT({
+    openId: openId,
+    appId: ENV.appId || "3bsolution",
+    name: name,
+  })
+    .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+    .setExpirationTime(expirationSeconds)
+    .sign(secretKey);
 };
 
 // Register OAuth routes on Express app
@@ -72,23 +88,17 @@ export const registerOAuthRoutes = (app: Express) => {
       if (email === LEGACY_ADMIN_EMAIL && password === LEGACY_ADMIN_PASSWORD) {
         console.log("[Auth] Legacy admin login successful");
 
-        const token = jwt.sign(
-          {
-            sub: "0",
-            email: LEGACY_ADMIN_EMAIL,
-            name: LEGACY_ADMIN_NAME,
-            role: "admin",
-            mustChangePassword: false,
-          },
-          JWT_SECRET,
-          { expiresIn: SESSION_DURATION }
-        );
+        // Create openId for admin user (format: admin_0)
+        const adminOpenId = "admin_0";
+        
+        // Create session token compatible with SDK
+        const token = await createSessionToken(adminOpenId, LEGACY_ADMIN_NAME);
 
         res.cookie(COOKIE_NAME, token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
           sameSite: "lax",
-          maxAge: SESSION_DURATION * 1000,
+          maxAge: SESSION_DURATION_MS,
           path: "/",
         } );
 
@@ -120,7 +130,7 @@ export const registerOAuthRoutes = (app: Express) => {
   });
 
   // Get current user endpoint
-  app.get("/api/oauth/me", (req: Request, res: Response) => {
+  app.get("/api/oauth/me", async (req: Request, res: Response) => {
     try {
       const cookies = parseCookies(req);
       const token = cookies[COOKIE_NAME];
@@ -130,20 +140,28 @@ export const registerOAuthRoutes = (app: Express) => {
         return res.json({ user: null });
       }
 
-      const payload = jwt.verify(token, JWT_SECRET) as any;
-      if (!payload || !payload.sub) {
+      // Verify token using jose (same as SDK)
+      const secretKey = getSessionSecret();
+      const { payload } = await jwtVerify(token, secretKey);
+      
+      if (!payload || !payload.openId) {
         return res.json({ user: null });
       }
 
-      return res.json({
-        user: {
-          id: parseInt(payload.sub),
-          email: payload.email,
-          name: payload.name,
-          role: payload.role,
-          mustChangePassword: payload.mustChangePassword,
-        },
-      });
+      // Check if this is the legacy admin
+      if (payload.openId === "admin_0") {
+        return res.json({
+          user: {
+            id: 0,
+            email: LEGACY_ADMIN_EMAIL,
+            name: payload.name || LEGACY_ADMIN_NAME,
+            role: "admin",
+            mustChangePassword: false,
+          },
+        });
+      }
+
+      return res.json({ user: null });
     } catch (error) {
       console.error("[Auth] Get user error:", error);
       return res.json({ user: null });
@@ -158,19 +176,20 @@ export const registerOAuthRoutes = (app: Express) => {
   console.log("[Auth] OAuth routes registered successfully");
 };
 
-// Verify token helper for SDK
+// Verify token helper for SDK compatibility
 export const verifyToken = async (token: string) => {
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as any;
-    if (!payload || !payload.sub) {
+    const secretKey = getSessionSecret();
+    const { payload } = await jwtVerify(token, secretKey);
+    
+    if (!payload || !payload.openId) {
       return null;
     }
+    
     return {
-      id: parseInt(payload.sub),
-      email: payload.email as string,
+      openId: payload.openId as string,
+      appId: payload.appId as string,
       name: payload.name as string,
-      role: payload.role as string,
-      mustChangePassword: payload.mustChangePassword as boolean,
     };
   } catch {
     return null;
