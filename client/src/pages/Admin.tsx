@@ -319,7 +319,7 @@ function DashboardSection({ analytics, properties, leads, canUpdate }: any) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Properties</p>
-                <p className="text-3xl font-bold">{properties?.length || 0}</p>
+                <p className="text-3xl font-bold">{properties?.items?.length || properties?.total || 0}</p>
               </div>
               <Building2 className="w-10 h-10 text-primary/20" />
             </div>
@@ -330,7 +330,7 @@ function DashboardSection({ analytics, properties, leads, canUpdate }: any) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Leads</p>
-                <p className="text-3xl font-bold">{leads?.length || 0}</p>
+                <p className="text-3xl font-bold">{leads?.items?.length || leads?.total || 0}</p>
               </div>
               <Mail className="w-10 h-10 text-primary/20" />
             </div>
@@ -394,7 +394,7 @@ function PropertiesSection({ properties, canCreate, canUpdate, canDelete }: any)
             </TableRow>
           </TableHeader>
           <TableBody>
-            {properties?.slice(0, 10).map((property: any) => (
+            {(properties?.items || []).slice(0, 10).map((property: any) => (
               <TableRow key={property.id}>
                 <TableCell className="font-medium">{property.title}</TableCell>
                 <TableCell>{property.city}, {property.country}</TableCell>
@@ -455,7 +455,7 @@ function BookingsSection({ bookings, canUpdate, canDelete }: any) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {bookings?.slice(0, 10).map((booking: any) => (
+            {(bookings?.items || bookings || []).slice(0, 10).map((booking: any) => (
               <TableRow key={booking.id}>
                 <TableCell className="font-medium">{booking.clientName}</TableCell>
                 <TableCell>{new Date(booking.date).toLocaleDateString()}</TableCell>
