@@ -112,10 +112,11 @@ export function UserManagement() {
   // Fetch users
   const { data: users, isLoading, refetch } = trpc.adminUsers.list.useQuery();
 
-  // Mutations
+  // Mutations - Fixed with proper refetch after success
   const createUser = trpc.adminUsers.create.useMutation({
-    onSuccess: () => {
-      utils.adminUsers.list.invalidate();
+    onSuccess: async () => {
+      await utils.adminUsers.list.invalidate();
+      await refetch();
       setIsAddDialogOpen(false);
       setNewUser({
         email: "",
@@ -132,8 +133,9 @@ export function UserManagement() {
   });
 
   const updateUser = trpc.adminUsers.update.useMutation({
-    onSuccess: () => {
-      utils.adminUsers.list.invalidate();
+    onSuccess: async () => {
+      await utils.adminUsers.list.invalidate();
+      await refetch();
       setIsEditDialogOpen(false);
       setSelectedUser(null);
       toast.success("User updated successfully");
@@ -144,8 +146,9 @@ export function UserManagement() {
   });
 
   const resetPasswordMutation = trpc.adminUsers.resetPassword.useMutation({
-    onSuccess: () => {
-      utils.adminUsers.list.invalidate();
+    onSuccess: async () => {
+      await utils.adminUsers.list.invalidate();
+      await refetch();
       setIsResetPasswordDialogOpen(false);
       setSelectedUser(null);
       setResetPassword({ newPassword: "", confirmPassword: "" });
@@ -157,8 +160,9 @@ export function UserManagement() {
   });
 
   const unlockUser = trpc.adminUsers.unlock.useMutation({
-    onSuccess: () => {
-      utils.adminUsers.list.invalidate();
+    onSuccess: async () => {
+      await utils.adminUsers.list.invalidate();
+      await refetch();
       toast.success("Account unlocked successfully");
     },
     onError: (error) => {
@@ -167,8 +171,9 @@ export function UserManagement() {
   });
 
   const deleteUser = trpc.adminUsers.delete.useMutation({
-    onSuccess: () => {
-      utils.adminUsers.list.invalidate();
+    onSuccess: async () => {
+      await utils.adminUsers.list.invalidate();
+      await refetch();
       setIsDeleteDialogOpen(false);
       setSelectedUser(null);
       toast.success("User deleted successfully");
