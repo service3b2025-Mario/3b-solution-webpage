@@ -1,16 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { Loader2, Mail, ArrowLeft, RefreshCw, Heart, CheckCircle2, Shield } from "lucide-react";
+import { Loader2, Mail, ArrowLeft, RefreshCw, Heart, CheckCircle2, Shield, X } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface VisitorLoginModalProps {
@@ -39,11 +32,12 @@ export function VisitorLoginModal({
   const [gdprConsent, setGdprConsent] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [resendCooldown, setResendCooldown] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const emailInputRef = useRef<HTMLInputElement>(null);
 
   // Reset state when modal opens/closes
   useEffect(() => {
     if (!open) {
-      // Delay reset to allow close animation
       const timer = setTimeout(() => {
         setStep("email");
         setEmail("");
@@ -57,8 +51,35 @@ export function VisitorLoginModal({
         setResendCooldown(0);
       }, 300);
       return () => clearTimeout(timer);
+    } else {
+      // Focus email input when modal opens
+      setTimeout(() => {
+        emailInputRef.current?.focus();
+      }, 100);
     }
   }, [open]);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "";
+      };
+    }
+  }, [open]);
+
+  // Close on Escape key
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onOpenChange(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open, onOpenChange]);
 
   // Countdown timer for OTP expiry
   useEffect(() => {
@@ -103,6 +124,12 @@ export function VisitorLoginModal({
     }
   };
 
+  // Block ALL events from passing through the modal
+  const blockEvent = (e: React.SyntheticEvent) => {
+    e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
+  };
+
   // STEP 1: Request OTP
   const handleRequestOTP = async () => {
     if (isLoading) return;
@@ -111,7 +138,6 @@ export function VisitorLoginModal({
       return;
     }
 
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
       setError("Please enter a valid email address");
@@ -148,8 +174,8 @@ export function VisitorLoginModal({
       setSessionId(data.sessionId);
       setIsNewVisitor(data.isNewVisitor);
       setStep("otp");
-      setCountdown(900); // 15 minutes
-      setResendCooldown(60); // 60 second cooldown before resend
+      setCountdown(900);
+      setResendCooldown(60);
     } catch (err: any) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {
@@ -184,16 +210,13 @@ export function VisitorLoginModal({
         throw new Error(data.error || "Verification failed");
       }
 
-      // Success!
       setStep("success");
       
-      // Brief success animation, then close and trigger callback
       setTimeout(() => {
         onOpenChange(false);
         if (onSuccess) {
           onSuccess();
         }
-        // Reload the page to refresh auth state
         window.location.reload();
       }, 1500);
     } catch (err: any) {
@@ -243,13 +266,61 @@ export function VisitorLoginModal({
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
+  // Handle overlay click (close modal)
+  const handleOverlayClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
+    // Only close if clicking the overlay itself, not the content
+    if (e.target === e.currentTarget) {
+      onOpenChange(false);
+    }
+  };
+
+  if (!open) return null;
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[440px] p-0 overflow-hidden">
+    <div
+      className="fixed inset-0 z-[200] flex items-center justify-center"
+      onClick={blockEvent}
+      onPointerDown={blockEvent}
+      onMouseDown={blockEvent}
+      onTouchStart={blockEvent}
+    >
+      {/* Overlay - blocks ALL interaction with page behind */}
+      <div
+        className="absolute inset-0 bg-black/50 animate-in fade-in-0 duration-200"
+        onClick={handleOverlayClick}
+        onPointerDown={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
+        onMouseDown={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
+      />
+
+      {/* Modal Content */}
+      <div
+        ref={contentRef}
+        className="relative z-[201] w-full max-w-[440px] mx-4 bg-white rounded-lg shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in-0 duration-200"
+        onClick={blockEvent}
+        onPointerDown={blockEvent}
+        onMouseDown={blockEvent}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="visitor-modal-title"
+      >
+        {/* Close Button */}
+        <button
+          onClick={(e) => {
+            blockEvent(e);
+            onOpenChange(false);
+          }}
+          className="absolute top-4 right-4 z-10 text-white/70 hover:text-white transition-opacity rounded-sm focus:outline-none focus:ring-2 focus:ring-white/50"
+          aria-label="Close"
+        >
+          <X className="h-5 w-5" />
+        </button>
+
         {/* Header with branding */}
         <div className="bg-gradient-to-r from-[#0f2b46] via-[#1a4a7a] to-[#0f2b46] px-6 pt-6 pb-4">
-          <DialogHeader>
-            <DialogTitle className="text-white text-lg font-semibold flex items-center gap-2">
+          <div className="flex flex-col gap-2 text-left">
+            <h2 id="visitor-modal-title" className="text-white text-lg font-semibold flex items-center gap-2">
               {step === "email" && (
                 <>
                   <Heart className="h-5 w-5 text-[#c9a84c]" />
@@ -268,13 +339,13 @@ export function VisitorLoginModal({
                   Welcome!
                 </>
               )}
-            </DialogTitle>
-            <DialogDescription className="text-gray-300 text-sm mt-1">
+            </h2>
+            <p className="text-gray-300 text-sm mt-1">
               {step === "email" && getContextMessage()}
               {step === "otp" && `We sent a 6-digit code to ${email}`}
               {step === "success" && "You're now signed in. Enjoy your personalized experience!"}
-            </DialogDescription>
-          </DialogHeader>
+            </p>
+          </div>
         </div>
 
         <div className="px-6 pb-6 pt-4">
@@ -293,6 +364,7 @@ export function VisitorLoginModal({
                   Email Address
                 </Label>
                 <Input
+                  ref={emailInputRef}
                   id="visitor-email"
                   type="email"
                   placeholder="your@email.com"
@@ -302,6 +374,9 @@ export function VisitorLoginModal({
                     setError(null);
                   }}
                   onKeyDown={(e) => e.key === "Enter" && handleRequestOTP()}
+                  onClick={blockEvent}
+                  onPointerDown={blockEvent}
+                  onMouseDown={blockEvent}
                   disabled={isLoading}
                   autoFocus
                 />
@@ -318,41 +393,61 @@ export function VisitorLoginModal({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleRequestOTP()}
+                  onClick={blockEvent}
+                  onPointerDown={blockEvent}
+                  onMouseDown={blockEvent}
                   disabled={isLoading}
                 />
               </div>
 
               {/* GDPR Consent */}
-              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border">
-                <input
-                  type="checkbox"
-                  id="gdpr-consent"
-                  checked={gdprConsent}
-                  onChange={(e) => {
-                    setGdprConsent(e.target.checked);
-                    if (e.target.checked) setError(null);
-                  }}
-                  className="mt-0.5 h-4 w-4 rounded border-gray-300 text-[#1a4a7a] focus:ring-[#1a4a7a]"
-                  disabled={isLoading}
-                />
-                <label htmlFor="gdpr-consent" className="text-xs text-gray-600 leading-relaxed">
-                  I agree to the{" "}
-                  <a href="/legal/privacy-policy" target="_blank" className="text-[#1a4a7a] underline hover:text-[#c9a84c]">
-                    Privacy Policy
-                  </a>{" "}
-                  and consent to 3B Solution processing my data to provide personalized property recommendations and investment insights. I can withdraw my consent at any time.
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    id="gdpr-consent"
+                    type="checkbox"
+                    checked={gdprConsent}
+                    onChange={(e) => {
+                      setGdprConsent(e.target.checked);
+                      setError(null);
+                    }}
+                    onClick={blockEvent}
+                    onPointerDown={blockEvent}
+                    onMouseDown={blockEvent}
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-[#0f2b46] focus:ring-[#0f2b46]"
+                  />
+                  <span className="text-xs text-gray-600 leading-relaxed">
+                    I agree to the{" "}
+                    <a
+                      href="/legal/privacy-policy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#1a4a7a] underline hover:text-[#c9a84c]"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Privacy Policy
+                    </a>{" "}
+                    and consent to 3B Solution processing my data to provide
+                    personalized property recommendations and investment insights.
+                    I can withdraw my consent at any time.
+                  </span>
                 </label>
               </div>
 
               <Button
-                onClick={handleRequestOTP}
-                disabled={isLoading || !email.trim() || !gdprConsent}
-                className="w-full bg-[#1a4a7a] hover:bg-[#0f2b46] text-white"
+                onClick={(e) => {
+                  blockEvent(e);
+                  handleRequestOTP();
+                }}
+                onPointerDown={blockEvent}
+                onMouseDown={blockEvent}
+                disabled={isLoading}
+                className="w-full bg-[#1a4a7a] hover:bg-[#0f2b46] text-white h-11"
               >
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Sending Code...
+                    Sending...
                   </>
                 ) : (
                   <>
@@ -362,7 +457,7 @@ export function VisitorLoginModal({
                 )}
               </Button>
 
-              <p className="text-xs text-center text-gray-400 flex items-center justify-center gap-1">
+              <p className="text-center text-xs text-gray-400 flex items-center justify-center gap-1">
                 <Shield className="h-3 w-3" />
                 No password needed. We'll send a one-time code to your email.
               </p>
@@ -372,36 +467,40 @@ export function VisitorLoginModal({
           {/* STEP 2: OTP Verification */}
           {step === "otp" && (
             <div className="space-y-4">
-              <div className="flex flex-col items-center space-y-4">
+              <div className="flex flex-col items-center gap-3">
                 <p className="text-sm text-gray-600 text-center">
                   Enter the 6-digit verification code:
                 </p>
-
-                <InputOTP
-                  maxLength={6}
-                  value={otpCode}
-                  onChange={(value) => {
-                    setOtpCode(value);
-                    setError(null);
-                    // Auto-submit when 6 digits entered
-                    if (value.length === 6) {
-                      handleVerifyOTP(value);
-                    }
-                  }}
-                  disabled={isLoading}
+                <div
+                  onClick={blockEvent}
+                  onPointerDown={blockEvent}
+                  onMouseDown={blockEvent}
                 >
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                  </InputOTPGroup>
-                  <span className="text-gray-300 mx-1">-</span>
-                  <InputOTPGroup>
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
-                </InputOTP>
+                  <InputOTP
+                    maxLength={6}
+                    value={otpCode}
+                    onChange={(value) => {
+                      setOtpCode(value);
+                      setError(null);
+                      if (value.length === 6) {
+                        handleVerifyOTP(value);
+                      }
+                    }}
+                    disabled={isLoading}
+                  >
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                    </InputOTPGroup>
+                    <span className="text-gray-400">-</span>
+                    <InputOTPGroup>
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </div>
 
                 {countdown > 0 && (
                   <p className="text-xs text-gray-400">
@@ -411,9 +510,14 @@ export function VisitorLoginModal({
               </div>
 
               <Button
-                onClick={() => handleVerifyOTP()}
+                onClick={(e) => {
+                  blockEvent(e);
+                  handleVerifyOTP();
+                }}
+                onPointerDown={blockEvent}
+                onMouseDown={blockEvent}
                 disabled={isLoading || otpCode.length !== 6}
-                className="w-full bg-[#1a4a7a] hover:bg-[#0f2b46] text-white"
+                className="w-full bg-[#1a4a7a] hover:bg-[#0f2b46] text-white h-11"
               >
                 {isLoading ? (
                   <>
@@ -425,53 +529,56 @@ export function VisitorLoginModal({
                 )}
               </Button>
 
-              <div className="flex items-center justify-between">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
+              <div className="flex justify-between items-center pt-2">
+                <button
+                  onClick={(e) => {
+                    blockEvent(e);
                     setStep("email");
                     setOtpCode("");
                     setError(null);
                   }}
-                  disabled={isLoading}
-                  className="text-gray-500 hover:text-gray-700"
+                  onPointerDown={blockEvent}
+                  onMouseDown={blockEvent}
+                  className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
                 >
-                  <ArrowLeft className="mr-1 h-3 w-3" />
+                  <ArrowLeft className="h-3 w-3" />
                   Back
-                </Button>
-
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleResendOTP}
-                  disabled={isLoading || resendCooldown > 0}
-                  className="text-gray-500 hover:text-gray-700"
+                </button>
+                <button
+                  onClick={(e) => {
+                    blockEvent(e);
+                    handleResendOTP();
+                  }}
+                  onPointerDown={blockEvent}
+                  onMouseDown={blockEvent}
+                  disabled={resendCooldown > 0 || isLoading}
+                  className={`text-sm flex items-center gap-1 ${
+                    resendCooldown > 0
+                      ? "text-gray-300 cursor-not-allowed"
+                      : "text-[#1a4a7a] hover:text-[#0f2b46]"
+                  }`}
                 >
-                  <RefreshCw className={`mr-1 h-3 w-3 ${isLoading ? "animate-spin" : ""}`} />
-                  {resendCooldown > 0
-                    ? `Resend in ${resendCooldown}s`
-                    : "Resend Code"}
-                </Button>
+                  <RefreshCw className="h-3 w-3" />
+                  {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend Code"}
+                </button>
               </div>
             </div>
           )}
 
           {/* STEP 3: Success */}
           {step === "success" && (
-            <div className="flex flex-col items-center py-4 space-y-3">
-              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+            <div className="flex flex-col items-center py-6 gap-3">
+              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center animate-in zoom-in-50 duration-300">
                 <CheckCircle2 className="h-8 w-8 text-green-600" />
               </div>
-              <p className="text-sm text-gray-600 text-center">
-                {isNewVisitor
-                  ? "Your account has been created. Welcome to 3B Solution!"
-                  : "Welcome back! You're now signed in."}
+              <p className="text-lg font-semibold text-gray-800">You're all set!</p>
+              <p className="text-sm text-gray-500 text-center">
+                Redirecting you back...
               </p>
             </div>
           )}
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }
