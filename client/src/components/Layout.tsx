@@ -155,11 +155,11 @@ export function Header() {
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="hidden md:block"
+                className="hidden md:inline-flex items-center gap-2"
                 onClick={() => setShowVisitorLogin(true)}
               >
-                <User className="mr-2 h-4 w-4" aria-hidden="true" />
-                Sign In
+                <User className="h-4 w-4" aria-hidden="true" />
+                <span>Sign In</span>
               </Button>
             )}
 
