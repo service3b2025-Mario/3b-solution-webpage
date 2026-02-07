@@ -553,3 +553,27 @@ export const adminUsers = mysqlTable("admin_users", {
 
 export type AdminUser = typeof adminUsers.$inferSelect;
 export type InsertAdminUser = typeof adminUsers.$inferInsert;
+
+// ============================================
+// VISITORS TABLE - For Public Visitor Accounts
+// ============================================
+// Passwordless email-OTP login for website visitors
+// Separate from admin_users to maintain clear role separation
+
+export const visitors = mysqlTable("visitors", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  name: varchar("name", { length: 255 }),
+  status: mysqlEnum("status", ["pending_verification", "active", "suspended"]).default("pending_verification").notNull(),
+  lastLogin: timestamp("last_login"),
+  gdprConsent: json("gdpr_consent").$type<{
+    version: string;
+    timestamp: string;
+    ipAddress: string;
+  }>(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Visitor = typeof visitors.$inferSelect;
+export type InsertVisitor = typeof visitors.$inferInsert;
