@@ -11,6 +11,9 @@ import {
   TrendingUp, Building2, ChevronLeft, ChevronRight, Maximize2, Minimize2
 } from "lucide-react";
 import { BookingSelector } from "./BookingSelector";
+import { trpc } from "@/lib/trpc";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { VisitorLoginModal } from "./VisitorLoginModal";
 
 interface Property {
   id: number;
@@ -103,43 +106,61 @@ export function PropertyDetailModal({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [mediaTab, setMediaTab] = useState<'photos' | 'video' | 'tour'>('photos');
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const { user } = useAuth();
+  const utils = trpc.useUtils();
 
-  // Check if property is saved on mount
-  useEffect(() => {
-    if (property) {
-      const savedProperties = JSON.parse(localStorage.getItem('savedProperties') || '[]');
-      setIsSaved(savedProperties.some((p: Property) => p.id === property.id));
-    }
-  }, [property]);
+  // Check if property is in wishlist (server-side)
+  const { data: isSaved } = trpc.wishlist.check.useQuery(property?.id ?? 0, {
+    enabled: !!user && !!property,
+  });
 
-  // Handle Save property
+  // Add to wishlist mutation
+  const addMutation = trpc.wishlist.add.useMutation({
+    onSuccess: () => {
+      if (property) {
+        utils.wishlist.check.invalidate(property.id);
+        utils.wishlist.list.invalidate();
+      }
+      toast.success('Property saved to your wishlist!');
+    },
+    onError: (error) => {
+      if (error.message?.includes('Already in wishlist')) {
+        toast.info('This property is already in your wishlist');
+      } else {
+        toast.error(error.message || 'Failed to save property');
+      }
+    },
+  });
+
+  // Remove from wishlist mutation
+  const removeMutation = trpc.wishlist.remove.useMutation({
+    onSuccess: () => {
+      if (property) {
+        utils.wishlist.check.invalidate(property.id);
+        utils.wishlist.list.invalidate();
+      }
+      toast.success('Property removed from wishlist');
+    },
+    onError: () => {
+      toast.error('Failed to remove property');
+    },
+  });
+
+  // Handle Save property using tRPC wishlist
   const handleSave = () => {
     if (!property) return;
     
-    const savedProperties = JSON.parse(localStorage.getItem('savedProperties') || '[]');
+    // If not authenticated, show visitor login modal
+    if (!user) {
+      setShowLoginModal(true);
+      return;
+    }
     
     if (isSaved) {
-      // Remove from saved
-      const updated = savedProperties.filter((p: Property) => p.id !== property.id);
-      localStorage.setItem('savedProperties', JSON.stringify(updated));
-      setIsSaved(false);
-      toast.success('Property removed from saved list');
+      removeMutation.mutate(property.id);
     } else {
-      // Add to saved
-      savedProperties.push({
-        id: property.id,
-        title: property.title,
-        slug: property.slug,
-        location: property.location,
-        mainImage: property.mainImage,
-        price: property.price,
-        propertyType: property.propertyType,
-        savedAt: new Date().toISOString()
-      });
-      localStorage.setItem('savedProperties', JSON.stringify(savedProperties));
-      setIsSaved(true);
-      toast.success('Property saved! View your saved properties in your profile.');
+      addMutation.mutate(property.id);
     }
   };
 
@@ -207,6 +228,7 @@ export function PropertyDetailModal({
   };
 
   return (
+    <>
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={`w-full p-0 overflow-hidden bg-background transition-all duration-300 ${
         isFullscreen 
@@ -646,8 +668,14 @@ export function PropertyDetailModal({
           </div>
         </div>
       </DialogContent>
-    </Dialog>
+     </Dialog>
+
+    <VisitorLoginModal
+      open={showLoginModal}
+      onOpenChange={setShowLoginModal}
+      triggerContext="wishlist"
+    />
+    </>
   );
 }
-
 export default PropertyDetailModal;
