@@ -1249,7 +1249,7 @@ export const registerOAuthRoutes = (app: Express) => {
           ipAddress: clientIP,
         } : null;
 
-        const insertResult = await db.insert(visitors).values({
+        await db.insert(visitors).values({
           email: verifiedEmail,
           name: visitorName,
           status: "active",
@@ -1257,8 +1257,8 @@ export const registerOAuthRoutes = (app: Express) => {
           gdprConsent: gdprConsentData,
         });
         
-        const newId = insertResult[0].insertId;
-        const newResults = await db.select().from(visitors).where(eq(visitors.id, newId)).limit(1);
+        // Fetch the newly created visitor by email (PostgreSQL compatible)
+        const newResults = await db.select().from(visitors).where(eq(visitors.email, verifiedEmail)).limit(1);
         visitor = newResults[0];
       }
 
