@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
-import { Users, Heart, Bookmark, Eye, MessageSquare, Calendar, TrendingUp, ArrowRight } from "lucide-react";
+import { Users, Heart, Bookmark, Eye, MessageSquare, Calendar, TrendingUp, ArrowRight, UserCheck } from "lucide-react";
 import { Link } from "wouter";
 
 export function SalesFunnelDashboard() {
@@ -18,14 +18,14 @@ export function SalesFunnelDashboard() {
       link: "/admin/analytics",
     },
     {
-      name: "Registered Users",
-      count: funnelStats?.registeredUsers || 0,
-      icon: Users,
-      color: "text-green-600",
-      bgColor: "bg-green-50",
-      description: "Users who signed up",
+      name: "Registered Visitors",
+      count: funnelStats?.registeredVisitors || funnelStats?.registeredUsers || 0,
+      icon: UserCheck,
+      color: "text-teal-600",
+      bgColor: "bg-teal-50",
+      description: "Email-verified visitor accounts",
       conversion: funnelStats?.totalVisitors ? 
-        ((funnelStats.registeredUsers / funnelStats.totalVisitors) * 100).toFixed(1) : 0,
+        (((funnelStats.registeredVisitors || funnelStats.registeredUsers || 0) / funnelStats.totalVisitors) * 100).toFixed(1) : 0,
       link: "/admin/leads",
     },
     {
@@ -35,8 +35,8 @@ export function SalesFunnelDashboard() {
       color: "text-purple-600",
       bgColor: "bg-purple-50",
       description: "Saved properties or searches",
-      conversion: funnelStats?.registeredUsers ? 
-        ((funnelStats.engagedUsers / funnelStats.registeredUsers) * 100).toFixed(1) : 0,
+      conversion: (funnelStats?.registeredVisitors || funnelStats?.registeredUsers) ? 
+        ((funnelStats.engagedUsers / (funnelStats.registeredVisitors || funnelStats.registeredUsers || 1)) * 100).toFixed(1) : 0,
       link: "/admin/leads?filter=engaged",
     },
     {
