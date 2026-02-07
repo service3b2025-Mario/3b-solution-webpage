@@ -314,7 +314,7 @@ const createAdminSessionToken = async (
 };
 
 // ============================================
-// BOOTSTRAP: Seed admin_users table if empty
+// BOOTSTRAP: Ensure required admin users exist
 // ============================================
 async function bootstrapAdminUsers(): Promise<void> {
   try {
@@ -324,22 +324,8 @@ async function bootstrapAdminUsers(): Promise<void> {
       return;
     }
 
-    // Check if admin_users table has any rows
-    const existingUsers = await db
-      .select({ count: sql<number>`count(*)` })
-      .from(adminUsers);
-    
-    const count = Number(existingUsers[0]?.count ?? 0);
-    
-    if (count > 0) {
-      console.log(`[Auth Bootstrap] admin_users table has ${count} users, skipping bootstrap`);
-      return;
-    }
-
-    console.log("[Auth Bootstrap] admin_users table is EMPTY - seeding initial users...");
-
-    // Define the initial team members
-    const initialUsers = [
+    // Define the required team members
+    const requiredUsers = [
       {
         email: "mariobockph@3bsolution.de",
         name: "Mario Bock",
@@ -366,8 +352,22 @@ async function bootstrapAdminUsers(): Promise<void> {
       },
     ];
 
-    for (const user of initialUsers) {
+    // Check each required user and create if missing
+    let created = 0;
+    for (const user of requiredUsers) {
       try {
+        const existing = await db
+          .select({ id: adminUsers.id })
+          .from(adminUsers)
+          .where(eq(adminUsers.email, user.email))
+          .limit(1);
+        
+        if (existing.length > 0) {
+          console.log(`[Auth Bootstrap] User ${user.email} already exists (id: ${existing[0].id}), skipping`);
+          continue;
+        }
+
+        // User doesn't exist - create them
         const passwordHash = await hashPassword(user.password);
         await db.insert(adminUsers).values({
           email: user.email,
@@ -378,14 +378,18 @@ async function bootstrapAdminUsers(): Promise<void> {
           mustChangePassword: true,
         });
         console.log(`[Auth Bootstrap] Created user: ${user.name} (${user.email}) as ${user.role}`);
+        created++;
       } catch (insertErr) {
-        // If user already exists (unique constraint), skip
         console.warn(`[Auth Bootstrap] Could not create ${user.email}:`, insertErr);
       }
     }
 
-    console.log("[Auth Bootstrap] Initial admin users seeded successfully!");
-    console.log("[Auth Bootstrap] IMPORTANT: All users should change their passwords after first login.");
+    if (created > 0) {
+      console.log(`[Auth Bootstrap] Created ${created} new admin user(s)`);
+      console.log("[Auth Bootstrap] IMPORTANT: All new users should change their passwords after first login.");
+    } else {
+      console.log("[Auth Bootstrap] All required users already exist, no changes needed");
+    }
   } catch (error) {
     console.error("[Auth Bootstrap] Failed to bootstrap admin users:", error);
   }
