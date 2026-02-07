@@ -5,7 +5,10 @@ import { parse as parseCookieHeader } from "cookie";
 import type { Request } from "express";
 import { SignJWT, jwtVerify } from "jose";
 import type { User } from "../../drizzle/schema";
+import { adminUsers } from "../../drizzle/schema";
 import * as db from "../db";
+import { getDb } from "../db";
+import { eq } from "drizzle-orm";
 import { ENV } from "./env";
 import type {
   ExchangeTokenRequest,
@@ -271,18 +274,46 @@ class SDKServer {
     if (!user) {
       // Check if this is an admin user created by our custom login (starts with "admin_")
       if (sessionUserId.startsWith("admin_")) {
-        console.log("[Auth] Admin user not found in DB, creating from session...");
+        console.log("[Auth] Admin user not found in users table, resolving from admin_users...");
         try {
-         await db.upsertUser({
-  openId: sessionUserId,
-  name: session.name || "Admin User",
-  email: "admin@3bsolution.com",
-  loginMethod: "email",
-  role: "admin",
-  lastSignedIn: signedInAt,
-});
+          // Extract admin user ID from openId (e.g., "admin_5" -> 5)
+          const adminId = parseInt(sessionUserId.replace("admin_", ""), 10);
+          let adminEmail = session.name ? `${session.name.toLowerCase().replace(/\s+/g, '')}@3bsolution.de` : "admin@3bsolution.de";
+          let adminName = session.name || "Admin User";
+          let adminRole: "user" | "admin" = "admin";
+          
+          // Look up the real admin user info from admin_users table
+          try {
+            const database = await getDb();
+            if (database && !isNaN(adminId)) {
+              const adminResults = await database
+                .select({ email: adminUsers.email, name: adminUsers.name, role: adminUsers.role })
+                .from(adminUsers)
+                .where(eq(adminUsers.id, adminId))
+                .limit(1);
+              
+              if (adminResults.length > 0) {
+                adminEmail = adminResults[0].email;
+                adminName = adminResults[0].name;
+                // Map all admin panel roles to "admin" in the users table
+                adminRole = "admin";
+                console.log(`[Auth] Resolved admin user: ${adminName} (${adminEmail}), role: ${adminResults[0].role}`);
+              }
+            }
+          } catch (lookupErr) {
+            console.warn("[Auth] Could not look up admin_users, using session data:", lookupErr);
+          }
+          
+          await db.upsertUser({
+            openId: sessionUserId,
+            name: adminName,
+            email: adminEmail,
+            loginMethod: "email",
+            role: adminRole,
+            lastSignedIn: signedInAt,
+          });
           user = await db.getUserByOpenId(sessionUserId);
-          console.log("[Auth] Admin user created successfully");
+          console.log("[Auth] Admin user created/updated in users table successfully");
         } catch (dbError) {
           console.error("[Auth] Failed to create admin user:", dbError);
           throw ForbiddenError("Failed to create admin user");
