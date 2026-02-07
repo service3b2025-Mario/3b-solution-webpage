@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
@@ -93,12 +94,17 @@ export function WishlistButton({ propertyId, className = "", size = "default" }:
         />
       </Button>
 
-      <VisitorLoginModal
-        open={showLoginModal}
-        onOpenChange={setShowLoginModal}
-        onSuccess={handleLoginSuccess}
-        triggerContext="wishlist"
-      />
+      {/* Render modal via portal at document.body level to prevent click events 
+          from bubbling through the React component tree to the property card */}
+      {createPortal(
+        <VisitorLoginModal
+          open={showLoginModal}
+          onOpenChange={setShowLoginModal}
+          onSuccess={handleLoginSuccess}
+          triggerContext="wishlist"
+        />,
+        document.body
+      )}
     </>
   );
 }
