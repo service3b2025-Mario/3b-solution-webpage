@@ -312,7 +312,7 @@ export const registerOAuthRoutes = (app: Express) => {
           sameSite: "lax",
           maxAge: SESSION_DURATION_MS,
           path: "/",
-        } );
+        });
 
         logAuditEvent({
           action: "LOGIN_SUCCESS",
@@ -420,7 +420,7 @@ export const registerOAuthRoutes = (app: Express) => {
         sameSite: "lax",
         maxAge: SESSION_DURATION_MS,
         path: "/",
-      } );
+      });
 
       logAuditEvent({
         action: "LOGIN_SUCCESS",
@@ -653,11 +653,6 @@ export const registerOAuthRoutes = (app: Express) => {
     }
   });
 
-  // Change password endpoint (disabled for legacy admin)
-  app.post("/api/oauth/change-password", (req: Request, res: Response) => {
-    return res.status(400).json({ error: "Password change not available for legacy admin" });
-  });
-
   console.log("[Auth] OAuth routes with Email OTP registered successfully");
 };
 
@@ -679,25 +674,4 @@ export const verifyToken = async (token: string) => {
   } catch {
     return null;
   }
-};
-
-// Password hashing (kept for compatibility)
-export const hashPassword = async (password: string): Promise<string> => {
-  const salt = crypto.randomBytes(32).toString("hex");
-  return new Promise((resolve, reject) => {
-    crypto.pbkdf2(password, salt, 100000, 64, "sha512", (err, derivedKey) => {
-      if (err) reject(err);
-      resolve(`${salt}:${derivedKey.toString("hex")}`);
-    });
-  });
-};
-
-export const verifyPassword = async (password: string, hash: string): Promise<boolean> => {
-  const [salt, key] = hash.split(":");
-  return new Promise((resolve, reject) => {
-    crypto.pbkdf2(password, salt, 100000, 64, "sha512", (err, derivedKey) => {
-      if (err) reject(err);
-      resolve(key === derivedKey.toString("hex"));
-    });
-  });
 };
