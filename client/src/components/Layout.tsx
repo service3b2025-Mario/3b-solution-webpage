@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState, useEffect } from "react";
+import { VisitorLoginModal } from "@/components/VisitorLoginModal";
 
 const navLinks = [
   { href: "/", label: "Home", icon: Home },
@@ -36,6 +37,7 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { user } = useAuth();
   const logoutMutation = trpc.auth.logout.useMutation();
+  const [showVisitorLogin, setShowVisitorLogin] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,7 +49,14 @@ export function Header() {
   }, []);
 
   const handleLogout = async () => {
-    await logoutMutation.mutateAsync();
+    try {
+      // Clear visitor session if applicable
+      await fetch('/api/visitor/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+      // Clear admin session
+      await logoutMutation.mutateAsync();
+    } catch (e) {
+      // Ignore errors
+    }
     window.location.href = '/';
   };
 
@@ -143,13 +152,23 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <a href="/admin" className="hidden md:block">
-                <Button variant="outline" size="sm">
-                  <User className="mr-2 h-4 w-4" aria-hidden="true" />
-                  Sign In
-                </Button>
-              </a>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="hidden md:block"
+                onClick={() => setShowVisitorLogin(true)}
+              >
+                <User className="mr-2 h-4 w-4" aria-hidden="true" />
+                Sign In
+              </Button>
             )}
+
+            {/* Visitor Login Modal */}
+            <VisitorLoginModal
+              open={showVisitorLogin}
+              onOpenChange={setShowVisitorLogin}
+              triggerContext="general"
+            />
             <Link href="/contact" className="hidden md:block">
               <Button className="bg-secondary hover:bg-secondary/90 text-white font-bold text-base px-6 py-6 shadow-lg hover:shadow-xl transition-all">
                 Schedule Consultation
