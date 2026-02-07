@@ -4,6 +4,9 @@ import { SignJWT, jwtVerify } from "jose";
 import { COOKIE_NAME as SHARED_COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { ENV } from "./env";
 import { sendOTP, verifyOTP, getOTPEmail, getOTPConfig, testEmailConfiguration } from "./email-otp-service";
+import { getDb } from "../db";
+import { adminUsers } from "../../drizzle/schema";
+import { eq } from "drizzle-orm";
 
 // Re-export COOKIE_NAME for other files that import from oauth
 export const COOKIE_NAME = SHARED_COOKIE_NAME;
@@ -21,9 +24,6 @@ const SECURITY_CONFIG = {
   
   // Email OTP - ENABLED
   emailOTPEnabled: true,
-  
-  // Allowed admin emails (only these can log in)
-  allowedAdminEmails: (process.env.ADMIN_USERS || "admin@3bsolution.com").split(",").map(e => e.trim().toLowerCase()),
 };
 
 // ============================================
@@ -154,11 +154,120 @@ function resetRateLimit(ip: string): void {
   rateLimitStore.delete(ip);
 }
 
-// Legacy admin credentials (still used for password step)
-const LEGACY_ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@3bsolution.com";
-const LEGACY_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "3BSolution2025!";
-const LEGACY_ADMIN_NAME = process.env.ADMIN_NAME || "Admin User";
+// ============================================
+// DATABASE USER LOOKUP
+// ============================================
 
+interface AdminUserRecord {
+  id: number;
+  email: string;
+  name: string;
+  passwordHash: string;
+  role: string;
+  isActive: boolean;
+  failedLoginAttempts: number;
+  lockedUntil: Date | null;
+}
+
+/**
+ * Look up an admin user by email in the admin_users database table.
+ * Returns null if user not found or database unavailable.
+ */
+async function findAdminUserByEmail(email: string): Promise<AdminUserRecord | null> {
+  try {
+    const db = await getDb();
+    if (!db) {
+      console.warn("[Auth] Database not available for admin user lookup");
+      return null;
+    }
+    
+    const results = await db
+      .select({
+        id: adminUsers.id,
+        email: adminUsers.email,
+        name: adminUsers.name,
+        passwordHash: adminUsers.passwordHash,
+        role: adminUsers.role,
+        isActive: adminUsers.isActive,
+        failedLoginAttempts: adminUsers.failedLoginAttempts,
+        lockedUntil: adminUsers.lockedUntil,
+      })
+      .from(adminUsers)
+      .where(eq(adminUsers.email, email.toLowerCase()))
+      .limit(1);
+    
+    if (results.length === 0) return null;
+    return results[0] as AdminUserRecord;
+  } catch (error) {
+    console.error("[Auth] Error looking up admin user:", error);
+    return null;
+  }
+}
+
+/**
+ * Update failed login attempts for a user
+ */
+async function updateFailedAttempts(userId: number, attempts: number, lockUntil?: Date): Promise<void> {
+  try {
+    const db = await getDb();
+    if (!db) return;
+    
+    const updateData: any = { failedLoginAttempts: attempts };
+    if (lockUntil) {
+      updateData.lockedUntil = lockUntil;
+    }
+    
+    await db.update(adminUsers).set(updateData).where(eq(adminUsers.id, userId));
+  } catch (error) {
+    console.error("[Auth] Error updating failed attempts:", error);
+  }
+}
+
+/**
+ * Record successful login for a user
+ */
+async function recordSuccessfulLogin(userId: number): Promise<void> {
+  try {
+    const db = await getDb();
+    if (!db) return;
+    
+    await db.update(adminUsers).set({
+      failedLoginAttempts: 0,
+      lockedUntil: null,
+      lastLogin: new Date(),
+    }).where(eq(adminUsers.id, userId));
+  } catch (error) {
+    console.error("[Auth] Error recording successful login:", error);
+  }
+}
+
+// ============================================
+// OTP SESSION STORE (maps sessionId -> user info for Step 2)
+// ============================================
+interface OTPSessionData {
+  userId: number;
+  email: string;
+  name: string;
+  role: string;
+  createdAt: number;
+}
+
+const otpSessionStore = new Map<string, OTPSessionData>();
+
+// Clean up old OTP sessions every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of otpSessionStore.entries()) {
+    // Remove sessions older than 15 minutes
+    if (now - entry.createdAt > 15 * 60 * 1000) {
+      otpSessionStore.delete(key);
+    }
+  }
+}, 5 * 60 * 1000);
+
+// ============================================
+// SESSION TOKEN
+// ============================================
 const SESSION_DURATION_MS = SECURITY_CONFIG.sessionDurationMs;
 
 const getSessionSecret = () => {
@@ -178,14 +287,26 @@ const parseCookies = (req: Request): Record<string, string> => {
   return cookies;
 };
 
-const createSessionToken = async (openId: string, name: string): Promise<string> => {
+/**
+ * Create a session token for an admin user.
+ * The openId encodes the admin user's database ID (e.g., "admin_5").
+ * The JWT also carries the user's name and role for quick access.
+ */
+const createAdminSessionToken = async (
+  adminUserId: number,
+  name: string,
+  role: string,
+  email: string
+): Promise<string> => {
   const secretKey = getSessionSecret();
   const expirationSeconds = Math.floor((Date.now() + SESSION_DURATION_MS) / 1000);
   
   return new SignJWT({
-    openId: openId,
+    openId: `admin_${adminUserId}`,
     appId: ENV.appId || "3bsolution",
     name: name,
+    role: role,
+    email: email,
   })
     .setProtectedHeader({ alg: "HS256", typ: "JWT" })
     .setExpirationTime(expirationSeconds)
@@ -196,12 +317,12 @@ const createSessionToken = async (openId: string, name: string): Promise<string>
 // REGISTER OAUTH ROUTES
 // ============================================
 export const registerOAuthRoutes = (app: Express) => {
-  console.log("[Auth] Registering OAuth routes with Email OTP...");
+  console.log("[Auth] Registering OAuth routes with Database Auth + Email OTP...");
   console.log(`[Auth] Email OTP: ${SECURITY_CONFIG.emailOTPEnabled ? 'ENABLED' : 'DISABLED'}`);
-  console.log(`[Auth] Allowed admins: ${SECURITY_CONFIG.allowedAdminEmails.join(', ')}`);
+  console.log("[Auth] Authentication source: PostgreSQL admin_users table");
 
   // ============================================
-  // STEP 1: LOGIN - Verify password and send OTP
+  // STEP 1: LOGIN - Verify password from DB and send OTP
   // ============================================
   app.post("/api/oauth/login", async (req: Request, res: Response) => {
     const clientIP = getClientIP(req);
@@ -244,16 +365,19 @@ export const registerOAuthRoutes = (app: Express) => {
         });
       }
 
-      // Check if email is in allowed list
-      const emailLower = email.toLowerCase();
-      if (!SECURITY_CONFIG.allowedAdminEmails.includes(emailLower)) {
+      const emailLower = email.toLowerCase().trim();
+
+      // ---- LOOK UP USER IN DATABASE ----
+      const adminUser = await findAdminUserByEmail(emailLower);
+      
+      if (!adminUser) {
         logAuditEvent({
           action: "LOGIN_FAILED",
-          email,
+          email: emailLower,
           ip: clientIP,
           userAgent,
           success: false,
-          details: "Email not in allowed admin list",
+          details: "Email not found in admin_users table",
         });
         return res.status(401).json({ 
           error: "Invalid email or password",
@@ -261,92 +385,156 @@ export const registerOAuthRoutes = (app: Express) => {
         });
       }
 
-      // Verify password (legacy admin check)
-      if (emailLower === LEGACY_ADMIN_EMAIL.toLowerCase() && password === LEGACY_ADMIN_PASSWORD) {
-        console.log("[Auth] Password verified, sending OTP...");
-        
-        // If Email OTP is enabled, send code
-        if (SECURITY_CONFIG.emailOTPEnabled) {
-          const otpResult = await sendOTP(email);
-          
-          if (!otpResult.success) {
-            logAuditEvent({
-              action: "OTP_SEND_FAILED",
-              email,
-              ip: clientIP,
-              userAgent,
-              success: false,
-              details: otpResult.error,
-            });
-            return res.status(500).json({ 
-              error: "Failed to send verification code. Please try again.",
-              details: otpResult.error,
-            });
-          }
-          
-          logAuditEvent({
-            action: "OTP_SENT",
-            email,
-            ip: clientIP,
-            userAgent,
-            success: true,
-            details: "Verification code sent to email",
-          });
-          
-          return res.json({
-            success: true,
-            requiresOTP: true,
-            sessionId: otpResult.sessionId,
-            message: "Verification code sent to your email. Please check your inbox.",
-          });
-        }
-        
-        // If OTP disabled, log in directly (not recommended)
-        resetRateLimit(clientIP);
-        const adminOpenId = "admin_0";
-        const token = await createSessionToken(adminOpenId, LEGACY_ADMIN_NAME);
-
-        res.cookie(COOKIE_NAME, token, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          maxAge: SESSION_DURATION_MS,
-          path: "/",
-        });
-
+      // Check if account is active
+      if (!adminUser.isActive) {
         logAuditEvent({
-          action: "LOGIN_SUCCESS",
-          email,
+          action: "LOGIN_FAILED",
+          email: emailLower,
           ip: clientIP,
           userAgent,
-          success: true,
-          details: "Direct login (OTP disabled)",
+          success: false,
+          details: "Account is deactivated",
         });
-
-        return res.json({
-          success: true,
-          requiresOTP: false,
-          user: {
-            id: 0,
-            email: LEGACY_ADMIN_EMAIL,
-            name: LEGACY_ADMIN_NAME,
-            role: "admin",
-          },
+        return res.status(401).json({ 
+          error: "Your account has been deactivated. Contact your administrator.",
+          remainingAttempts: rateCheck.remainingAttempts,
         });
       }
 
+      // Check if account is locked
+      if (adminUser.lockedUntil && new Date(adminUser.lockedUntil) > new Date()) {
+        const lockMinutes = Math.ceil((new Date(adminUser.lockedUntil).getTime() - Date.now()) / 60000);
+        logAuditEvent({
+          action: "LOGIN_FAILED",
+          email: emailLower,
+          ip: clientIP,
+          userAgent,
+          success: false,
+          details: `Account locked for ${lockMinutes} more minutes`,
+        });
+        return res.status(401).json({ 
+          error: `Account is temporarily locked. Try again in ${lockMinutes} minutes.`,
+          remainingAttempts: 0,
+        });
+      }
+
+      // ---- VERIFY PASSWORD AGAINST DATABASE HASH ----
+      const passwordValid = await verifyPassword(password, adminUser.passwordHash);
+      
+      if (!passwordValid) {
+        // Increment failed attempts
+        const newAttempts = adminUser.failedLoginAttempts + 1;
+        let lockUntil: Date | undefined;
+        
+        // Lock account after 5 failed attempts for 15 minutes
+        if (newAttempts >= 5) {
+          lockUntil = new Date(Date.now() + 15 * 60 * 1000);
+        }
+        
+        await updateFailedAttempts(adminUser.id, newAttempts, lockUntil);
+        
+        logAuditEvent({
+          action: "LOGIN_FAILED",
+          email: emailLower,
+          ip: clientIP,
+          userAgent,
+          success: false,
+          details: `Invalid password. Attempt ${newAttempts}/5.`,
+        });
+        
+        return res.status(401).json({ 
+          error: "Invalid email or password",
+          remainingAttempts: rateCheck.remainingAttempts,
+        });
+      }
+
+      // ---- PASSWORD VERIFIED ----
+      console.log(`[Auth] Password verified for ${adminUser.name} (${adminUser.role}), sending OTP...`);
+      
+      // If Email OTP is enabled, send code
+      if (SECURITY_CONFIG.emailOTPEnabled) {
+        const otpResult = await sendOTP(adminUser.email);
+        
+        if (!otpResult.success) {
+          logAuditEvent({
+            action: "OTP_SEND_FAILED",
+            email: adminUser.email,
+            ip: clientIP,
+            userAgent,
+            success: false,
+            details: otpResult.error,
+          });
+          return res.status(500).json({ 
+            error: "Failed to send verification code. Please try again.",
+            details: otpResult.error,
+          });
+        }
+        
+        // Store user info for OTP verification step
+        if (otpResult.sessionId) {
+          otpSessionStore.set(otpResult.sessionId, {
+            userId: adminUser.id,
+            email: adminUser.email,
+            name: adminUser.name,
+            role: adminUser.role,
+            createdAt: Date.now(),
+          });
+        }
+        
+        logAuditEvent({
+          action: "OTP_SENT",
+          email: adminUser.email,
+          ip: clientIP,
+          userAgent,
+          success: true,
+          details: `Verification code sent to ${adminUser.email}`,
+        });
+        
+        return res.json({
+          success: true,
+          requiresOTP: true,
+          sessionId: otpResult.sessionId,
+          message: "Verification code sent to your email. Please check your inbox.",
+        });
+      }
+      
+      // If OTP disabled, log in directly
+      resetRateLimit(clientIP);
+      await recordSuccessfulLogin(adminUser.id);
+      
+      const token = await createAdminSessionToken(
+        adminUser.id,
+        adminUser.name,
+        adminUser.role,
+        adminUser.email
+      );
+
+      res.cookie(COOKIE_NAME, token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: SESSION_DURATION_MS,
+        path: "/",
+      });
+
       logAuditEvent({
-        action: "LOGIN_FAILED",
-        email,
+        action: "LOGIN_SUCCESS",
+        email: adminUser.email,
         ip: clientIP,
         userAgent,
-        success: false,
-        details: `Invalid credentials. ${rateCheck.remainingAttempts} attempts remaining.`,
+        success: true,
+        details: "Direct login (OTP disabled)",
       });
-      
-      return res.status(401).json({ 
-        error: "Invalid email or password",
-        remainingAttempts: rateCheck.remainingAttempts,
+
+      return res.json({
+        success: true,
+        requiresOTP: false,
+        user: {
+          id: adminUser.id,
+          email: adminUser.email,
+          name: adminUser.name,
+          role: adminUser.role,
+        },
       });
     } catch (error) {
       console.error("[Auth] Login error:", error);
@@ -408,11 +596,38 @@ export const registerOAuthRoutes = (app: Express) => {
         });
       }
 
-      // OTP verified successfully - create session
-      resetRateLimit(clientIP);
+      // OTP verified successfully - retrieve user info from our session store
+      const sessionData = otpSessionStore.get(sessionId);
       
-      const adminOpenId = "admin_0";
-      const token = await createSessionToken(adminOpenId, LEGACY_ADMIN_NAME);
+      // If session data exists, use it; otherwise look up user again from DB
+      let userId: number;
+      let userName: string;
+      let userRole: string;
+      let userEmail: string;
+      
+      if (sessionData) {
+        userId = sessionData.userId;
+        userName = sessionData.name;
+        userRole = sessionData.role;
+        userEmail = sessionData.email;
+        otpSessionStore.delete(sessionId);
+      } else {
+        // Fallback: look up user by email from DB
+        const adminUser = await findAdminUserByEmail(email);
+        if (!adminUser) {
+          return res.status(401).json({ error: "User account not found. Please contact your administrator." });
+        }
+        userId = adminUser.id;
+        userName = adminUser.name;
+        userRole = adminUser.role;
+        userEmail = adminUser.email;
+      }
+      
+      // Create session
+      resetRateLimit(clientIP);
+      await recordSuccessfulLogin(userId);
+      
+      const token = await createAdminSessionToken(userId, userName, userRole, userEmail);
 
       res.cookie(COOKIE_NAME, token, {
         httpOnly: true,
@@ -424,20 +639,20 @@ export const registerOAuthRoutes = (app: Express) => {
 
       logAuditEvent({
         action: "LOGIN_SUCCESS",
-        email,
+        email: userEmail,
         ip: clientIP,
         userAgent,
         success: true,
-        details: "Login completed with Email OTP verification",
+        details: `Login completed with Email OTP verification (role: ${userRole})`,
       });
 
       return res.json({
         success: true,
         user: {
-          id: 0,
-          email: LEGACY_ADMIN_EMAIL,
-          name: LEGACY_ADMIN_NAME,
-          role: "admin",
+          id: userId,
+          email: userEmail,
+          name: userName,
+          role: userRole,
         },
       });
     } catch (error) {
@@ -469,14 +684,16 @@ export const registerOAuthRoutes = (app: Express) => {
         return res.status(400).json({ error: "Email is required" });
       }
 
-      // Check if email is allowed
-      const emailLower = email.toLowerCase();
-      if (!SECURITY_CONFIG.allowedAdminEmails.includes(emailLower)) {
+      // Check if email exists in admin_users database
+      const emailLower = email.toLowerCase().trim();
+      const adminUser = await findAdminUserByEmail(emailLower);
+      
+      if (!adminUser || !adminUser.isActive) {
         return res.status(401).json({ error: "Email not authorized" });
       }
 
       // Send new OTP
-      const otpResult = await sendOTP(email);
+      const otpResult = await sendOTP(adminUser.email);
       
       if (!otpResult.success) {
         return res.status(500).json({ 
@@ -485,9 +702,20 @@ export const registerOAuthRoutes = (app: Express) => {
         });
       }
 
+      // Store user info for the new OTP session
+      if (otpResult.sessionId) {
+        otpSessionStore.set(otpResult.sessionId, {
+          userId: adminUser.id,
+          email: adminUser.email,
+          name: adminUser.name,
+          role: adminUser.role,
+          createdAt: Date.now(),
+        });
+      }
+
       logAuditEvent({
         action: "OTP_RESENT",
-        email,
+        email: adminUser.email,
         ip: clientIP,
         userAgent,
         success: true,
@@ -540,13 +768,50 @@ export const registerOAuthRoutes = (app: Express) => {
         return res.json({ user: null });
       }
 
-      if (payload.openId === "admin_0") {
+      const openId = payload.openId as string;
+      
+      // Admin users have openId like "admin_5"
+      if (openId.startsWith("admin_")) {
+        const adminId = parseInt(openId.replace("admin_", ""), 10);
+        
+        // Look up current user info from database for freshness
+        try {
+          const db = await getDb();
+          if (db) {
+            const results = await db
+              .select({
+                id: adminUsers.id,
+                email: adminUsers.email,
+                name: adminUsers.name,
+                role: adminUsers.role,
+                isActive: adminUsers.isActive,
+              })
+              .from(adminUsers)
+              .where(eq(adminUsers.id, adminId))
+              .limit(1);
+            
+            if (results.length > 0 && results[0].isActive) {
+              return res.json({
+                user: {
+                  id: results[0].id,
+                  email: results[0].email,
+                  name: results[0].name,
+                  role: results[0].role,
+                },
+              });
+            }
+          }
+        } catch (dbError) {
+          console.warn("[Auth] DB lookup failed for /me, using JWT data:", dbError);
+        }
+        
+        // Fallback to JWT payload data if DB lookup fails
         return res.json({
           user: {
-            id: 0,
-            email: LEGACY_ADMIN_EMAIL,
-            name: payload.name || LEGACY_ADMIN_NAME,
-            role: "admin",
+            id: adminId,
+            email: payload.email || "unknown",
+            name: payload.name || "Admin User",
+            role: payload.role || "admin",
           },
         });
       }
@@ -572,8 +837,19 @@ export const registerOAuthRoutes = (app: Express) => {
       const secretKey = getSessionSecret();
       const { payload } = await jwtVerify(token, secretKey);
       
-      if (!payload || payload.openId !== "admin_0") {
+      if (!payload || !payload.openId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      const openId = payload.openId as string;
+      if (!openId.startsWith("admin_")) {
         return res.status(403).json({ error: "Forbidden" });
+      }
+      
+      // Only admin role can view audit logs
+      const role = payload.role as string;
+      if (role !== "admin") {
+        return res.status(403).json({ error: "Forbidden - Admin role required" });
       }
 
       const recentLogs = auditLog.slice(-100).reverse();
@@ -598,7 +874,12 @@ export const registerOAuthRoutes = (app: Express) => {
       const secretKey = getSessionSecret();
       const { payload } = await jwtVerify(token, secretKey);
       
-      if (!payload || payload.openId !== "admin_0") {
+      if (!payload || !payload.openId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      const openId = payload.openId as string;
+      if (!openId.startsWith("admin_")) {
         return res.status(403).json({ error: "Forbidden" });
       }
 
@@ -614,7 +895,7 @@ export const registerOAuthRoutes = (app: Express) => {
           enabled: SECURITY_CONFIG.emailOTPEnabled,
           ...otpConfig,
         },
-        allowedAdmins: SECURITY_CONFIG.allowedAdminEmails,
+        authSource: "PostgreSQL admin_users table",
         auditLog: {
           totalEntries: auditLog.length,
           recentFailedLogins: auditLog
@@ -642,7 +923,12 @@ export const registerOAuthRoutes = (app: Express) => {
       const secretKey = getSessionSecret();
       const { payload } = await jwtVerify(token, secretKey);
       
-      if (!payload || payload.openId !== "admin_0") {
+      if (!payload || !payload.openId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      
+      const openId = payload.openId as string;
+      if (!openId.startsWith("admin_")) {
         return res.status(403).json({ error: "Forbidden" });
       }
 
@@ -653,10 +939,10 @@ export const registerOAuthRoutes = (app: Express) => {
     }
   });
 
-  console.log("[Auth] OAuth routes with Email OTP registered successfully");
+  console.log("[Auth] OAuth routes with Database Auth + Email OTP registered successfully");
 };
 
-// Verify token helper
+// Verify token helper (used by other modules)
 export const verifyToken = async (token: string) => {
   try {
     const secretKey = getSessionSecret();
@@ -676,7 +962,7 @@ export const verifyToken = async (token: string) => {
   }
 };
 
-// Password hashing (kept for compatibility with adminUserRouters)
+// Password hashing (used by adminUserRouters for creating/resetting users)
 export const hashPassword = async (password: string): Promise<string> => {
   const salt = crypto.randomBytes(32).toString("hex");
   return new Promise((resolve, reject) => {
@@ -688,11 +974,17 @@ export const hashPassword = async (password: string): Promise<string> => {
 };
 
 export const verifyPassword = async (password: string, hash: string): Promise<boolean> => {
-  const [salt, key] = hash.split(":");
-  return new Promise((resolve, reject) => {
-    crypto.pbkdf2(password, salt, 100000, 64, "sha512", (err, derivedKey) => {
-      if (err) reject(err);
-      resolve(key === derivedKey.toString("hex"));
+  try {
+    const [salt, key] = hash.split(":");
+    if (!salt || !key) return false;
+    
+    return new Promise((resolve, reject) => {
+      crypto.pbkdf2(password, salt, 100000, 64, "sha512", (err, derivedKey) => {
+        if (err) reject(err);
+        resolve(key === derivedKey.toString("hex"));
+      });
     });
-  });
+  } catch {
+    return false;
+  }
 };
