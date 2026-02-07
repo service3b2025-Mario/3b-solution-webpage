@@ -4,8 +4,9 @@ import { SignJWT, jwtVerify } from "jose";
 import { COOKIE_NAME as SHARED_COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { ENV } from "./env";
 import { sendOTP, verifyOTP, getOTPEmail, getOTPConfig, testEmailConfiguration } from "./email-otp-service";
+import { sendVisitorOTP, verifyVisitorOTP } from "./visitor-email-otp-service";
 import { getDb } from "../db";
-import { adminUsers } from "../../drizzle/schema";
+import { adminUsers, visitors, users } from "../../drizzle/schema";
 import { eq, sql } from "drizzle-orm";
 
 // Re-export COOKIE_NAME for other files that import from oauth
@@ -903,6 +904,52 @@ export const registerOAuthRoutes = (app: Express) => {
         });
       }
 
+      // Visitor users have openId like "visitor_12"
+      if (openId.startsWith("visitor_")) {
+        const visitorId = parseInt(openId.replace("visitor_", ""), 10);
+        
+        try {
+          const db = await getDb();
+          if (db && !isNaN(visitorId)) {
+            const results = await db
+              .select({
+                id: visitors.id,
+                email: visitors.email,
+                name: visitors.name,
+                status: visitors.status,
+              })
+              .from(visitors)
+              .where(eq(visitors.id, visitorId))
+              .limit(1);
+            
+            if (results.length > 0 && results[0].status === "active") {
+              return res.json({
+                user: {
+                  id: results[0].id,
+                  email: results[0].email,
+                  name: results[0].name || results[0].email,
+                  role: "visitor",
+                  isVisitor: true,
+                },
+              });
+            }
+          }
+        } catch (dbError) {
+          console.warn("[Auth] DB lookup failed for visitor /me:", dbError);
+        }
+        
+        // Fallback to JWT payload data
+        return res.json({
+          user: {
+            id: visitorId,
+            email: payload.email || "unknown",
+            name: payload.name || "Visitor",
+            role: "visitor",
+            isVisitor: true,
+          },
+        });
+      }
+
       return res.json({ user: null });
     } catch (error) {
       return res.json({ user: null });
@@ -1026,7 +1073,433 @@ export const registerOAuthRoutes = (app: Express) => {
     }
   });
 
+  // ============================================
+  // VISITOR AUTH ROUTES (Passwordless Email OTP)
+  // ============================================
+
+  // Visitor cookie name (separate from admin)
+  const VISITOR_COOKIE_NAME = "visitor_session_id";
+  const VISITOR_SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+  /**
+   * Create a session token for a visitor user.
+   * The openId encodes the visitor's database ID (e.g., "visitor_12").
+   */
+  const createVisitorSessionToken = async (
+    visitorId: number,
+    name: string,
+    email: string
+  ): Promise<string> => {
+    const secretKey = getSessionSecret();
+    const expirationSeconds = Math.floor((Date.now() + VISITOR_SESSION_DURATION_MS) / 1000);
+    
+    return new SignJWT({
+      openId: `visitor_${visitorId}`,
+      appId: ENV.appId || "3bsolution",
+      name: name,
+      role: "visitor",
+      email: email,
+    })
+      .setProtectedHeader({ alg: "HS256", typ: "JWT" })
+      .setExpirationTime(expirationSeconds)
+      .sign(secretKey);
+  };
+
+  // STEP 1: Request visitor login - send OTP to email
+  app.post("/api/visitor/request-login", async (req: Request, res: Response) => {
+    const clientIP = getClientIP(req);
+    const userAgent = req.headers['user-agent'];
+    
+    try {
+      const { email, name, gdprConsent } = req.body;
+
+      // Check rate limit (shared with admin)
+      const rateCheck = checkRateLimit(clientIP);
+      if (!rateCheck.allowed) {
+        return res.status(429).json({
+          error: rateCheck.message,
+          retryAfter: rateCheck.retryAfter,
+        });
+      }
+
+      if (!email || !email.includes("@")) {
+        return res.status(400).json({ error: "Valid email address is required" });
+      }
+
+      const emailLower = email.toLowerCase().trim();
+      const trimmedName = name?.trim() || null;
+
+      // GDPR consent is required for new visitors
+      // We'll check if they're already registered
+      const db = await getDb();
+      let existingVisitor = null;
+      
+      if (db) {
+        const results = await db
+          .select()
+          .from(visitors)
+          .where(eq(visitors.email, emailLower))
+          .limit(1);
+        existingVisitor = results[0] || null;
+      }
+
+      // If new visitor, require GDPR consent
+      if (!existingVisitor && !gdprConsent) {
+        return res.status(400).json({ 
+          error: "GDPR consent is required to create an account",
+          requiresConsent: true,
+        });
+      }
+
+      // Send OTP via info@3bsolution.de
+      const otpResult = await sendVisitorOTP(emailLower, trimmedName || existingVisitor?.name || undefined);
+      
+      if (!otpResult.success) {
+        console.error("[Visitor Auth] Failed to send OTP:", otpResult.error);
+        return res.status(500).json({ 
+          error: "Failed to send verification code. Please try again.",
+          details: otpResult.error,
+        });
+      }
+
+      logAuditEvent({
+        action: "VISITOR_OTP_SENT",
+        email: emailLower,
+        ip: clientIP,
+        userAgent,
+        success: true,
+        details: existingVisitor ? "Returning visitor" : "New visitor registration",
+      });
+
+      return res.json({
+        success: true,
+        sessionId: otpResult.sessionId,
+        isNewVisitor: !existingVisitor,
+        message: "Verification code sent to your email.",
+      });
+    } catch (error) {
+      console.error("[Visitor Auth] Request login error:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // STEP 2: Verify visitor OTP and create session
+  app.post("/api/visitor/verify-otp", async (req: Request, res: Response) => {
+    const clientIP = getClientIP(req);
+    const userAgent = req.headers['user-agent'];
+    
+    try {
+      const { sessionId, code, name, gdprConsent } = req.body;
+
+      if (!sessionId || !code) {
+        return res.status(400).json({ error: "Session ID and verification code are required" });
+      }
+
+      // Verify OTP
+      const otpResult = verifyVisitorOTP(sessionId, code);
+      
+      if (!otpResult.valid) {
+        logAuditEvent({
+          action: "VISITOR_OTP_FAILED",
+          ip: clientIP,
+          userAgent,
+          success: false,
+          details: otpResult.error,
+        });
+        return res.status(401).json({ 
+          error: otpResult.error,
+          remainingAttempts: otpResult.remainingAttempts,
+        });
+      }
+
+      const verifiedEmail = otpResult.email!;
+      const visitorName = name?.trim() || otpResult.name || null;
+
+      // Find or create visitor in database
+      const db = await getDb();
+      if (!db) {
+        return res.status(500).json({ error: "Database unavailable" });
+      }
+
+      let visitor = null;
+      const existingResults = await db
+        .select()
+        .from(visitors)
+        .where(eq(visitors.email, verifiedEmail))
+        .limit(1);
+      
+      if (existingResults.length > 0) {
+        visitor = existingResults[0];
+        
+        // Update last login and name if provided
+        const updateData: any = { lastLogin: new Date(), status: "active" as const };
+        if (visitorName && !visitor.name) {
+          updateData.name = visitorName;
+        }
+        await db.update(visitors).set(updateData).where(eq(visitors.id, visitor.id));
+        
+        // Refresh visitor data
+        const refreshed = await db.select().from(visitors).where(eq(visitors.id, visitor.id)).limit(1);
+        visitor = refreshed[0] || visitor;
+      } else {
+        // Create new visitor
+        const gdprConsentData = gdprConsent ? {
+          version: "1.0",
+          timestamp: new Date().toISOString(),
+          ipAddress: clientIP,
+        } : null;
+
+        const insertResult = await db.insert(visitors).values({
+          email: verifiedEmail,
+          name: visitorName,
+          status: "active",
+          lastLogin: new Date(),
+          gdprConsent: gdprConsentData,
+        });
+        
+        const newId = insertResult[0].insertId;
+        const newResults = await db.select().from(visitors).where(eq(visitors.id, newId)).limit(1);
+        visitor = newResults[0];
+      }
+
+      if (!visitor) {
+        return res.status(500).json({ error: "Failed to create visitor account" });
+      }
+
+      // Also ensure visitor exists in the main users table for wishlist/saved search compatibility
+      const visitorOpenId = `visitor_${visitor.id}`;
+      try {
+        const existingUser = await db
+          .select()
+          .from(users)
+          .where(eq(users.openId, visitorOpenId))
+          .limit(1);
+        
+        if (existingUser.length === 0) {
+          await db.insert(users).values({
+            openId: visitorOpenId,
+            name: visitor.name || visitor.email,
+            email: visitor.email,
+            loginMethod: "email_otp",
+            role: "user",
+            lastSignedIn: new Date(),
+          });
+          console.log(`[Visitor Auth] Created users table entry for visitor ${visitorOpenId}`);
+        } else {
+          await db.update(users)
+            .set({ lastSignedIn: new Date(), name: visitor.name || visitor.email })
+            .where(eq(users.openId, visitorOpenId));
+        }
+      } catch (userSyncError) {
+        console.warn("[Visitor Auth] Failed to sync visitor to users table:", userSyncError);
+        // Non-fatal - visitor can still use the system
+      }
+
+      // Create session token
+      resetRateLimit(clientIP);
+      const token = await createVisitorSessionToken(
+        visitor.id,
+        visitor.name || visitor.email,
+        visitor.email
+      );
+
+      // Set both visitor cookie and main session cookie for compatibility
+      const cookieOptions = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax" as const,
+        path: "/",
+      };
+
+      res.cookie(VISITOR_COOKIE_NAME, token, {
+        ...cookieOptions,
+        maxAge: VISITOR_SESSION_DURATION_MS,
+      });
+
+      // Also set the main session cookie so tRPC context picks up the visitor
+      res.cookie(COOKIE_NAME, token, {
+        ...cookieOptions,
+        maxAge: VISITOR_SESSION_DURATION_MS,
+      });
+
+      logAuditEvent({
+        action: "VISITOR_LOGIN_SUCCESS",
+        email: verifiedEmail,
+        ip: clientIP,
+        userAgent,
+        success: true,
+        details: `Visitor ${visitor.id} logged in successfully`,
+      });
+
+      return res.json({
+        success: true,
+        visitor: {
+          id: visitor.id,
+          email: visitor.email,
+          name: visitor.name,
+          status: visitor.status,
+        },
+      });
+    } catch (error) {
+      console.error("[Visitor Auth] Verify OTP error:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Resend visitor OTP
+  app.post("/api/visitor/resend-otp", async (req: Request, res: Response) => {
+    const clientIP = getClientIP(req);
+    
+    try {
+      const { email } = req.body;
+
+      const rateCheck = checkRateLimit(clientIP);
+      if (!rateCheck.allowed) {
+        return res.status(429).json({
+          error: rateCheck.message,
+          retryAfter: rateCheck.retryAfter,
+        });
+      }
+
+      if (!email) {
+        return res.status(400).json({ error: "Email is required" });
+      }
+
+      const emailLower = email.toLowerCase().trim();
+      const otpResult = await sendVisitorOTP(emailLower);
+      
+      if (!otpResult.success) {
+        return res.status(500).json({ 
+          error: "Failed to send verification code",
+          details: otpResult.error,
+        });
+      }
+
+      return res.json({
+        success: true,
+        sessionId: otpResult.sessionId,
+        message: "New verification code sent to your email.",
+      });
+    } catch (error) {
+      console.error("[Visitor Auth] Resend OTP error:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Visitor logout
+  app.post("/api/visitor/logout", (req: Request, res: Response) => {
+    const clientIP = getClientIP(req);
+    
+    logAuditEvent({
+      action: "VISITOR_LOGOUT",
+      ip: clientIP,
+      userAgent: req.headers['user-agent'],
+      success: true,
+    });
+    
+    res.clearCookie(VISITOR_COOKIE_NAME, { path: "/" });
+    res.clearCookie(COOKIE_NAME, { path: "/" });
+    return res.json({ success: true });
+  });
+
+  // Get current visitor session
+  app.get("/api/visitor/me", async (req: Request, res: Response) => {
+    try {
+      const cookies = parseCookies(req);
+      // Check visitor cookie first, then main cookie
+      const token = cookies[VISITOR_COOKIE_NAME] || cookies[COOKIE_NAME];
+
+      if (!token) {
+        return res.json({ visitor: null });
+      }
+
+      const secretKey = getSessionSecret();
+      const { payload } = await jwtVerify(token, secretKey);
+      
+      if (!payload || !payload.openId) {
+        return res.json({ visitor: null });
+      }
+
+      const openId = payload.openId as string;
+      
+      // Only return visitor data for visitor sessions
+      if (!openId.startsWith("visitor_")) {
+        return res.json({ visitor: null });
+      }
+
+      const visitorId = parseInt(openId.replace("visitor_", ""), 10);
+      
+      const db = await getDb();
+      if (db && !isNaN(visitorId)) {
+        const results = await db
+          .select({
+            id: visitors.id,
+            email: visitors.email,
+            name: visitors.name,
+            status: visitors.status,
+          })
+          .from(visitors)
+          .where(eq(visitors.id, visitorId))
+          .limit(1);
+        
+        if (results.length > 0 && results[0].status === "active") {
+          return res.json({
+            visitor: results[0],
+          });
+        }
+      }
+
+      return res.json({ visitor: null });
+    } catch (error) {
+      return res.json({ visitor: null });
+    }
+  });
+
+  // ============================================
+  // VISITOR STATS (for admin dashboard)
+  // ============================================
+  app.get("/api/visitor/stats", async (req: Request, res: Response) => {
+    try {
+      // Verify admin session
+      const cookies = parseCookies(req);
+      const token = cookies[COOKIE_NAME];
+      if (!token) return res.status(401).json({ error: "Unauthorized" });
+      
+      const secretKey = getSessionSecret();
+      const { payload } = await jwtVerify(token, secretKey);
+      if (!payload?.openId || !(payload.openId as string).startsWith("admin_")) {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+
+      const db = await getDb();
+      if (!db) return res.json({ totalVisitors: 0, activeVisitors: 0, recentRegistrations: [] });
+
+      const [totalCount, activeCount, recentVisitors] = await Promise.all([
+        db.select({ count: sql<number>`count(*)` }).from(visitors).then((r: any) => r[0]?.count || 0),
+        db.select({ count: sql<number>`count(*)` }).from(visitors).where(eq(visitors.status, "active")).then((r: any) => r[0]?.count || 0),
+        db.select({
+          id: visitors.id,
+          email: visitors.email,
+          name: visitors.name,
+          status: visitors.status,
+          createdAt: visitors.createdAt,
+          lastLogin: visitors.lastLogin,
+        }).from(visitors).orderBy(sql`${visitors.createdAt} DESC`).limit(20),
+      ]);
+
+      return res.json({
+        totalVisitors: totalCount,
+        activeVisitors: activeCount,
+        recentRegistrations: recentVisitors,
+      });
+    } catch (error) {
+      console.error("[Visitor Stats] Error:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   console.log("[Auth] OAuth routes with Database Auth + Email OTP registered successfully");
+  console.log("[Auth] Visitor auth routes registered (passwordless OTP via info@3bsolution.de)");
 };
 
 // Verify token helper (used by other modules)
