@@ -6,7 +6,7 @@ import { ENV } from "./env";
 import { sendOTP, verifyOTP, getOTPEmail, getOTPConfig, testEmailConfiguration } from "./email-otp-service";
 import { getDb } from "../db";
 import { adminUsers } from "../../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 // Re-export COOKIE_NAME for other files that import from oauth
 export const COOKIE_NAME = SHARED_COOKIE_NAME;
@@ -314,10 +314,93 @@ const createAdminSessionToken = async (
 };
 
 // ============================================
+// BOOTSTRAP: Seed admin_users table if empty
+// ============================================
+async function bootstrapAdminUsers(): Promise<void> {
+  try {
+    const db = await getDb();
+    if (!db) {
+      console.warn("[Auth Bootstrap] Database not available, skipping bootstrap");
+      return;
+    }
+
+    // Check if admin_users table has any rows
+    const existingUsers = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(adminUsers);
+    
+    const count = Number(existingUsers[0]?.count ?? 0);
+    
+    if (count > 0) {
+      console.log(`[Auth Bootstrap] admin_users table has ${count} users, skipping bootstrap`);
+      return;
+    }
+
+    console.log("[Auth Bootstrap] admin_users table is EMPTY - seeding initial users...");
+
+    // Define the initial team members
+    const initialUsers = [
+      {
+        email: "mariobockph@3bsolution.de",
+        name: "Mario Bock",
+        password: "3BSolution2025!",
+        role: "admin" as const,
+      },
+      {
+        email: "bibianbockph@3bsolution.de",
+        name: "Bibian Pacayra Bock",
+        password: "Start@2026!",
+        role: "director" as const,
+      },
+      {
+        email: "georgblascheck@3bsolution.de",
+        name: "Georg Blascheck",
+        password: "Georg@0123!",
+        role: "director" as const,
+      },
+      {
+        email: "engelapacayraph@3bsolution.de",
+        name: "Engela Pacayra Espares",
+        password: "Start@2026!",
+        role: "director" as const,
+      },
+    ];
+
+    for (const user of initialUsers) {
+      try {
+        const passwordHash = await hashPassword(user.password);
+        await db.insert(adminUsers).values({
+          email: user.email,
+          name: user.name,
+          passwordHash,
+          role: user.role,
+          isActive: true,
+          mustChangePassword: true,
+        });
+        console.log(`[Auth Bootstrap] Created user: ${user.name} (${user.email}) as ${user.role}`);
+      } catch (insertErr) {
+        // If user already exists (unique constraint), skip
+        console.warn(`[Auth Bootstrap] Could not create ${user.email}:`, insertErr);
+      }
+    }
+
+    console.log("[Auth Bootstrap] Initial admin users seeded successfully!");
+    console.log("[Auth Bootstrap] IMPORTANT: All users should change their passwords after first login.");
+  } catch (error) {
+    console.error("[Auth Bootstrap] Failed to bootstrap admin users:", error);
+  }
+}
+
+// ============================================
 // REGISTER OAUTH ROUTES
 // ============================================
 export const registerOAuthRoutes = (app: Express) => {
   console.log("[Auth] Registering OAuth routes with Database Auth + Email OTP...");
+  
+  // Bootstrap admin users on startup (only seeds if table is empty)
+  bootstrapAdminUsers().catch(err => {
+    console.error("[Auth] Bootstrap error:", err);
+  });
   console.log(`[Auth] Email OTP: ${SECURITY_CONFIG.emailOTPEnabled ? 'ENABLED' : 'DISABLED'}`);
   console.log("[Auth] Authentication source: PostgreSQL admin_users table");
 
