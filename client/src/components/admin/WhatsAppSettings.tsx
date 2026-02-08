@@ -155,7 +155,7 @@ export function WhatsAppSettings() {
     displayOrder: 0,
     isActive: true,
     isVisible: true,
-    defaultMessage: "Hi! I'm interested in learning more about 3B Solution's real estate investment opportunities.",
+    defaultMessage: "Hi! I'm interested in learning more about 3B Solution's real estate opportunities.",
     visibleOnPages: ["contact", "team", "about", "property"],
   });
 
@@ -169,7 +169,7 @@ export function WhatsAppSettings() {
       displayOrder: 0,
       isActive: true,
       isVisible: true,
-      defaultMessage: "Hi! I'm interested in learning more about 3B Solution's real estate investment opportunities.",
+      defaultMessage: "Hi! I'm interested in learning more about 3B Solution's real estate opportunities.",
       visibleOnPages: ["contact", "team", "about", "property"],
     });
   };
@@ -272,7 +272,7 @@ export function WhatsAppSettings() {
       displayOrder: member.displayOrder,
       isActive: member.isActive,
       isVisible: true,
-      defaultMessage: `Hi ${member.name.split(' ')[0]}! I'm interested in learning more about 3B Solution's real estate investment opportunities.`,
+      defaultMessage: `Hi ${member.name.split(' ')[0]}! I'm interested in learning more about 3B Solution's real estate opportunities.`,
       visibleOnPages: ["contact", "team", "about", "property"],
     };
 

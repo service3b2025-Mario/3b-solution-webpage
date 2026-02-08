@@ -31,9 +31,9 @@ export async function seedDatabase() {
 
   // Seed Services
   const servicesData = [
-    { title: 'Investment Advisory', slug: 'investment-advisory', shortDescription: 'Strategic guidance for high-yield real estate investments', fullDescription: 'Our investment advisory services provide comprehensive analysis and strategic recommendations for investors seeking premium real estate opportunities. We leverage our global network and local expertise to identify, evaluate, and structure investments that align with your financial objectives.', icon: 'TrendingUp', order: 1, isActive: true, features: ['Market Analysis', 'Due Diligence', 'Investment Structuring', 'Risk Assessment'] },
+    { title: 'Service Advisory', slug: 'service-advisory', shortDescription: 'Strategic guidance for high-yield real estate services', fullDescription: 'Our service advisory provides comprehensive analysis and strategic recommendations for clients seeking premium real estate opportunities. We leverage our global network and local expertise to identify, evaluate, and structure transactions that align with your financial objectives.', icon: 'TrendingUp', order: 1, isActive: true, features: ['Market Analysis', 'Due Diligence', 'Transaction Structuring', 'Risk Assessment'] },
     { title: 'Property Acquisition', slug: 'property-acquisition', shortDescription: 'End-to-end support for acquiring premium properties', fullDescription: 'From initial property identification to final closing, our acquisition team guides you through every step of the purchase process. We handle negotiations, legal coordination, and ensure seamless transactions across multiple jurisdictions.', icon: 'Building', order: 2, isActive: true, features: ['Property Sourcing', 'Negotiation Support', 'Legal Coordination', 'Transaction Management'] },
-    { title: 'Asset Management', slug: 'asset-management', shortDescription: 'Professional management to maximize your investment returns', fullDescription: 'Our asset management services ensure your investments perform optimally. We provide ongoing oversight, performance monitoring, and strategic recommendations to enhance value and returns throughout the investment lifecycle.', icon: 'BarChart3', order: 3, isActive: true, features: ['Performance Monitoring', 'Value Enhancement', 'Reporting & Analytics', 'Exit Strategy Planning'] },
+    { title: 'Real Estate Services', slug: 'real-estate-services', shortDescription: 'Professional management to maximize your property performance', fullDescription: 'Our real estate services ensure your properties perform optimally. We provide ongoing oversight, performance monitoring, and strategic recommendations to enhance value throughout the property lifecycle.', icon: 'BarChart3', order: 3, isActive: true, features: ['Performance Monitoring', 'Value Enhancement', 'Reporting & Analytics', 'Exit Strategy Planning'] },
     { title: 'Development Consulting', slug: 'development-consulting', shortDescription: 'Expert guidance for hospitality and commercial developments', fullDescription: 'Leverage our deep expertise in hospitality and commercial development. We provide consulting services covering project feasibility, design optimization, operator selection, and construction oversight.', icon: 'Compass', order: 4, isActive: true, features: ['Feasibility Studies', 'Design Optimization', 'Operator Selection', 'Project Oversight'] },
   ];
   await db.insert(services).values(servicesData).onDuplicateKeyUpdate({ set: { title: servicesData[0].title } });
@@ -68,10 +68,10 @@ export async function seedDatabase() {
   // Seed Site Settings
   const settingsData = [
     { key: 'hero_headline', value: 'Premium Real Estate Solutions', type: 'text' as const, category: 'home' },
-    { key: 'hero_subheadline', value: 'Exclusive Access to High-Yield Real Estate Investments', type: 'text' as const, category: 'home' },
-    { key: 'hero_description', value: 'Anchored in the Philippines, Diversified Globally\n15-30% Annual Returns Backed by Global Expertise', type: 'text' as const, category: 'home' },
+    { key: 'hero_subheadline', value: 'Exclusive Access to High-Yield Real Estate Opportunities', type: 'text' as const, category: 'home' },
+    { key: 'hero_description', value: 'Anchored in the Philippines, Diversified Globally\nTarget Returns: 15-30% (Projected based on market analysis)', type: 'text' as const, category: 'home' },
     { key: 'about_story', value: 'Founded with a vision to bridge global investors with premium real estate opportunities, 3B Solution has grown into a trusted partner for discerning investors worldwide.', type: 'text' as const, category: 'about' },
-    { key: 'mission', value: 'To provide exceptional real estate investment opportunities that deliver superior returns while maintaining the highest standards of integrity and professionalism.', type: 'text' as const, category: 'about' },
+    { key: 'mission', value: 'To provide exceptional real estate brokerage services that facilitate access to high-yield opportunities while maintaining the highest standards of integrity and professionalism.', type: 'text' as const, category: 'about' },
     { key: 'vision', value: 'To be the premier global platform connecting sophisticated investors with transformative real estate opportunities.', type: 'text' as const, category: 'about' },
     { key: 'footer_disclaimer', value: '© 2024 3B Solution. All rights reserved. Investment involves risk. Past performance is not indicative of future results.', type: 'text' as const, category: 'footer' },
   ];
@@ -80,8 +80,8 @@ export async function seedDatabase() {
   // Seed Market Reports
   const reportsData = [
     { title: 'Philippine Real Estate Market Outlook 2024', slug: 'ph-market-outlook-2024', description: 'Comprehensive analysis of the Philippine real estate market including hospitality, commercial, and residential sectors.', category: 'Market Outlook', region: 'SouthEastAsia', isActive: true, publishedAt: new Date() },
-    { title: 'Maldives Tourism & Hospitality Investment Guide', slug: 'maldives-hospitality-guide', description: 'In-depth guide to investing in Maldives hospitality sector, covering regulations, opportunities, and market dynamics.', category: 'Investment Guide', region: 'Maldives', isActive: true, publishedAt: new Date() },
-    { title: 'European Boutique Hotel Investment Trends', slug: 'europe-boutique-trends', description: 'Analysis of boutique hotel investment opportunities across major European cities.', category: 'Market Trends', region: 'Europe', isActive: true, publishedAt: new Date() },
+    { title: 'Maldives Tourism & Hospitality Property Guide', slug: 'maldives-hospitality-guide', description: 'In-depth guide to Maldives hospitality sector, covering regulations, opportunities, and market dynamics.', category: 'Property Guide', region: 'Maldives', isActive: true, publishedAt: new Date() },
+    { title: 'European Boutique Hotel Investment Trends', slug: 'europe-boutique-trends', description: 'Analysis of boutique hotel opportunities across major European cities.', category: 'Market Trends', region: 'Europe', isActive: true, publishedAt: new Date() },
   ];
   await db.insert(marketReports).values(reportsData).onDuplicateKeyUpdate({ set: { title: reportsData[0].title } });
 
@@ -94,7 +94,7 @@ export async function seedDatabase() {
 <p>By accessing and using the 3B Solution website and services, you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to abide by these terms, please do not use our services.</p>
 
 <h2>2. Description of Services</h2>
-<p>3B Solution provides real estate investment advisory services, property acquisition support, asset management, and development consulting. Our services are intended for sophisticated investors and institutional clients seeking premium real estate investment opportunities.</p>
+<p>3B Solution provides real estate brokerage and services, property acquisition support, property management, and development consulting. Our services are intended for sophisticated clients seeking premium real estate opportunities.</p>
 
 <h2>3. Investment Risks</h2>
 <p>All investments involve risk, including the potential loss of principal. Past performance is not indicative of future results. Real estate investments are subject to various risks including market fluctuations, economic conditions, regulatory changes, and other factors beyond our control.</p>
@@ -140,7 +140,7 @@ export async function seedDatabase() {
 <p>We use the information we collect to:</p>
 <ul>
 <li>Provide and improve our services</li>
-<li>Communicate with you about investment opportunities</li>
+<li>Communicate with you about property opportunities</li>
 <li>Send market updates and newsletters (with your consent)</li>
 <li>Comply with legal obligations</li>
 <li>Protect our rights and prevent fraud</li>
@@ -206,7 +206,7 @@ Website: www.3bsolution.com</p>
 <p>Managing Director: Georg Blascheck</p>
 
 <h2>Regulatory Information</h2>
-<p>3B Solution operates as a real estate investment advisory firm. Our services are provided in compliance with applicable regulations in Germany and the Philippines.</p>
+<p>3B Solution operates as a real estate brokerage and services company. Our services are provided in compliance with applicable regulations in Germany and the Philippines.</p>
 
 <h2>Disclaimer</h2>
 <p>The information provided on this website is for general informational purposes only. It does not constitute investment advice or an offer to sell or solicitation of an offer to buy any securities or investment products.</p>
@@ -218,7 +218,7 @@ Website: www.3bsolution.com</p>
 
 <p>All content on this website, including text, graphics, logos, images, and software, is the property of 3B Solution and is protected by German and international copyright laws.</p>`,
       metaTitle: 'Imprint - 3B Solution',
-      metaDescription: 'Legal information and company details for 3B Solution real estate investment advisory.',
+      metaDescription: 'Legal information and company details for 3B Solution real estate brokerage and services.',
       isActive: true,
       order: 3
     },

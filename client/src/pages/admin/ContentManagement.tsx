@@ -12,6 +12,7 @@ import { Plus, Edit2, Trash2, Check, X, Loader2, Image as ImageIcon } from "luci
 import { PDFUpload } from "@/components/PDFUpload";
 import { RichTextEditor } from "@/components/RichTextEditor";
 import { SuccessStoryEditDialog } from "@/components/SuccessStoryEditDialog";
+import { ServicesTab } from "@/components/admin/ServicesTab";
 import { toast } from "sonner";
 
 // Skeleton loader component
@@ -29,331 +30,7 @@ function TableSkeleton({ rows = 5 }: { rows?: number }) {
   );
 }
 
-// Services Tab with lazy loading and inline editing
-function ServicesTab() {
-  const [activeTab, setActiveTab] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editData, setEditData] = useState<any>({});
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [isAdding, setIsAdding] = useState(false);
-
-  const utils = trpc.useUtils();
-  const { data: services, isLoading } = trpc.services.list.useQuery(undefined, {
-    enabled: activeTab, // Only fetch when tab is active
-  });
-
-  const createService = trpc.services.create.useMutation({
-    onSuccess: () => {
-      setIsAdding(false);
-      setEditingId(null);
-      setEditData({});
-      utils.services.list.invalidate();
-      toast.success("Service created successfully");
-    },
-    onError: () => {
-      toast.error("Failed to create service");
-    },
-  });
-
-  const updateService = trpc.services.update.useMutation({
-    onMutate: async (newData) => {
-      // Cancel outgoing refetches
-      await utils.services.list.cancel();
-      
-      // Snapshot previous value
-      const previousServices = utils.services.list.getData();
-      
-      // Optimistically update
-      utils.services.list.setData(undefined, (old) =>
-        old?.map((s) => (s.id === newData.id ? { ...s, ...newData } : s))
-      );
-      
-      return { previousServices };
-    },
-    onError: (err, newData, context) => {
-      // Rollback on error
-      utils.services.list.setData(undefined, context?.previousServices);
-      toast.error("Failed to update service");
-    },
-    onSuccess: () => {
-      setEditingId(null);
-      setEditData({});
-      toast.success("Service updated successfully");
-    },
-  });
-
-  const deleteService = trpc.services.delete.useMutation({
-    onMutate: async (id) => {
-      await utils.services.list.cancel();
-      const previousServices = utils.services.list.getData();
-      utils.services.list.setData(undefined, (old) => old?.filter((s) => s.id !== id));
-      return { previousServices };
-    },
-    onError: (err, id, context) => {
-      utils.services.list.setData(undefined, context?.previousServices);
-      toast.error("Failed to delete service");
-    },
-    onSuccess: () => {
-      toast.success("Service deleted successfully");
-    },
-  });
-
-  const handleEdit = (service: any) => {
-    setEditingId(service.id);
-    setEditData(service);
-  };
-
-  const handleSave = () => {
-    if (isAdding) {
-      // Create new service
-      createService.mutate(editData);
-    } else if (editingId) {
-      // Update existing service
-      updateService.mutate({ id: editingId, data: editData });
-    }
-  };
-
-  const handleCancel = () => {
-    setIsAdding(false);
-    setEditingId(null);
-    setEditData({});
-  };
-
-  const handleAdd = () => {
-    setIsAdding(true);
-    setEditingId(-1); // Use -1 to indicate adding mode
-    setEditData({
-      title: "",
-      slug: "",
-      shortDescription: "",
-      fullDescription: "",
-      icon: "",
-      image: "",
-      features: [],
-      order: 0,
-      isActive: true,
-    });
-  };
-
-  const handleBulkDelete = () => {
-    if (selectedIds.length === 0) return;
-    if (confirm(`Delete ${selectedIds.length} selected services?`)) {
-      selectedIds.forEach((id) => deleteService.mutate(id));
-      setSelectedIds([]);
-    }
-  };
-
-  const toggleSelectAll = () => {
-    if (selectedIds.length === services?.length) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(services?.map((s) => s.id) || []);
-    }
-  };
-
-  // Mark tab as active when rendered
-  if (!activeTab) {
-    setTimeout(() => setActiveTab(true), 0);
-  }
-
-  return (
-    <Card className="border-0 shadow-lg">
-      <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>Services</span>
-          <div className="flex gap-2">
-            {selectedIds.length > 0 && (
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={handleBulkDelete}
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Delete ({selectedIds.length})
-              </Button>
-            )}
-            <Button 
-              className="bg-secondary hover:bg-secondary/90 text-white" 
-              size="sm"
-              onClick={handleAdd}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Service
-            </Button>
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <TableSkeleton />
-        ) : services && services.length > 0 ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-12">
-                  <Checkbox
-                    checked={selectedIds.length === services.length}
-                    onCheckedChange={toggleSelectAll}
-                  />
-                </TableHead>
-                <TableHead>Icon</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead className="w-32">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {/* Add new service row */}
-              {isAdding && editingId === -1 && (
-                <TableRow className="bg-muted/50">
-                  <TableCell>
-                    <Checkbox disabled />
-                  </TableCell>
-                  <TableCell>
-                    <div className="w-10 h-10 bg-primary/10 rounded flex items-center justify-center">
-                      <ImageIcon className="w-5 h-5 text-primary" />
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      placeholder="Service Title"
-                      value={editData.title || ""}
-                      onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-                      className="max-w-xs"
-                      autoFocus
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Textarea
-                      placeholder="Short description..."
-                      value={editData.shortDescription || ""}
-                      onChange={(e) => setEditData({ ...editData, shortDescription: e.target.value })}
-                      className="max-w-md"
-                      rows={2}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={handleSave}
-                        disabled={createService.isPending || !editData.title}
-                      >
-                        {createService.isPending ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Check className="w-4 h-4 text-green-600" />
-                        )}
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={handleCancel}>
-                        <X className="w-4 h-4 text-red-600" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
-              {/* Existing services */}
-              {services.map((service) => (
-                <TableRow key={service.id}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedIds.includes(service.id)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setSelectedIds([...selectedIds, service.id]);
-                        } else {
-                          setSelectedIds(selectedIds.filter((id) => id !== service.id));
-                        }
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <div className="w-10 h-10 bg-primary/10 rounded flex items-center justify-center">
-                      <ImageIcon className="w-5 h-5 text-primary" />
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {editingId === service.id ? (
-                      <Input
-                        value={editData.title || ""}
-                        onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-                        className="max-w-xs"
-                      />
-                    ) : (
-                      <span className="font-medium">{service.title}</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {editingId === service.id ? (
-                      <Textarea
-                        value={editData.shortDescription || ""}
-                        onChange={(e) => setEditData({ ...editData, shortDescription: e.target.value })}
-                        className="max-w-md"
-                        rows={2}
-                      />
-                    ) : (
-                      <span className="text-sm text-muted-foreground line-clamp-2">
-                        {service.shortDescription}
-                      </span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {editingId === service.id ? (
-                      <div className="flex gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={handleSave}
-                          disabled={updateService.isPending}
-                        >
-                          {updateService.isPending ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Check className="w-4 h-4 text-green-600" />
-                          )}
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={handleCancel}>
-                          <X className="w-4 h-4 text-red-600" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="flex gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(service)}
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => deleteService.mutate(service.id)}
-                          disabled={deleteService.isPending}
-                        >
-                          {deleteService.isPending ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="w-4 h-4 text-red-600" />
-                          )}
-                        </Button>
-                      </div>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No services yet. Add your first service to get started.</p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
+// ServicesTab is now imported from @/components/admin/ServicesTab
 
 // Locations Tab (similar pattern)
 function LocationsTab() {
@@ -1264,15 +941,84 @@ function MarketReportsTab() {
   );
 }
 
-// Legal Pages Tab
+// Legal Pages Tab - UPDATED with JSON-based multi-language support
+// This component stores all 3 languages (EN, DE, ZH) in a single 'content' field as JSON
+// Format: { "en": "<html>", "de": "<html>", "zh": "<html>" }
+
 function LegalPagesTab() {
   const [activeTab, setActiveTab] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editData, setEditData] = useState<any>({});
+  const [isAdding, setIsAdding] = useState(false);
+  const [contentLang, setContentLang] = useState<"en" | "de" | "zh">("en");
 
   const utils = trpc.useUtils();
   const { data: pages, isLoading } = trpc.legalPages.listAll.useQuery(undefined, {
     enabled: activeTab,
+  });
+
+  // Parse JSON content into separate language fields for editing
+  const parseContentForEdit = (page: any) => {
+    let contentEn = "";
+    let contentDe = "";
+    let contentZh = "";
+    
+    if (page.content) {
+      try {
+        const parsed = JSON.parse(page.content);
+        if (typeof parsed === "object" && (parsed.en || parsed.de || parsed.zh)) {
+          contentEn = parsed.en || "";
+          contentDe = parsed.de || "";
+          contentZh = parsed.zh || "";
+        } else {
+          // Not valid JSON format, treat as English content
+          contentEn = page.content;
+        }
+      } catch (e) {
+        // Not JSON, treat entire content as English (legacy format)
+        contentEn = page.content;
+      }
+    }
+    
+    return {
+      ...page,
+      contentEn,
+      contentDe,
+      contentZh,
+    };
+  };
+
+  // Convert separate language fields back to JSON for saving
+  const prepareContentForSave = (data: any) => {
+    const jsonContent = JSON.stringify({
+      en: data.contentEn || "",
+      de: data.contentDe || "",
+      zh: data.contentZh || "",
+    });
+    
+    return {
+      title: data.title,
+      slug: data.slug,
+      content: jsonContent,
+      metaTitle: data.metaTitle,
+      metaDescription: data.metaDescription,
+      isActive: data.isActive,
+      order: data.order,
+    };
+  };
+
+  const createPage = trpc.legalPages.create.useMutation({
+    onSuccess: () => {
+      setIsAdding(false);
+      setEditingId(null);
+      setEditData({});
+      setContentLang("en");
+      utils.legalPages.listAll.invalidate();
+      toast.success("Legal page created successfully");
+    },
+    onError: () => {
+      toast.error("Failed to create legal page");
+    },
   });
 
   const updatePage = trpc.legalPages.update.useMutation({
@@ -1294,7 +1040,18 @@ function LegalPagesTab() {
       utils.legalPages.listAll.invalidate();
       setEditingId(null);
       setEditData({});
+      setContentLang("en");
       toast.success("Legal page updated successfully");
+    },
+  });
+
+  const deletePage = trpc.legalPages.delete.useMutation({
+    onSuccess: () => {
+      utils.legalPages.listAll.invalidate();
+      toast.success("Legal page deleted successfully");
+    },
+    onError: () => {
+      toast.error("Failed to delete legal page");
     },
   });
 
@@ -1304,131 +1061,369 @@ function LegalPagesTab() {
 
   const handleEdit = (page: any) => {
     setEditingId(page.id);
-    setEditData(page);
+    setEditData(parseContentForEdit(page));
+    setContentLang("en");
   };
 
   const handleSave = () => {
-    if (editingId) {
-      updatePage.mutate({ id: editingId, ...editData });
+    const dataToSave = prepareContentForSave(editData);
+    
+    if (isAdding) {
+      createPage.mutate(dataToSave);
+    } else if (editingId) {
+      updatePage.mutate({ id: editingId, ...dataToSave });
     }
   };
 
   const handleCancel = () => {
+    setIsAdding(false);
     setEditingId(null);
     setEditData({});
+    setContentLang("en");
+  };
+
+  const handleAdd = () => {
+    setIsAdding(true);
+    setEditingId(-1);
+    setEditData({
+      title: "",
+      slug: "",
+      contentEn: "",
+      contentDe: "",
+      contentZh: "",
+      metaTitle: "",
+      metaDescription: "",
+      isActive: true,
+      order: 0,
+    });
+    setContentLang("en");
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm("Are you sure you want to delete this legal page?")) {
+      deletePage.mutate(id);
+    }
+  };
+
+  // Get current content field based on selected language
+  const getCurrentContentField = () => {
+    if (contentLang === "de") return "contentDe";
+    if (contentLang === "zh") return "contentZh";
+    return "contentEn";
+  };
+
+  const getPlaceholder = () => {
+    if (contentLang === "de") return "Geben Sie den Inhalt der rechtlichen Seite auf Deutsch ein...";
+    if (contentLang === "zh") return "请输入中文法律页面内容...";
+    return "Enter legal page content in English...";
   };
 
   return (
     <Card className="border-0 shadow-lg">
       <CardHeader>
-        <CardTitle>Legal Pages</CardTitle>
+        <CardTitle className="flex items-center justify-between">
+          <span>Legal Pages</span>
+          <Button 
+            className="bg-secondary hover:bg-secondary/90 text-white" 
+            size="sm"
+            onClick={handleAdd}
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Legal Page
+          </Button>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
           <TableSkeleton rows={3} />
-        ) : pages && pages.length > 0 ? (
+        ) : (
           <div className="space-y-6">
-            {pages.map((page: any) => (
-              <Card key={page.id} className="border">
+            {/* Add new page form */}
+            {isAdding && editingId === -1 && (
+              <Card className="border-2 border-secondary">
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between text-lg">
-                    {editingId === page.id ? (
-                      <Input
-                        value={editData.title || ""}
-                        onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-                        className="max-w-md"
-                      />
-                    ) : (
-                      <span>{page.title}</span>
-                    )}
+                    <span className="text-secondary">New Legal Page</span>
                     <div className="flex gap-2">
-                      {editingId === page.id ? (
-                        <>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={handleSave}
-                            disabled={updatePage.isPending}
-                          >
-                            {updatePage.isPending ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <Check className="w-4 h-4 text-green-600" />
-                            )}
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={handleCancel}>
-                            <X className="w-4 h-4 text-red-600" />
-                          </Button>
-                        </>
-                      ) : (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEdit(page)}
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </Button>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleSave}
+                        disabled={createPage.isPending || !editData.title || !editData.slug}
+                      >
+                        {createPage.isPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Check className="w-4 h-4 text-green-600" />
+                        )}
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={handleCancel}>
+                        <X className="w-4 h-4 text-red-600" />
+                      </Button>
                     </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {editingId === page.id ? (
-                    <div className="space-y-4">
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm font-medium mb-2 block">Slug</label>
+                        <label className="text-sm font-medium mb-2 block">Title *</label>
+                        <Input
+                          value={editData.title || ""}
+                          onChange={(e) => setEditData({ ...editData, title: e.target.value })}
+                          placeholder="Cookie Policy"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Slug *</label>
                         <Input
                           value={editData.slug || ""}
                           onChange={(e) => setEditData({ ...editData, slug: e.target.value })}
-                          placeholder="privacy-policy"
+                          placeholder="cookie-policy"
+                        />
+                      </div>
+                    </div>
+                    
+                    {/* Language tabs for content */}
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Content</label>
+                      <div className="flex gap-2 mb-3">
+                        <Button
+                          type="button"
+                          variant={contentLang === "en" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setContentLang("en")}
+                          className={contentLang === "en" ? "bg-primary" : ""}
+                        >
+                          English {editData.contentEn ? "✓" : ""}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={contentLang === "de" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setContentLang("de")}
+                          className={contentLang === "de" ? "bg-primary" : ""}
+                        >
+                          Deutsch {editData.contentDe ? "✓" : ""}
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={contentLang === "zh" ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setContentLang("zh")}
+                          className={contentLang === "zh" ? "bg-primary" : ""}
+                        >
+                          中文 {editData.contentZh ? "✓" : ""}
+                        </Button>
+                      </div>
+                      <div className="min-h-[400px] border rounded-md">
+                        <RichTextEditor
+                          content={editData[getCurrentContentField()] || ""}
+                          onChange={(content) => setEditData({ ...editData, [getCurrentContentField()]: content })}
+                          placeholder={getPlaceholder()}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-sm font-medium mb-2 block">Meta Title</label>
+                        <Input
+                          value={editData.metaTitle || ""}
+                          onChange={(e) => setEditData({ ...editData, metaTitle: e.target.value })}
+                          placeholder="SEO title"
                         />
                       </div>
                       <div>
-                        <label className="text-sm font-medium mb-2 block">Content</label>
-                        <RichTextEditor
-                          content={editData.content || ""}
-                          onChange={(content) => setEditData({ ...editData, content })}
-                          placeholder="Enter legal page content..."
+                        <label className="text-sm font-medium mb-2 block">Meta Description</label>
+                        <Textarea
+                          value={editData.metaDescription || ""}
+                          onChange={(e) => setEditData({ ...editData, metaDescription: e.target.value })}
+                          placeholder="SEO description"
+                          rows={2}
                         />
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Meta Title</label>
-                          <Input
-                            value={editData.metaTitle || ""}
-                            onChange={(e) => setEditData({ ...editData, metaTitle: e.target.value })}
-                            placeholder="SEO title"
-                          />
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium mb-2 block">Meta Description</label>
-                          <Textarea
-                            value={editData.metaDescription || ""}
-                            onChange={(e) => setEditData({ ...editData, metaDescription: e.target.value })}
-                            placeholder="SEO description"
-                            rows={2}
-                          />
-                        </div>
-                      </div>
                     </div>
-                  ) : (
-                    <div className="prose prose-sm max-w-none">
-                      <div dangerouslySetInnerHTML={{ __html: page.content || "<p class='text-muted-foreground'>No content yet</p>" }} />
-                    </div>
-                  )}
+                  </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No legal pages found. Please seed the database.</p>
+            )}
+            
+            {/* Existing pages */}
+            {pages && pages.length > 0 ? (
+              pages.map((page: any) => (
+                <Card key={page.id} className="border">
+                  <CardHeader>
+                    <CardTitle className="flex items-center justify-between text-lg">
+                      {editingId === page.id ? (
+                        <Input
+                          value={editData.title || ""}
+                          onChange={(e) => setEditData({ ...editData, title: e.target.value })}
+                          className="max-w-md"
+                        />
+                      ) : (
+                        <span>{page.title}</span>
+                      )}
+                      <div className="flex gap-2">
+                        {editingId === page.id ? (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={handleSave}
+                              disabled={updatePage.isPending}
+                            >
+                              {updatePage.isPending ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Check className="w-4 h-4 text-green-600" />
+                              )}
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={handleCancel}>
+                              <X className="w-4 h-4 text-red-600" />
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEdit(page)}
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDelete(page.id)}
+                            >
+                              <Trash2 className="w-4 h-4 text-red-600" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {editingId === page.id ? (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Slug</label>
+                          <Input
+                            value={editData.slug || ""}
+                            onChange={(e) => setEditData({ ...editData, slug: e.target.value })}
+                            placeholder="privacy-policy"
+                          />
+                        </div>
+                        
+                        {/* Language tabs for content */}
+                        <div>
+                          <label className="text-sm font-medium mb-2 block">Content</label>
+                          <div className="flex gap-2 mb-3">
+                            <Button
+                              type="button"
+                              variant={contentLang === "en" ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setContentLang("en")}
+                              className={contentLang === "en" ? "bg-primary" : ""}
+                            >
+                              English {editData.contentEn ? "✓" : ""}
+                            </Button>
+                            <Button
+                              type="button"
+                              variant={contentLang === "de" ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setContentLang("de")}
+                              className={contentLang === "de" ? "bg-primary" : ""}
+                            >
+                              Deutsch {editData.contentDe ? "✓" : ""}
+                            </Button>
+                            <Button
+                              type="button"
+                              variant={contentLang === "zh" ? "default" : "outline"}
+                              size="sm"
+                              onClick={() => setContentLang("zh")}
+                              className={contentLang === "zh" ? "bg-primary" : ""}
+                            >
+                              中文 {editData.contentZh ? "✓" : ""}
+                            </Button>
+                          </div>
+                          <div className="min-h-[400px] border rounded-md">
+                            <RichTextEditor
+                              content={editData[getCurrentContentField()] || ""}
+                              onChange={(content) => setEditData({ ...editData, [getCurrentContentField()]: content })}
+                              placeholder={getPlaceholder()}
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-sm font-medium mb-2 block">Meta Title</label>
+                            <Input
+                              value={editData.metaTitle || ""}
+                              onChange={(e) => setEditData({ ...editData, metaTitle: e.target.value })}
+                              placeholder="SEO title"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-sm font-medium mb-2 block">Meta Description</label>
+                            <Textarea
+                              value={editData.metaDescription || ""}
+                              onChange={(e) => setEditData({ ...editData, metaDescription: e.target.value })}
+                              placeholder="SEO description"
+                              rows={2}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="prose prose-sm max-w-none">
+                        {(() => {
+                          // Try to parse and show English content preview
+                          try {
+                            const parsed = JSON.parse(page.content || "{}");
+                            const preview = parsed.en || parsed.de || parsed.zh || "";
+                            return (
+                              <div>
+                                <div className="flex gap-2 mb-2">
+                                  {parsed.en && <Badge variant="outline">EN ✓</Badge>}
+                                  {parsed.de && <Badge variant="outline">DE ✓</Badge>}
+                                  {parsed.zh && <Badge variant="outline">ZH ✓</Badge>}
+                                </div>
+                                <div 
+                                  className="text-muted-foreground line-clamp-3"
+                                  dangerouslySetInnerHTML={{ __html: preview.substring(0, 300) + "..." }} 
+                                />
+                              </div>
+                            );
+                          } catch (e) {
+                            // Legacy format - show as-is
+                            return (
+                              <div 
+                                className="text-muted-foreground line-clamp-3"
+                                dangerouslySetInnerHTML={{ __html: (page.content || "<p>No content yet</p>").substring(0, 300) + "..." }} 
+                              />
+                            );
+                          }
+                        })()}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))
+            ) : !isAdding && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">No legal pages found. Click "Add Legal Page" to create one.</p>
+              </div>
+            )}
           </div>
         )}
       </CardContent>
     </Card>
   );
 }
+
 
 export default function ContentManagement() {
   const [activeTab, setActiveTab] = useState("services");

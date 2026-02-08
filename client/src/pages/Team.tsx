@@ -112,7 +112,7 @@ export default function Team() {
                 Meet Our Team
               </h1>
               <p className="text-xl text-blue-100">
-                Experienced professionals dedicated to delivering exceptional real estate investment opportunities and superior client service. Our team combines deep market knowledge, institutional-grade analysis, and hands-on operational expertise.
+                Experienced professionals dedicated to delivering exceptional real estate opportunities and superior client service. Our team combines deep market knowledge, institutional-grade analysis, and hands-on operational expertise.
               </p>
             </div>
           </div>
@@ -178,7 +178,7 @@ export default function Team() {
                               asChild
                             >
                               <a 
-                                href={`https://wa.me/${member.phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(member.name)}%2C%20I%20would%20like%20to%20discuss%20investment%20opportunities%20with%203B%20Solution.`}
+                                href={`https://wa.me/${member.phone.replace(/[^0-9]/g, '')}?text=Hello%20${encodeURIComponent(member.name)}%2C%20I%20would%20like%20to%20discuss%20property%20opportunities%20with%203B%20Solution.`}
                                 target="_blank" 
                                 rel="noopener noreferrer"
                               >

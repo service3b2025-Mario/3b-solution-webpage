@@ -334,7 +334,7 @@ export function SuccessStoryEditDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="investmentAmount">Investment Amount</Label>
+              <Label htmlFor="investmentAmount">Purchase Amount</Label>
               <Input
                 id="investmentAmount"
                 value={formData.investmentAmount}

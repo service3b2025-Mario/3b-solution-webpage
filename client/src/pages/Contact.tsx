@@ -159,7 +159,7 @@ export default function Contact() {
           {/* Row 4: CTA - Full Width */}
           <div className="bg-secondary rounded-xl p-8 md:p-12 text-center">
             <h2 className="text-xl md:text-2xl font-bold text-white mb-4">
-              Ready to Start Your Investment Journey?
+              Ready to Start Your Property Journey?
             </h2>
             <Link href="/contact">
               <Button 

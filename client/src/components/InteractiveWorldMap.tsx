@@ -15,7 +15,7 @@ const regions = [
     type: "country" as const,
     countries: ["Philippines"],
     icon: "🇵🇭",
-    description: "Southeast Asia's premier investment destination",
+    description: "Southeast Asia's premier property destination",
     position: { top: "45%", left: "75%" },
   },
   {

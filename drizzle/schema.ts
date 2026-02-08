@@ -378,7 +378,7 @@ export const legalPages = mysqlTable("legal_pages", {
   id: int("id").autoincrement().primaryKey(),
   slug: varchar("slug", { length: 100 }).notNull().unique(),
   title: varchar("title", { length: 255 }).notNull(),
-  content: text("content"),
+  content: text("content"),  // Stores JSON with {en, de, zh} for multi-language support
   metaTitle: varchar("meta_title", { length: 255 }),
   metaDescription: text("meta_description"),
   isActive: boolean("is_active").default(true),
@@ -527,3 +527,53 @@ export const whatsappClicks = mysqlTable("whatsapp_clicks", {
 
 export type WhatsAppClick = typeof whatsappClicks.$inferSelect;
 export type InsertWhatsAppClick = typeof whatsappClicks.$inferInsert;
+
+// ============================================
+// ADMIN USERS TABLE - For User Management
+// ============================================
+// This is a NEW table that doesn't modify existing tables
+// Safe to add without affecting existing data
+
+export const adminUsers = mysqlTable("admin_users", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  passwordHash: text("password_hash").notNull(),
+  role: mysqlEnum("role", ["admin", "director", "dataEditor", "propertySpecialist", "salesSpecialist"]).notNull().default("salesSpecialist"),
+  isActive: boolean("is_active").default(true).notNull(),
+  mustChangePassword: boolean("must_change_password").default(true).notNull(),
+  failedLoginAttempts: int("failed_login_attempts").default(0).notNull(),
+  lockedUntil: timestamp("locked_until"),
+  lastLogin: timestamp("last_login"),
+  lastPasswordChange: timestamp("last_password_change"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+  createdBy: int("created_by"), // ID of admin who created this user
+});
+
+export type AdminUser = typeof adminUsers.$inferSelect;
+export type InsertAdminUser = typeof adminUsers.$inferInsert;
+
+// ============================================
+// VISITORS TABLE - For Public Visitor Accounts
+// ============================================
+// Passwordless email-OTP login for website visitors
+// Separate from admin_users to maintain clear role separation
+
+export const visitors = mysqlTable("visitors", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  name: varchar("name", { length: 255 }),
+  status: mysqlEnum("status", ["pending_verification", "active", "suspended"]).default("pending_verification").notNull(),
+  lastLogin: timestamp("last_login"),
+  gdprConsent: json("gdpr_consent").$type<{
+    version: string;
+    timestamp: string;
+    ipAddress: string;
+  }>(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Visitor = typeof visitors.$inferSelect;
+export type InsertVisitor = typeof visitors.$inferInsert;

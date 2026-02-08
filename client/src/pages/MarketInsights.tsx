@@ -106,7 +106,7 @@ export default function MarketInsights() {
               Market Insights
             </h1>
             <p className="text-xl text-white/80">
-              Expert analysis and reports on global real estate investment opportunities
+              Expert analysis and reports on global real estate opportunities
             </p>
           </div>
         </div>
@@ -147,7 +147,7 @@ export default function MarketInsights() {
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
                 <SelectItem value="market_analysis">Market Analysis</SelectItem>
-                <SelectItem value="investment_guide">Investment Guide</SelectItem>
+                <SelectItem value="investment_guide">Property Market Guide</SelectItem>
                 <SelectItem value="sector_report">Sector Report</SelectItem>
                 <SelectItem value="regional_outlook">Regional Outlook</SelectItem>
               </SelectContent>
@@ -250,7 +250,7 @@ export default function MarketInsights() {
                   <div>
                     <label className="text-sm font-medium mb-2 block">Regions of Interest</label>
                     <div className="grid grid-cols-2 gap-3">
-                      {["SouthEastAsia", "Maldives", "Europe", "NorthAmerica", "MiddleEast", "Caribbean"].map((region) => (
+                      {["SouthEastAsia", "Maldives", "Europe", "NorthAmerica", "Caribbean"].map((region) => (
                         <label key={region} className="flex items-center gap-2 cursor-pointer">
                           <input
                             type="checkbox"
@@ -276,7 +276,7 @@ export default function MarketInsights() {
                     Subscribe to Market Alerts
                   </Button>
                   <p className="text-xs text-muted-foreground text-center">
-                    Receive market updates and exclusive investment opportunities. Unsubscribe anytime.
+                    Receive market updates and exclusive property opportunities. Unsubscribe anytime.
                   </p>
                 </div>
               </CardContent>

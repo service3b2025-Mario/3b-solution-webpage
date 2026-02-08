@@ -220,7 +220,7 @@ export default function SoutheastAsia() {
         </div>
       </section>
 
-      {/* Investment Opportunities */}
+      {/* Property Opportunities */}
       <section className="py-20 bg-background">
         <div className="container">
           <div className="text-center mb-12">
@@ -436,7 +436,7 @@ export default function SoutheastAsia() {
               </Link>
               <Link href="/investors">
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                  Investor Qualification
+                  Client Onboarding
                 </Button>
               </Link>
             </div>

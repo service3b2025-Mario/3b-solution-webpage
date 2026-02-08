@@ -1,4 +1,4 @@
-const CACHE_NAME = '3b-solution-v2'; // Updated version to force cache invalidation
+const CACHE_NAME = '3b-solution-v3'; // Updated version to force cache invalidation
 const urlsToCache = [
   '/',
   '/favicon.ico',
@@ -10,7 +10,7 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Opened cache v2');
+        console.log('Opened cache v3');
         return cache.addAll(urlsToCache);
       })
       .then(() => {
@@ -20,7 +20,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Fetch strategy: Network first for images, cache first for other resources
+// Fetch strategy: Network first for JS files, cache first for other resources
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   
@@ -28,6 +28,29 @@ self.addEventListener('fetch', (event) => {
   if (event.request.destination === 'image' || 
       url.pathname.match(/\.(jpg|jpeg|png|gif|webp|svg|ico)$/i)) {
     event.respondWith(fetch(event.request));
+    return;
+  }
+  
+  // Network-first for JavaScript files to ensure latest code is always used
+  if (event.request.destination === 'script' || 
+      url.pathname.match(/\.(js|mjs)$/i)) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // Clone and cache the response
+          if (response && response.status === 200) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // Fallback to cache if network fails
+          return caches.match(event.request);
+        })
+    );
     return;
   }
   

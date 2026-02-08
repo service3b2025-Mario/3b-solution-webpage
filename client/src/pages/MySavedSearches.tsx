@@ -6,15 +6,16 @@ import { Link, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Bookmark, Trash2, Search, Bell, BellOff, Edit, Eye, MapPin, Building2, DollarSign, Bed } from "lucide-react";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 import { SEO } from "@/components/SEO";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { VisitorLoginModal } from "@/components/VisitorLoginModal";
 
 export default function MySavedSearches() {
   const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const [showLoginModal, setShowLoginModal] = useState(false);
   
   const { data: savedSearches, isLoading, refetch } = trpc.savedSearches.list.useQuery(undefined, {
     enabled: !!user,
@@ -108,13 +109,18 @@ export default function MySavedSearches() {
             <p className="text-lg text-muted-foreground mb-8">
               Save your property search criteria and get notified when new matching properties are listed.
             </p>
-            <a href={getLoginUrl()}>
-              <Button size="lg">
-                Sign In
-              </Button>
-            </a>
+            <Button size="lg" onClick={() => setShowLoginModal(true)}>
+              <Bookmark className="w-5 h-5 mr-2" />
+              Sign In with Email
+            </Button>
           </div>
         </div>
+
+        <VisitorLoginModal
+          open={showLoginModal}
+          onOpenChange={setShowLoginModal}
+          triggerContext="saved-search"
+        />
       </Layout>
     );
   }

@@ -191,7 +191,7 @@ export default function InvestmentsPhilippines() {
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">Featured Philippine Properties</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Explore our curated selection of {properties?.total || 21}+ premium investment opportunities
+              Explore our curated selection of {properties?.total || 21}+ premium property opportunities
             </p>
           </div>
 

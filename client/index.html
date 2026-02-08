@@ -1,360 +1,486 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Google Consent Mode V2 - MUST be loaded FIRST before any analytics -->
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags -->
+    <title>Luxury Real Estate Investment | 5-Star Hotels & Resorts | Target Returns 15-30% (Projected) | 3B Solution</title>
+    <meta name="title" content="Luxury Real Estate Investment | 5-Star Hotels & Resorts | Target Returns 15-30% (Projected) | 3B Solution" />
+    <meta name="description" content="Invest in premium 5-star hotels and luxury resorts in the Philippines. Target returns 15-30% (projected) with 3B Solution's expert real estate brokerage services." />
+    <meta name="keywords" content="luxury real estate investment, 5-star hotel investment, resort investment Philippines, high yield real estate, premium property investment, 3B Solution" />
+    <meta name="author" content="3B Solution" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.3b-solution.com/" />
+    <meta property="og:title" content="Luxury Real Estate Investment | 5-Star Hotels & Resorts | Target Returns 15-30% (Projected)" />
+    <meta property="og:description" content="Invest in premium 5-star hotels and luxury resorts in the Philippines. Target returns 15-30% (projected) with expert guidance." />
+    <meta property="og:image" content="/og-image.jpg" />
+    <meta property="og:site_name" content="3B Solution" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://www.3b-solution.com/" />
+    <meta property="twitter:title" content="Luxury Real Estate Investment | 5-Star Hotels & Resorts | Target Returns 15-30% (Projected)" />
+    <meta property="twitter:description" content="Invest in premium 5-star hotels and luxury resorts in the Philippines. Target returns 15-30% (projected) with expert guidance." />
+    <meta property="twitter:image" content="/og-image.jpg" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://www.3b-solution.com/" />
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "RealEstateAgent",
+      "name": "3B Solution",
+      "description": "Premium real estate brokerage and services company specializing in 5-star hotels and luxury resorts in the Philippines",
+      "url": "https://www.3b-solution.com",
+      "logo": "https://www.3b-solution.com/logo.png",
+      "areaServed": {
+        "@type": "Country",
+        "name": "Philippines"
+      },
+      "priceRange": "$$$",
+      "sameAs": [
+        "https://www.linkedin.com/company/3b-solution"
+      ]
+    }
+    </script>
+    
+    <!-- Preconnect to important third-party origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Google Consent Mode V2 - Default to denied (MUST be before GA4) -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       
-      // Set default consent to denied (GDPR compliant)
+      // Set default consent to denied
       gtag('consent', 'default', {
+        'analytics_storage': 'denied',
         'ad_storage': 'denied',
         'ad_user_data': 'denied',
         'ad_personalization': 'denied',
-        'analytics_storage': 'denied',
+        'functionality_storage': 'granted',
+        'personalization_storage': 'denied',
+        'security_storage': 'granted',
         'wait_for_update': 500
       });
     </script>
     
-    <meta charset="UTF-8" />
-    <!-- FIXED: Removed maximum-scale=1 for accessibility (allows zoom) -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- Google Search Console Verification -->
-    <!-- www.3bsolution.com -->
-    <meta name="google-site-verification" content="h46SUR56zcv1oZvtAiGpn5JMRfLG1kVaInKSHbacP0c" />
-    <!-- 3bsolution.com (non-www) -->
-    <meta name="google-site-verification" content="QvyyYhH7nan2IzCe9eg22CnPhn3gI494QxQzS70fgRc" />
-    
-    <!-- Primary Meta Tags -->
-    <title>Luxury Real Estate Investment | 5-Star Hotels & Resorts | 15-30% Returns | 3B Solution</title>
-    <meta name="title" content="Luxury Real Estate Investment | 5-Star Hotels & Resorts | 15-30% Returns | 3B Solution">
-    <meta name="description" content="3B Solution offers premium real estate investment opportunities in luxury hospitality across the Philippines, Maldives, Europe, USA, and Caribbean. Delivering 15-30% annual returns through 5-star hotels and ultra-luxury resorts with institutional-grade due diligence.">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.3bsolution.com/">
-    <meta property="og:title" content="Luxury Real Estate Investment | 5-Star Hotels & Resorts | 15-30% Returns | 3B Solution">
-    <meta property="og:description" content="3B Solution offers premium real estate investment opportunities in luxury hospitality across the Philippines, Maldives, Europe, USA, and Caribbean. Delivering 15-30% annual returns through 5-star hotels and ultra-luxury resorts with institutional-grade due diligence.">
-    <meta property="og:image" content="https://cdn.3bsolution.com/assets/3b-logo.webp">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://www.3bsolution.com/">
-    <meta property="twitter:title" content="Luxury Real Estate Investment | 5-Star Hotels & Resorts | 15-30% Returns | 3B Solution">
-    <meta property="twitter:description" content="3B Solution offers premium real estate investment opportunities in luxury hospitality across the Philippines, Maldives, Europe, USA, and Caribbean. Delivering 15-30% annual returns through 5-star hotels and ultra-luxury resorts with institutional-grade due diligence.">
-    <meta property="twitter:image" content="https://cdn.3bsolution.com/assets/3b-logo.webp">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    
-    <!-- Silktide Cookie Consent CSS - Load early for no flash of unstyled content -->
-    <link rel="stylesheet" href="https://cdn.3bsolution.com/assets/silktide-consent-manager.css">
-    
-    <!-- Custom Brand Styling for Cookie Consent -->
-    <style>
-      /* 3B Solution Exact Brand Colors for Cookie Consent Banner */
-      #stcm-wrapper {
-        /* Exact Brand Colors */
-        --primaryColor: #D78F00;         /* Exact Orange - RGB(215, 143, 0) */
-        --backgroundColor: #132A4B;      /* Exact Blue - RGB(19, 42, 75) */
-        --textColor: #FFFFFF;            /* White text for contrast */
-        --fontFamily: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        
-        /* Button styling */
-        --boxShadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        
-        /* Backdrop */
-        --backdropBackgroundColor: rgba(0, 0, 0, 0.5);
-        --backdropBackgroundBlur: 5px;
-        
-        /* Cookie icon - HIDE IT */
-        --iconColor: transparent;
-        --iconBackgroundColor: transparent;
-      }
-
-      /* CENTER the banner PERFECTLY and make it SMALLER */
-      #stcm-wrapper .stcm-prompt {
-        position: fixed !important;
-        top: 50% !important;
-        left: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        bottom: auto !important;
-        right: auto !important;
-        max-width: 550px !important;
-        width: 85% !important;
-        padding: 2rem !important;
-        border-radius: 12px !important;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
-        margin: 0 auto !important;
-        box-sizing: border-box !important;
-      }
-
-      /* Ensure content is properly contained */
-      #stcm-wrapper .stcm-prompt > * {
-        max-width: 100% !important;
-        box-sizing: border-box !important;
-      }
-
-      /* Adjust text size */
-      #stcm-wrapper .stcm-prompt p {
-        font-size: 0.95rem !important;
-        line-height: 1.6 !important;
-        margin-bottom: 1.25rem !important;
-        padding: 0 !important;
-      }
-
-      /* Make buttons container flex and wrap properly */
-      #stcm-wrapper .stcm-prompt .stcm-buttons {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 0.75rem !important;
-        margin-top: 1.25rem !important;
-        justify-content: center !important;
-        align-items: center !important;
-      }
-
-      /* Make buttons more compact */
-      #stcm-wrapper .stcm-prompt button {
-        padding: 0.7rem 1.5rem !important;
-        font-size: 0.9rem !important;
-        white-space: nowrap !important;
-        flex-shrink: 0 !important;
-      }
-
-      /* Put "Manage preferences" link below buttons, centered */
-      #stcm-wrapper .stcm-prompt a[data-stcm-action="preferences"],
-      #stcm-wrapper .stcm-prompt button[data-stcm-action="preferences"] {
-        display: block !important;
-        width: 100% !important;
-        text-align: center !important;
-        margin-top: 1rem !important;
-        font-size: 0.85rem !important;
-        padding: 0.5rem !important;
-      }
-
-      /* HIDE the Silktide logo/icon completely */
-      #stcm-wrapper .stcm-icon,
-      #stcm-wrapper [class*="icon"],
-      #stcm-wrapper svg {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-      }
-
-      /* Additional custom styling for buttons */
-      #stcm-wrapper button {
-        font-weight: 600;
-        letter-spacing: 0.025em;
-        transition: all 0.2s ease-in-out;
-      }
-
-      #stcm-wrapper button:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      }
-
-      /* Primary button (Accept all) - Orange */
-      #stcm-wrapper button[data-stcm-action="accept-all"] {
-        background-color: #D78F00 !important;
-        color: #FFFFFF !important;
-        border: none !important;
-      }
-
-      #stcm-wrapper button[data-stcm-action="accept-all"]:hover {
-        background-color: #C17F00 !important;
-      }
-
-      /* Secondary button (Reject non-essential) - Orange outlined */
-      #stcm-wrapper button[data-stcm-action="reject-all"] {
-        background-color: transparent !important;
-        color: #D78F00 !important;
-        border: 2px solid #D78F00 !important;
-      }
-
-      #stcm-wrapper button[data-stcm-action="reject-all"]:hover {
-        background-color: rgba(215, 143, 0, 0.1) !important;
-      }
-
-      /* Preferences link - Orange */
-      #stcm-wrapper a,
-      #stcm-wrapper button[data-stcm-action="preferences"] {
-        color: #D78F00 !important;
-      }
-
-      #stcm-wrapper a:hover,
-      #stcm-wrapper button[data-stcm-action="preferences"]:hover {
-        color: #E79F10 !important;
-        text-decoration: underline;
-      }
-
-      /* Modal styling - Blue background */
-      #stcm-wrapper .stcm-modal {
-        background-color: #132A4B !important;
-        color: #FFFFFF !important;
-        max-width: 600px !important;
-        margin: 0 auto !important;
-      }
-
-      /* Toggle switches - Orange when checked */
-      #stcm-wrapper input[type="checkbox"]:checked {
-        background-color: #D78F00 !important;
-        border-color: #D78F00 !important;
-      }
-
-      /* Mobile responsive */
-      @media (max-width: 640px) {
-        #stcm-wrapper .stcm-prompt {
-          max-width: 90% !important;
-          width: 90% !important;
-          padding: 1.5rem !important;
-        }
-        
-        #stcm-wrapper .stcm-prompt p {
-          font-size: 0.875rem !important;
-        }
-        
-        #stcm-wrapper .stcm-prompt button {
-          padding: 0.6rem 1.25rem !important;
-          font-size: 0.875rem !important;
-        }
-        
-        #stcm-wrapper .stcm-buttons {
-          flex-direction: column !important;
-        }
-        
-        #stcm-wrapper .stcm-buttons button {
-          width: 100% !important;
-        }
-      }
-    </style>
-    
-    <!-- Google Analytics - Loads after consent -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KL93ZTPFCF"></script>
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-KL93ZTPFCF');
-    </script>
-    
-    <!-- Cloudflare Web Analytics -->
-    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "4cc22ca34fc443978b46e45c87ce3bc1"}'></script>
-  </head>
-  <body>
-    <!-- Silktide Cookie Consent Script -->
-    <script src="https://cdn.3bsolution.com/assets/silktide-consent-manager.js"></script>
-    <script>
-      // Initialize Silktide Cookie Consent
-      window.silktideConsentManager.init({
-        // Consent Types Configuration
-        consentTypes: [
-          {
-            id: 'essential',
-            label: 'Essential',
-            description: 'These cookies are necessary for the website to function and cannot be switched off.',
-            required: true,
-          },
-          {
-            id: 'analytics',
-            label: 'Analytics',
-            description: 'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.',
-            defaultValue: false,
-            gtag: 'analytics_storage',
-            onAccept: function() {
-              console.log('Analytics cookies accepted');
-            },
-            onReject: function() {
-              console.log('Analytics cookies rejected');
-            }
-          },
-          {
-            id: 'marketing',
-            label: 'Marketing',
-            description: 'These cookies are used to deliver personalized advertisements and measure the effectiveness of our marketing campaigns.',
-            defaultValue: false,
-            gtag: ['ad_storage', 'ad_user_data', 'ad_personalization'],
-            onAccept: function() {
-              console.log('Marketing cookies accepted');
-            },
-            onReject: function() {
-              console.log('Marketing cookies rejected');
-            }
-          }
-        ],
-        
-        // Event name for Google Tag Manager
-        eventName: 'cookie_consent_update',
-        
-        // Customized text
-        text: {
-          prompt: {
-            description: '<p>We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept all", you consent to our use of cookies.</p>',
-            acceptAllButtonText: 'Accept all',
-            rejectNonEssentialButtonText: 'Reject non-essential',
-            preferencesButtonText: 'Manage preferences',
-          },
-          preferences: {
-            title: 'Cookie Preferences',
-            description: '<p>Choose which types of cookies you want to accept. You can change your preferences at any time.</p>',
-            saveButtonText: 'Save preferences',
-          }
-        },
-        
-        // Prompt position - will be overridden by CSS to center
-        prompt: {
-          position: 'bottomCenter'
-        },
-        
-        // Icon position - DISABLED (hidden via CSS)
-        icon: {
-          position: 'bottomLeft',
-          show: false  // Disable icon
-        },
-        
-        // Show backdrop
-        backdrop: {
-          show: true
-        },
-        
-        // Callbacks
-        onAcceptAll: function() {
-          console.log('User accepted all cookies');
-        },
-        onRejectAll: function() {
-          console.log('User rejected non-essential cookies');
-        }
+      gtag('config', 'G-XXXXXXXXXX', {
+        'anonymize_ip': true,
+        'cookie_flags': 'SameSite=None;Secure'
       });
     </script>
     
-    <!-- Cloudflare Analytics Event Listener -->
-    <script>
-    document.addEventListener('cookie_consent_update', function() {
-      // Trigger Cloudflare Analytics with consent info
-      if (typeof window.silktideConsentManager !== 'undefined') {
-        const manager = window.silktideConsentManager.getInstance();
-        const consents = manager.getAcceptedConsents();
-        
-        // Log consent status for Cloudflare Analytics
-        if (window.cloudflareAnalytics) {
-          window.cloudflareAnalytics.track('consent_updated', {
-            language: {
-              locale: {
-                en: {
-                  name: 'Cloudflare Analytics'
-                }
-              }
-            }
-          });
-        }
+    <!-- Silktide Cookie Consent Manager - CSS with 3B Solution CI colors override -->
+    <link rel="stylesheet" href="https://cdn.3bsolution.com/assets/silktide-consent-manager.css" />
+    <style>
+      /* 3B Solution CI Color Override for Cookie Consent */
+      #stcm-wrapper {
+        --primaryColor: #D78F00 !important;
+        --backgroundColor: #1a365d !important;
+        --textColor: #ffffff !important;
+        --iconColor: #1a365d !important;
+        --iconBackgroundColor: #D78F00 !important;
       }
-    });
-    </script>
-    
+      /* Hide Silktide branding logo and credit link */
+      #stcm-banner .stcm-logo,
+      #stcm-modal .stcm-credit-link,
+      a.stcm-logo,
+      .stcm-credit-link {
+        display: none !important;
+      }
+    </style>
+    <script src="https://cdn.3bsolution.com/assets/silktide-consent-manager.js"></script>
+  </head>
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- OPTIMIZED: Delay Tidio chat loading by 5 seconds for better LCP/TBT -->
+    <!-- Initialize Silktide Cookie Consent Manager with proper configuration -->
+    <script>
+    (function() {
+      'use strict';
+      
+      // Multi-language translations
+      var translations = {
+        en: {
+          promptTitle: 'Cookie Preferences',
+          promptDescription: 'We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept all", you consent to our use of cookies.',
+          acceptAll: 'Accept all',
+          rejectAll: 'Reject non-essential',
+          managePreferences: 'Manage preferences',
+          preferencesTitle: 'Cookie Preferences',
+          preferencesDescription: 'Choose which types of cookies you want to accept. You can change your preferences at any time.',
+          saveButton: 'Save preferences',
+          essentialLabel: 'Essential',
+          essentialDescription: 'These cookies are necessary for the website to function and cannot be switched off.',
+          analyticsLabel: 'Analytics',
+          analyticsDescription: 'These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously.',
+          marketingLabel: 'Marketing',
+          marketingDescription: 'These cookies are used to deliver personalized advertisements and measure the effectiveness of our marketing campaigns.',
+          cookiePolicy: 'Cookie Policy'
+        },
+        de: {
+          promptTitle: 'Cookie-Einstellungen',
+          promptDescription: 'Wir verwenden Cookies, um Ihr Surferlebnis zu verbessern und unseren Datenverkehr zu analysieren. Durch Klicken auf "Alle akzeptieren" stimmen Sie der Verwendung von Cookies zu.',
+          acceptAll: 'Alle akzeptieren',
+          rejectAll: 'Nicht wesentliche ablehnen',
+          managePreferences: 'Einstellungen verwalten',
+          preferencesTitle: 'Cookie-Einstellungen',
+          preferencesDescription: 'Wählen Sie aus, welche Arten von Cookies Sie akzeptieren möchten. Sie können Ihre Einstellungen jederzeit ändern.',
+          saveButton: 'Einstellungen speichern',
+          essentialLabel: 'Notwendig',
+          essentialDescription: 'Diese Cookies sind für die Funktion der Website erforderlich und können nicht deaktiviert werden.',
+          analyticsLabel: 'Analytik',
+          analyticsDescription: 'Diese Cookies helfen uns zu verstehen, wie Besucher mit unserer Website interagieren, indem sie Informationen anonym sammeln und melden.',
+          marketingLabel: 'Marketing',
+          marketingDescription: 'Diese Cookies werden verwendet, um personalisierte Werbung zu liefern und die Wirksamkeit unserer Marketingkampagnen zu messen.',
+          cookiePolicy: 'Cookie-Richtlinie'
+        },
+        zh: {
+          promptTitle: 'Cookie偏好设置',
+          promptDescription: '我们使用Cookie来增强您的浏览体验并分析我们的流量。点击"全部接受"即表示您同意我们使用Cookie。',
+          acceptAll: '全部接受',
+          rejectAll: '拒绝非必要',
+          managePreferences: '管理偏好',
+          preferencesTitle: 'Cookie偏好设置',
+          preferencesDescription: '选择您要接受的Cookie类型。您可以随时更改您的偏好设置。',
+          saveButton: '保存偏好',
+          essentialLabel: '必要',
+          essentialDescription: '这些Cookie是网站正常运行所必需的，无法关闭。',
+          analyticsLabel: '分析',
+          analyticsDescription: '这些Cookie通过匿名收集和报告信息，帮助我们了解访客如何与我们的网站互动。',
+          marketingLabel: '营销',
+          marketingDescription: '这些Cookie用于提供个性化广告并衡量我们营销活动的效果。',
+          cookiePolicy: 'Cookie政策'
+        }
+      };
+      
+      // Detect browser language
+      function detectLanguage() {
+        var browserLang = (navigator.language || navigator.userLanguage || 'en').toLowerCase().substring(0, 2);
+        if (browserLang === 'de') return 'de';
+        if (browserLang === 'zh') return 'zh';
+        return 'en';
+      }
+      
+      var currentLang = detectLanguage();
+      
+      // Get translations for current language
+      function getTranslations() {
+        return translations[currentLang] || translations.en;
+      }
+      
+      // Build configuration with current language
+      function buildConfig() {
+        var t = getTranslations();
+        return {
+          consentTypes: [
+            {
+              id: 'essential',
+              required: true,
+              label: t.essentialLabel,
+              description: t.essentialDescription
+            },
+            {
+              id: 'analytics',
+              required: false,
+              label: t.analyticsLabel,
+              description: t.analyticsDescription,
+              defaultValue: false,
+              gtag: {
+                analytics_storage: true
+              },
+              onAccept: function() {
+                if (typeof gtag === 'function') {
+                  gtag('consent', 'update', { 'analytics_storage': 'granted' });
+                }
+              },
+              onReject: function() {
+                if (typeof gtag === 'function') {
+                  gtag('consent', 'update', { 'analytics_storage': 'denied' });
+                }
+              }
+            },
+            {
+              id: 'marketing',
+              required: false,
+              label: t.marketingLabel,
+              description: t.marketingDescription,
+              defaultValue: false,
+              gtag: {
+                ad_storage: true,
+                ad_user_data: true,
+                ad_personalization: true
+              },
+              onAccept: function() {
+                if (typeof gtag === 'function') {
+                  gtag('consent', 'update', {
+                    'ad_storage': 'granted',
+                    'ad_user_data': 'granted',
+                    'ad_personalization': 'granted'
+                  });
+                }
+              },
+              onReject: function() {
+                if (typeof gtag === 'function') {
+                  gtag('consent', 'update', {
+                    'ad_storage': 'denied',
+                    'ad_user_data': 'denied',
+                    'ad_personalization': 'denied'
+                  });
+                }
+              }
+            }
+          ],
+          text: {
+            prompt: {
+              title: t.promptTitle,
+              description: t.promptDescription,
+              acceptAllButtonText: t.acceptAll,
+              rejectNonEssentialButtonText: t.rejectAll,
+              preferencesButtonText: t.managePreferences,
+              policyLinkText: t.cookiePolicy,
+              policyLinkUrl: '/legal/cookie-policy?lang=en'
+            },
+            preferences: {
+              title: t.preferencesTitle,
+              description: t.preferencesDescription,
+              saveButtonText: t.saveButton,
+              creditLinkText: '' // Hide credit link text
+            }
+          },
+          icon: {
+            position: 'bottomLeft',
+            colorScheme: 'stcm-icon-dark'
+          },
+          prompt: {
+            position: 'bottom'
+          },
+          debug: false
+        };
+      }
+      
+      // Initialize consent manager
+      function initConsentManager() {
+        if (typeof window.silktideConsentManager !== 'undefined' && typeof window.silktideConsentManager.init === 'function') {
+          var config = buildConfig();
+          window.silktideConsentManager.init(config);
+          console.log('[Cookie Consent] Initialized with language:', currentLang);
+          
+          // Add language selector after initialization
+          setTimeout(addLanguageSelector, 500);
+        } else {
+          // Script not loaded yet, retry
+          setTimeout(initConsentManager, 100);
+        }
+      }
+      
+      // Change language WITHOUT reinitializing (just update text in DOM)
+      function changeLanguage(lang) {
+        if (!translations[lang]) return;
+        
+        currentLang = lang;
+        var t = getTranslations();
+        
+        // Update banner text if visible
+        var banner = document.getElementById('stcm-banner');
+        if (banner) {
+          var desc = banner.querySelector('p');
+          if (desc) desc.textContent = t.promptDescription;
+          
+          var acceptBtn = banner.querySelector('.stcm-accept-all');
+          if (acceptBtn) acceptBtn.textContent = t.acceptAll;
+          
+          var rejectBtn = banner.querySelector('.stcm-reject-all');
+          if (rejectBtn) rejectBtn.textContent = t.rejectAll;
+          
+          var prefsBtn = banner.querySelector('.stcm-preferences-button span');
+          if (prefsBtn) prefsBtn.textContent = t.managePreferences;
+        }
+        
+        // Update modal text if visible
+        var modal = document.getElementById('stcm-modal');
+        if (modal) {
+          var title = modal.querySelector('h1');
+          if (title) title.textContent = t.preferencesTitle;
+          
+          var desc = modal.querySelector('header + p');
+          if (desc) desc.textContent = t.preferencesDescription;
+          
+          var saveBtn = modal.querySelector('.stcm-modal-save');
+          if (saveBtn) saveBtn.textContent = t.saveButton;
+          
+          var rejectBtn = modal.querySelector('.stcm-modal-reject-all');
+          if (rejectBtn) rejectBtn.textContent = t.rejectAll;
+          
+          // Update consent type labels and descriptions
+          var fieldsets = modal.querySelectorAll('fieldset');
+          var consentLabels = [t.essentialLabel, t.analyticsLabel, t.marketingLabel];
+          var consentDescs = [t.essentialDescription, t.analyticsDescription, t.marketingDescription];
+          
+          fieldsets.forEach(function(fieldset, index) {
+            var legend = fieldset.querySelector('legend');
+            var descDiv = fieldset.querySelector('.stcm-consent-description');
+            if (legend && consentLabels[index]) legend.textContent = consentLabels[index];
+            if (descDiv && consentDescs[index]) descDiv.textContent = consentDescs[index];
+          });
+        }
+        
+        updateLanguageSelectorButtons();
+        console.log('[Cookie Consent] Language changed to:', lang);
+      }
+      
+      // Create and add language selector
+      function addLanguageSelector() {
+        // Check if cookie banner or modal is visible
+        var banner = document.getElementById('stcm-banner');
+        var modal = document.getElementById('stcm-modal');
+        var target = null;
+        
+        if (banner && getComputedStyle(banner).display !== 'none') {
+          target = banner;
+        } else if (modal && getComputedStyle(modal).display !== 'none') {
+          target = modal;
+        }
+        
+        if (!target) {
+          // No visible consent UI, try again later
+          setTimeout(addLanguageSelector, 500);
+          return;
+        }
+        
+        // Check if selector already exists in this target
+        if (target.querySelector('#stcm-lang-selector')) {
+          return;
+        }
+        
+        // Remove any existing selector from other location
+        var existingSelector = document.getElementById('stcm-lang-selector');
+        if (existingSelector) {
+          existingSelector.remove();
+        }
+        
+        // Create language selector
+        var selector = document.createElement('div');
+        selector.id = 'stcm-lang-selector';
+        selector.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; padding: 8px 0;';
+        
+        var label = document.createElement('span');
+        label.textContent = 'Language:';
+        label.style.cssText = 'color: #ffffff; opacity: 0.7; font-size: 0.85rem; margin-right: 4px;';
+        selector.appendChild(label);
+        
+        var languages = [
+          { code: 'en', label: 'EN' },
+          { code: 'de', label: 'DE' },
+          { code: 'zh', label: '中文' }
+        ];
+        
+        languages.forEach(function(lang) {
+          var btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'stcm-lang-btn';
+          btn.setAttribute('data-lang', lang.code);
+          btn.textContent = lang.label;
+          var isActive = lang.code === currentLang;
+          btn.style.cssText = 'background: ' + (isActive ? '#D78F00' : 'transparent') + '; border: 1px solid ' + (isActive ? '#D78F00' : '#ffffff') + '; color: ' + (isActive ? '#1a365d' : '#ffffff') + '; padding: 4px 12px; font-size: 0.8rem; border-radius: 4px; cursor: pointer; font-weight: 500; transition: all 0.2s;';
+          
+          btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            changeLanguage(lang.code);
+          });
+          
+          btn.addEventListener('mouseenter', function() {
+            if (lang.code !== currentLang) {
+              btn.style.background = 'rgba(215, 143, 0, 0.3)';
+            }
+          });
+          
+          btn.addEventListener('mouseleave', function() {
+            if (lang.code !== currentLang) {
+              btn.style.background = 'transparent';
+            }
+          });
+          
+          selector.appendChild(btn);
+        });
+        
+        // Insert at top of consent UI
+        target.insertBefore(selector, target.firstChild);
+      }
+      
+      // Update language selector button styles
+      function updateLanguageSelectorButtons() {
+        var buttons = document.querySelectorAll('.stcm-lang-btn');
+        buttons.forEach(function(btn) {
+          var lang = btn.getAttribute('data-lang');
+          var isActive = lang === currentLang;
+          btn.style.background = isActive ? '#D78F00' : 'transparent';
+          btn.style.borderColor = isActive ? '#D78F00' : '#ffffff';
+          btn.style.color = isActive ? '#1a365d' : '#ffffff';
+        });
+      }
+      
+      // Watch for consent UI changes to add language selector
+      function watchForConsentUI() {
+        var observer = new MutationObserver(function(mutations) {
+          var banner = document.getElementById('stcm-banner');
+          var modal = document.getElementById('stcm-modal');
+          
+          // Check if banner just became visible
+          if (banner && getComputedStyle(banner).display !== 'none') {
+            if (!banner.querySelector('#stcm-lang-selector')) {
+              setTimeout(function() { addLanguageSelector(); }, 100);
+            }
+          }
+          
+          // Check if modal just became visible
+          if (modal && getComputedStyle(modal).display !== 'none' && modal.style.display === 'flex') {
+            if (!modal.querySelector('#stcm-lang-selector')) {
+              // Remove from banner if exists
+              var bannerSelector = banner ? banner.querySelector('#stcm-lang-selector') : null;
+              if (bannerSelector) bannerSelector.remove();
+              setTimeout(function() { addLanguageSelector(); }, 100);
+            }
+          }
+        });
+        
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['style', 'class']
+        });
+      }
+      
+      // Start initialization
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          initConsentManager();
+          watchForConsentUI();
+        });
+      } else {
+        initConsentManager();
+        watchForConsentUI();
+      }
+    })();
+    </script>
+    
+    <!-- Tidio Chat Widget - BiBi AI Chatbot -->
     <script>
       // Load Tidio after page is fully loaded with 5 second delay
       // This significantly improves mobile performance scores

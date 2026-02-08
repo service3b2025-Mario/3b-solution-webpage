@@ -1,6 +1,7 @@
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { ArrowRight, TrendingUp, Globe, Building2, Users, MapPin, Calculator, ChevronRight, Lightbulb, Key, LineChart, Hammer, Briefcase, Landmark, Download } from "lucide-react";
@@ -31,8 +32,8 @@ export default function Home() {
   return (
     <Layout>
       <SEO 
-        title="Luxury Real Estate Investment | 5-Star Hotels & Resorts | 15-30% Returns | 3B Solution"
-        description="Premium real estate investment opportunities in 5-star hotels, luxury resorts, and commercial properties across Southeast Asia, Maldives, Europe, USA. UHNWI & institutional investors. $750M+ portfolio."
+        title="Luxury Real Estate Investment | 5-Star Hotels & Resorts | Target Returns 15-30% (Projected) | 3B Solution"
+        description="Premium real estate opportunities in 5-star hotels, luxury resorts, and commercial properties across Southeast Asia, Maldives, Europe, USA. UHNWI & institutional investors. $750M+ portfolio."
         keywords="luxury real estate investment, 5-star hotel investment, resort investment, UHNWI real estate, institutional investors, Southeast Asia property, Maldives resort, hospitality real estate"
         canonical="https://www.3bsolution.com/"
         ogImage="https://cdn.3bsolution.com/assets/hero-background.webp"
@@ -40,16 +41,16 @@ export default function Home() {
       <OrganizationSchema />
       <InvestmentProductSchema />
       <FAQSchema faqs={[
-        { question: "What is the minimum investment amount?", answer: "The minimum investment varies by project, typically starting at $100,000 USD for individual properties and $1,000,000 USD for fund participation." },
+        { question: "What is the minimum investment amount?", answer: "The minimum investment varies by project, typically starting at $100,000 USD for individual properties and $1,000,000 USD for direct acquisition." },
         { question: "What types of properties do you invest in?", answer: "We specialize in luxury hospitality real estate including 5-star hotels, ultra-luxury island resorts, premium city hotels, and high-end commercial properties." },
-        { question: "What are the expected returns?", answer: "Our historical performance shows 15-30% annual returns across our portfolio. Returns vary by property type, location, and market conditions." },
+        { question: "What are the expected returns?", answer: "Target returns are 15-30% (projected based on market analysis). Returns vary by property type, location, and market conditions." },
         { question: "What is the typical investment horizon?", answer: "Most investments have a 5-7 year hold period, though this can vary based on the specific opportunity." },
         { question: "How do you manage currency risk?", answer: "We employ sophisticated hedging strategies and structure deals in major currencies (USD, EUR). Our global portfolio provides natural diversification." },
         { question: "What makes Southeast Asia and Maldives attractive markets?", answer: "These regions offer strong GDP growth, rising middle class, increasing tourism, and limited supply of luxury hospitality assets." },
-        { question: "Do you offer co-investment opportunities?", answer: "Yes, we structure deals for both direct property co-investment and fund participation for family offices and institutional investors." },
+        { question: "Do you offer co-ownership opportunities?", answer: "Yes, we structure deals for both direct property co-ownership and direct acquisition for family offices and institutional investors." },
         { question: "What due diligence do you conduct?", answer: "We perform comprehensive due diligence including third-party valuations, environmental assessments, legal review, market analysis, and financial modeling." },
         { question: "How are properties managed?", answer: "We partner with internationally recognized hotel operators (Marriott, Hilton, Accor) and boutique luxury brands with professional asset management." },
-        { question: "How do I get started?", answer: "Schedule a private consultation with our investment team to discuss your objectives and complete the investor qualification process." }
+        { question: "How do I get started?", answer: "Schedule a private consultation with our real estate team to discuss your objectives and complete the client onboarding process." }
       ]} />
       {/* Hero Section */}
     <section className="relative min-h-screen flex items-center overflow-hidden">
@@ -81,7 +82,7 @@ export default function Home() {
             {/* Investor Badge */}
             <div className="mb-6">
               <div className="inline-flex items-center gap-2 px-6 py-3 bg-secondary/20 backdrop-blur-sm border-2 border-secondary/40 rounded-full">
-                <span className="text-white font-semibold text-lg">🏆 UHNWI, Institutional & Individual Investors</span>
+                <span className="text-white font-semibold text-lg">🏆 UHNWI, Institutional & Individual Clients</span>
               </div>
             </div>
             
@@ -104,16 +105,25 @@ export default function Home() {
               </div>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white mb-4 leading-tight">
-                Premium Real Estate <span className="text-secondary">Solution</span>
+                Premium Real Estate Solution
               </h1>
             
               <p className="text-2xl md:text-3xl lg:text-4xl text-white/90 mb-3 font-light">
-                Exclusive Access to High-Yield Real Estate Investments
+                Exclusive Access to High-Yield Real Estate Opportunities
               </p>
               
-              <p className="text-xl md:text-2xl text-white/70 mb-4 mx-auto max-w-3xl">
+              <p className="text-xl md:text-2xl text-white/70 mb-2 mx-auto max-w-3xl">
                 Anchored in the Philippines, Diversified Globally (Europe, USA).
-                <span className="block mt-2 text-secondary font-bold text-2xl md:text-3xl">15-30% Annual Returns Backed by Global Expertise</span>
+              </p>
+              
+              {/* Target Returns - Larger, pulsing animation, with asterisk */}
+              <p className="text-4xl md:text-5xl lg:text-6xl text-secondary font-bold mb-2 animate-pulse">
+                Target Returns: 15-30% *
+              </p>
+              
+              {/* Disclaimer - Smaller, italic, grey with asterisks */}
+              <p className="text-sm md:text-base text-gray-300/80 italic mb-4">
+                *Projected based on market analysis*
               </p>
               
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
@@ -126,7 +136,7 @@ export default function Home() {
                 <a href="#calculator">
                   <Button size="lg" variant="outline" className="border-white/40 border-2 text-white hover:bg-white/10 font-bold px-10 h-16 text-xl">
                     <Calculator className="mr-3 h-6 w-6" />
-                    Investment Calculator
+                    Property Yield Calculator
                   </Button>
                 </a>
               </div>
@@ -173,54 +183,60 @@ export default function Home() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {/* Germany */}
-            <Card className="group hover:shadow-xl transition-all duration-300 border border-border bg-card">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Building2 className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-2xl font-bold text-primary mb-2">Germany</h3>
-                <p className="text-lg font-semibold text-foreground mb-4">10+ European Projects</p>
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p className="font-semibold">3B SolutionDE</p>
-                  <p>Weidenweg 17</p>
-                  <p>15806 Zossen</p>
-                  <p>Germany</p>
-                </div>
-              </CardContent>
-            </Card>
+            <Link href="/contact">
+              <Card className="group hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu border border-border bg-card cursor-pointer h-full">
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Building2 className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-primary mb-2">Germany</h3>
+                  <p className="text-lg font-semibold text-foreground mb-4">10+ European Properties</p>
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    <p className="font-semibold">3B SolutionDE</p>
+                    <p>Weidenweg 17</p>
+                    <p>15806 Zossen</p>
+                    <p>Germany</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
 
             {/* Philippines - Highlighted */}
-            <Card className="group hover:shadow-xl transition-all duration-300 border-4 border-secondary bg-card shadow-lg">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-secondary/10 flex items-center justify-center">
-                  <Globe className="w-8 h-8 text-secondary" />
-                </div>
-                <h3 className="text-2xl font-bold text-secondary mb-2">Philippines</h3>
-                <p className="text-lg font-semibold text-foreground mb-4">Headquarters - 50+ Projects</p>
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p className="font-semibold">3B Solution</p>
-                  <p>Makati City</p>
-                  <p>Metro Manila</p>
-                  <p>Philippines</p>
-                </div>
-              </CardContent>
-            </Card>
+            <Link href="/contact">
+              <Card className="group hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu border-4 border-secondary bg-card shadow-lg cursor-pointer h-full">
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Globe className="w-8 h-8 text-secondary" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-secondary mb-2">Philippines</h3>
+                  <p className="text-lg font-semibold text-foreground mb-4">Headquarters - 60+ Philippine Properties</p>
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    <p className="font-semibold">3B Solution</p>
+                    <p>Makati City</p>
+                    <p>Metro Manila</p>
+                    <p>Philippines</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
 
             {/* China */}
-            <Card className="group hover:shadow-xl transition-all duration-300 border border-border bg-card">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Landmark className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-2xl font-bold text-primary mb-2">China</h3>
-                <p className="text-lg font-semibold text-foreground mb-4">10+ Asian Projects</p>
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p className="font-semibold">3B Solution CN</p>
-                  <p>Shanghai</p>
-                  <p>China</p>
-                </div>
-              </CardContent>
-            </Card>
+            <Link href="/contact">
+              <Card className="group hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu border border-border bg-card cursor-pointer h-full">
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Landmark className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-primary mb-2">China</h3>
+                  <p className="text-lg font-semibold text-foreground mb-4">65+ Asian Properties</p>
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    <p className="font-semibold">3B Solution CN</p>
+                    <p>Shanghai</p>
+                    <p>China</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>
@@ -235,7 +251,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Featured Properties</h2>
-              <p className="text-muted-foreground">Exclusive investment opportunities handpicked by our experts</p>
+              <p className="text-muted-foreground">Exclusive property opportunities curated by our network</p>
             </div>
             <Link href="/properties">
               <Button variant="outline" className="font-medium">
@@ -263,7 +279,7 @@ export default function Home() {
                   }
                 }}
               >
-                <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden border-0">
+                <Card className="group hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu overflow-hidden border-0">
                   <div 
                     className="h-56 bg-gradient-to-br from-primary/20 to-secondary/20 relative overflow-hidden"
                     onClick={(e) => {
@@ -323,97 +339,114 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Investment Approach Section */}
+      {/* Our Approach Section */}
       <section className="py-20 bg-muted/30">
         <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Investment Approach</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Our Approach</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Tailored investment solutions for every investor profile
+              Tailored real estate services for expert client profile
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* UHNWI */}
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-8">
-                <div className="w-14 h-14 mb-6 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <Briefcase className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">Ultra-High-Net-Worth Individuals</h3>
-                <p className="text-muted-foreground mb-4">Exclusive access to trophy assets and direct co-investment opportunities in luxury hospitality developments.</p>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Direct property ownership
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Co-investment structures
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Personalized advisory
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
+            <Link href="/investors/uhnwi">
+              <Card className="group border-0 shadow-lg hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu cursor-pointer h-full">
+                <CardContent className="p-6">
+                  <div className="w-12 h-12 mb-4 bg-primary/10 rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-3 transition-all">
+                    <Users className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground mb-2">UHNWI</h3>
+                  <p className="text-sm text-muted-foreground mb-3">Ultra High Net Worth Individuals</p>
+                  <ul className="space-y-1 text-xs text-muted-foreground">
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
+                      Direct ownership
+                    </li>
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
+                      Co-acquisition
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </Link>
 
             {/* Institutional */}
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-8">
-                <div className="w-14 h-14 mb-6 bg-secondary/10 rounded-xl flex items-center justify-center">
-                  <Building2 className="w-7 h-7 text-secondary" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">Institutional Investors</h3>
-                <p className="text-muted-foreground mb-4">Institutional-grade deal flow with comprehensive due diligence and transparent reporting.</p>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Fund participation
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Portfolio allocation
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Quarterly reporting
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
+            <Link href="/investors/institutional">
+              <Card className="group border-0 shadow-lg hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu cursor-pointer h-full">
+                <CardContent className="p-6">
+                  <div className="w-12 h-12 mb-4 bg-secondary/10 rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-3 transition-all">
+                    <Building2 className="w-6 h-6 text-secondary" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground mb-2">Institutional</h3>
+                  <p className="text-sm text-muted-foreground mb-3">Pension Funds, Insurance, Endowments</p>
+                  <ul className="space-y-1 text-xs text-muted-foreground">
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
+                      Portfolio allocation
+                    </li>
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
+                      Quarterly reporting
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </Link>
 
-            {/* Individual */}
-            <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-8">
-                <div className="w-14 h-14 mb-6 bg-accent/10 rounded-xl flex items-center justify-center">
-                  <Users className="w-7 h-7 text-accent" />
-                </div>
-                <h3 className="text-xl font-bold text-foreground mb-3">Individual Investors</h3>
-                <p className="text-muted-foreground mb-4">Accessible entry points to premium real estate with professional management and guidance.</p>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Fractional ownership
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Investment education
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <ChevronRight className="w-4 h-4 text-secondary" />
-                    Dedicated support
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
+            {/* Family Offices - NEW */}
+            <Link href="/investors/family-offices">
+              <Card className="group border-0 shadow-lg hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu cursor-pointer h-full">
+                <CardContent className="p-6">
+                  <div className="w-12 h-12 mb-4 bg-chart-1/10 rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-3 transition-all">
+                    <Globe className="w-6 h-6 text-chart-1" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground mb-2">Family Offices</h3>
+                  <p className="text-sm text-muted-foreground mb-3">Multi-generational Wealth Management</p>
+                  <ul className="space-y-1 text-xs text-muted-foreground">
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
+                      Legacy planning
+                    </li>
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
+                      Wealth preservation
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Individual & First-Time Buyers */}
+            <Link href="/investors/individual">
+              <Card className="group border-0 shadow-lg hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu cursor-pointer h-full">
+                <CardContent className="p-6">
+                  <div className="w-12 h-12 mb-4 bg-accent/10 rounded-xl flex items-center justify-center group-hover:scale-125 group-hover:rotate-3 transition-all">
+                    <TrendingUp className="w-6 h-6 text-accent" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground mb-2">Individual & First-Time Buyers</h3>
+                  <p className="text-sm text-muted-foreground mb-3">Building wealth through real estate</p>
+                  <ul className="space-y-1 text-xs text-muted-foreground">
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
+                      Fractional ownership
+                    </li>
+                    <li className="flex items-center gap-1">
+                      <ChevronRight className="w-3 h-3 text-secondary" />
+                      Market education
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
           
           <div className="text-center mt-10">
             <Link href="/investors">
               <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-white">
-                Qualify as an Investor
+                Register as a Client
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
@@ -437,8 +470,8 @@ export default function Home() {
                 <div className="w-12 h-12 mb-4 bg-primary/10 rounded-lg flex items-center justify-center">
                   <TrendingUp className="w-6 h-6 text-primary" />
                 </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">Proven Track Record</h3>
-                <p className="text-muted-foreground">8+ years delivering 15-30% annual returns across 70+ projects in 3 continents</p>
+                <h3 className="text-lg font-bold text-foreground mb-2">Market Expertise</h3>
+                <p className="text-muted-foreground">8+ years market experience with pipeline of 70+ opportunities across 3 continents</p>
               </CardContent>
             </Card>
             
@@ -498,13 +531,13 @@ export default function Home() {
       {/* Value Creation Framework Section */}
       <ValueCreationSection />
 
-      {/* Downloadable Investment Guide Section */}
+      {/* Downloadable Property Market Guide Section */}
       <section className="py-20 bg-gradient-to-br from-primary to-primary/80 text-white">
         <div className="container">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Download Our Investment Guide</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Download Our Property Market Guide</h2>
             <p className="text-xl text-white/90 mb-8">
-              Get exclusive access to our comprehensive guide on luxury hospitality real estate investment. Learn our strategies, market insights, and investment criteria.
+              Get exclusive access to our comprehensive guide on luxury hospitality real estate. Learn our strategies, market insights, and property criteria.
             </p>
             
             <Card className="border-0 shadow-2xl">
@@ -514,7 +547,7 @@ export default function Home() {
                     <h4 className="font-semibold text-foreground mb-2">What's Inside:</h4>
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li>✓ Market analysis for 5 key regions</li>
-                      <li>✓ Investment structures explained</li>
+                      <li>✓ Ownership structures explained</li>
                       <li>✓ Due diligence checklist</li>
                       <li>✓ Risk mitigation strategies</li>
                       <li>✓ Case studies with ROI breakdown</li>
@@ -525,10 +558,10 @@ export default function Home() {
                     <ul className="space-y-2 text-sm text-muted-foreground">
                       <li>✓ Ultra-high-net-worth individuals</li>
                       <li>✓ Family offices</li>
-                      <li>✓ Institutional investors</li>
-                      <li>✓ Individual & first-time investors</li>
+                      <li>✓ Institutional clients</li>
+                      <li>✓ Individual & first-time buyers</li>
                       <li>✓ Real estate fund managers</li>
-                      <li>✓ Accredited investors</li>
+                      <li>✓ Qualified clients</li>
                     </ul>
                   </div>
                 </div>
@@ -539,10 +572,10 @@ export default function Home() {
                   className="w-full bg-secondary hover:bg-secondary/90 text-white font-bold"
                 >
                   <Download className="mr-2 h-5 w-5" />
-                  Download Investment Guide
+                  Download Property Market Guide
                 </Button>
                 <p className="text-xs text-muted-foreground mt-4">
-                  By downloading, you agree to receive occasional updates about investment opportunities. Unsubscribe anytime.
+                  By downloading, you agree to receive occasional updates about property opportunities. Unsubscribe anytime.
                 </p>
               </CardContent>
             </Card>
@@ -550,87 +583,107 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 bg-muted/30">
+      {/* FAQ Section - Accordion Style */}
+      <section className="py-12 bg-muted/30">
         <div className="container max-w-4xl">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Frequently Asked Questions</h2>
             <p className="text-lg text-muted-foreground">
               Everything you need to know about investing with 3B Solution
             </p>
           </div>
           
-          <div className="space-y-6">
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">What is the minimum investment amount?</h3>
-                <p className="text-muted-foreground">The minimum investment varies by project, typically starting at $100,000 USD for individual properties and $10,000,000 USD for fund participation. We work with qualified investors to find opportunities that match their investment criteria.</p>
-              </CardContent>
-            </Card>
+          <Accordion type="single" collapsible className="space-y-3">
+            <AccordionItem value="item-1" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                What is the minimum investment amount?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                The minimum investment varies by project, typically starting at $100,000 USD for individual properties and $10,000,000 USD for direct acquisition. We work with qualified investors to find opportunities that match their investment criteria.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">What types of properties do you invest in?</h3>
-                <p className="text-muted-foreground">We specialize in luxury hospitality real estate including 5-star hotels, ultra-luxury island resorts, premium city hotels, and high-end commercial properties. Our focus is on assets with strong operator partnerships and proven revenue models.</p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-2" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                What types of properties do you invest in?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                We specialize in luxury hospitality real estate including 5-star hotels, ultra-luxury island resorts, premium city hotels, and high-end commercial properties. Our focus is on assets with strong operator partnerships and proven revenue models.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">What are the expected returns?</h3>
-                <p className="text-muted-foreground">Our historical performance shows 15-30% annual returns across our portfolio. Returns vary by property type, location, and market conditions. We provide detailed pro forma projections for each investment opportunity.</p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-3" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                What are the expected returns?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                Target returns are 15-30% (projected based on market analysis). Returns vary by property type, location, and market conditions. We provide detailed pro forma projections for each investment opportunity.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">What is the typical investment horizon?</h3>
-                <p className="text-muted-foreground">Most investments have a 5-7 year hold period, though this can vary based on the specific opportunity. We focus on value-add strategies with clear exit paths through sale to institutional buyers or hotel operators.</p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-4" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                What is the typical investment horizon?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                Most investments have a 5-7 year hold period, though this can vary based on the specific opportunity. We focus on value-add strategies with clear exit paths through sale to institutional buyers or hotel operators.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">How do you manage currency risk?</h3>
-                <p className="text-muted-foreground">Currency risk is managed through structural alignment, diversification, and long-term investment planning, rather than financial hedging.</p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-5" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                How do you manage currency risk?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                Currency risk is managed through structural alignment, diversification, and long-term investment planning, rather than financial hedging.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">What makes Southeast Asia and Maldives attractive markets?</h3>
-                <p className="text-muted-foreground">These regions offer strong GDP growth, rising middle class, increasing tourism, and limited supply of luxury hospitality assets. The Maldives specifically has government restrictions on new resort development, creating scarcity value.</p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-6" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                What makes Southeast Asia and Maldives attractive markets?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                These regions offer strong GDP growth, rising middle class, increasing tourism, and limited supply of luxury hospitality assets. The Maldives specifically has government restrictions on new resort development, creating scarcity value.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">Do you offer co-investment opportunities?</h3>
-                <p className="text-muted-foreground">Yes, we structure deals for both direct property co-investment and fund participation. Family offices and institutional investors can invest on specific assets.</p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-7" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                Do you offer co-ownership opportunities?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                Yes, we structure deals for both direct property co-ownership and direct acquisition. Family offices and institutional investors can participate in specific assets.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">What due diligence do you conduct?</h3>
-                <p className="text-muted-foreground">We perform comprehensive due diligence including third-party valuations, environmental assessments, legal review, market analysis, and financial modeling.</p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-8" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                What due diligence do you conduct?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                We perform comprehensive due diligence including third-party valuations, environmental assessments, legal review, market analysis, and financial modeling.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">How are properties managed?</h3>
-                <p className="text-muted-foreground">We partner with internationally recognized hotel operators and boutique luxury brands. </p>
-              </CardContent>
-            </Card>
+            <AccordionItem value="item-9" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                How are properties managed?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                We partner with internationally recognized hotel operators and boutique luxury brands.
+              </AccordionContent>
+            </AccordionItem>
             
-            <Card className="border-0 shadow-sm">
-              <CardContent className="p-6">
-                <h3 className="text-lg font-bold text-foreground mb-3">How do I get started?</h3>
-                <p className="text-muted-foreground">Schedule a private consultation with our investment team to discuss your objectives, review current opportunities, and complete the investor qualification process. We'll provide a detailed investment memorandum for properties that match your criteria.</p>
-              </CardContent>
-            </Card>
-          </div>
+            <AccordionItem value="item-10" className="bg-white rounded-lg border-0 shadow-sm px-6">
+              <AccordionTrigger className="text-left font-semibold text-foreground hover:no-underline py-4">
+                How do I get started?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground pb-4">
+                Schedule a private consultation with our real estate team to discuss your objectives, review current opportunities, and complete the client onboarding process. We'll provide a detailed property memorandum for properties that match your criteria.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
       </section>
 
@@ -639,7 +692,7 @@ export default function Home() {
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Investment Guides & Market Reports
+              Property Market Guides & Reports
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Access exclusive insights and comprehensive guides on global real estate markets
@@ -654,7 +707,7 @@ export default function Home() {
               <>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                   {featuredReports.map((report) => (
-                    <Card key={report.id} className="group hover:shadow-xl transition-all duration-300 border-0 overflow-hidden">
+                    <Card key={report.id} className="group hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu border-0 overflow-hidden">
                       <div className="h-40 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center relative overflow-hidden">
                         {report.thumbnailUrl ? (
                           <img 
@@ -710,15 +763,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Investment Calculator Section */}
+      {/* Property Yield Calculator Section */}
       <section id="calculator" className="py-20 bg-muted/30">
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Investment Calculator
+              Property Yield Calculator
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Visualize your potential returns with our interactive investment calculator
+              Visualize your potential yields with our interactive property calculator
             </p>
           </div>
           <InvestmentCalculatorLazy />
@@ -731,7 +784,7 @@ export default function Home() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Our Services</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Comprehensive investment solutions tailored to your goals
+              Comprehensive real estate services tailored to your goals
             </p>
           </div>
           
@@ -739,7 +792,7 @@ export default function Home() {
             {(services || []).slice(0, 4).map((service, index) => {
               // Map different icons for each service
               const iconMap: Record<number, any> = {
-                0: Lightbulb,  // Investment Advisory
+                0: Lightbulb,  // Property Acquisition Advisory
                 1: Key,         // Property Acquisition
                 2: LineChart,   // Asset Management
                 3: Hammer       // Development Consulting
@@ -748,9 +801,9 @@ export default function Home() {
               
               return (
                 <Link key={service.id} href={`/services#service-${service.id}`}>
-                  <Card className="group hover:shadow-lg transition-all duration-300 border-0 bg-card cursor-pointer h-full">
+                  <Card className="group hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] hover:scale-[1.08] hover:-translate-y-4 hover:border-secondary/50 transition-all duration-300 transform-gpu border-0 bg-card cursor-pointer h-full">
                     <CardContent className="p-6 text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 bg-secondary/10 rounded-xl flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
+                      <div className="w-16 h-16 mx-auto mb-4 bg-secondary/10 rounded-xl flex items-center justify-center group-hover:bg-secondary/20 group-hover:scale-110 transition-all">
                         <IconComponent className="w-8 h-8 text-secondary" />
                       </div>
                       <h3 className="font-semibold text-foreground mb-2">{service.title}</h3>

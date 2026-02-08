@@ -5,7 +5,10 @@ import { parse as parseCookieHeader } from "cookie";
 import type { Request } from "express";
 import { SignJWT, jwtVerify } from "jose";
 import type { User } from "../../drizzle/schema";
+import { adminUsers, visitors } from "../../drizzle/schema";
 import * as db from "../db";
+import { getDb } from "../db";
+import { eq } from "drizzle-orm";
 import { ENV } from "./env";
 import type {
   ExchangeTokenRequest,
@@ -267,22 +270,92 @@ class SDKServer {
     const signedInAt = new Date();
     let user = await db.getUserByOpenId(sessionUserId);
 
-    // If user not in DB, check if this is an admin user or sync from OAuth
+    // If user not in DB, check if this is an admin user, visitor, or sync from OAuth
     if (!user) {
-      // Check if this is an admin user created by our custom login (starts with "admin_")
-      if (sessionUserId.startsWith("admin_")) {
-        console.log("[Auth] Admin user not found in DB, creating from session...");
+      // Check if this is a visitor user (starts with "visitor_")
+      if (sessionUserId.startsWith("visitor_")) {
+        console.log("[Auth] Visitor user not found in users table, resolving from visitors...");
         try {
-         await db.upsertUser({
-  openId: sessionUserId,
-  name: session.name || "Admin User",
-  email: "admin@3bsolution.com",
-  loginMethod: "email",
-  role: "admin",
-  lastSignedIn: signedInAt,
-});
+          const visitorId = parseInt(sessionUserId.replace("visitor_", ""), 10);
+          let visitorEmail = session.name || "visitor@unknown.com";
+          let visitorName = session.name || "Visitor";
+          
+          // Look up the real visitor info from visitors table
+          try {
+            const database = await getDb();
+            if (database && !isNaN(visitorId)) {
+              const visitorResults = await database
+                .select({ email: visitors.email, name: visitors.name })
+                .from(visitors)
+                .where(eq(visitors.id, visitorId))
+                .limit(1);
+              
+              if (visitorResults.length > 0) {
+                visitorEmail = visitorResults[0].email;
+                visitorName = visitorResults[0].name || visitorResults[0].email;
+                console.log(`[Auth] Resolved visitor: ${visitorName} (${visitorEmail})`);
+              }
+            }
+          } catch (lookupErr) {
+            console.warn("[Auth] Could not look up visitors table, using session data:", lookupErr);
+          }
+          
+          await db.upsertUser({
+            openId: sessionUserId,
+            name: visitorName,
+            email: visitorEmail,
+            loginMethod: "email_otp",
+            role: "user",
+            lastSignedIn: signedInAt,
+          });
           user = await db.getUserByOpenId(sessionUserId);
-          console.log("[Auth] Admin user created successfully");
+          console.log("[Auth] Visitor user created/updated in users table successfully");
+        } catch (dbError) {
+          console.error("[Auth] Failed to create visitor user:", dbError);
+          throw ForbiddenError("Failed to create visitor user");
+        }
+      } else if (sessionUserId.startsWith("admin_")) {
+      // Check if this is an admin user created by our custom login (starts with "admin_")
+        console.log("[Auth] Admin user not found in users table, resolving from admin_users...");
+        try {
+          // Extract admin user ID from openId (e.g., "admin_5" -> 5)
+          const adminId = parseInt(sessionUserId.replace("admin_", ""), 10);
+          let adminEmail = session.name ? `${session.name.toLowerCase().replace(/\s+/g, '')}@3bsolution.de` : "admin@3bsolution.de";
+          let adminName = session.name || "Admin User";
+          let adminRole: "user" | "admin" = "admin";
+          
+          // Look up the real admin user info from admin_users table
+          try {
+            const database = await getDb();
+            if (database && !isNaN(adminId)) {
+              const adminResults = await database
+                .select({ email: adminUsers.email, name: adminUsers.name, role: adminUsers.role })
+                .from(adminUsers)
+                .where(eq(adminUsers.id, adminId))
+                .limit(1);
+              
+              if (adminResults.length > 0) {
+                adminEmail = adminResults[0].email;
+                adminName = adminResults[0].name;
+                // Map all admin panel roles to "admin" in the users table
+                adminRole = "admin";
+                console.log(`[Auth] Resolved admin user: ${adminName} (${adminEmail}), role: ${adminResults[0].role}`);
+              }
+            }
+          } catch (lookupErr) {
+            console.warn("[Auth] Could not look up admin_users, using session data:", lookupErr);
+          }
+          
+          await db.upsertUser({
+            openId: sessionUserId,
+            name: adminName,
+            email: adminEmail,
+            loginMethod: "email",
+            role: adminRole,
+            lastSignedIn: signedInAt,
+          });
+          user = await db.getUserByOpenId(sessionUserId);
+          console.log("[Auth] Admin user created/updated in users table successfully");
         } catch (dbError) {
           console.error("[Auth] Failed to create admin user:", dbError);
           throw ForbiddenError("Failed to create admin user");

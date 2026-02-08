@@ -25,7 +25,8 @@ import {
   downloadTags, DownloadTag, InsertDownloadTag,
   downloadTagAssignments, DownloadTagAssignment, InsertDownloadTagAssignment,
   resources, Resource, InsertResource,
-  whatsappClicks
+  whatsappClicks,
+  visitors, Visitor, InsertVisitor
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1124,6 +1125,7 @@ export async function getSalesFunnelStats() {
   if (!db) return { totalVisitors: 0, registeredUsers: 0, engagedUsers: 0, inquiries: 0, bookings: 0, wishlistActions: 0, savedSearches: 0, avgPropertiesViewed: 0 };
   const [
     totalVisitors,
+    registeredVisitors,
     registeredUsers,
     usersWithWishlist,
     usersWithSavedSearches,
@@ -1136,7 +1138,11 @@ export async function getSalesFunnelStats() {
     db.select({ count: sql<number>`count(distinct ${analyticsEvents.sessionId})` })
       .from(analyticsEvents)
       .then((r: any) => r[0]?.count || 0),
-    // Registered users
+    // Registered visitors (from visitors table - email OTP authenticated)
+    db.select({ count: sql<number>`count(*)` })
+      .from(visitors)
+      .then((r: any) => r[0]?.count || 0),
+    // Registered users (from users table)
     db.select({ count: sql<number>`count(*)` })
       .from(users)
       .then((r: any) => r[0]?.count || 0),
@@ -1170,6 +1176,7 @@ export async function getSalesFunnelStats() {
   
   return {
     totalVisitors,
+    registeredVisitors,
     registeredUsers,
     engagedUsers,
     inquiries: totalInquiries,
@@ -1949,4 +1956,90 @@ export async function resetAllTestData() {
 // Legacy function for backward compatibility
 export async function getTestDataCounts() {
   return getTestDataCountsByPeriod('all');
+}
+
+
+// ============================================
+// VISITOR FUNCTIONS
+// ============================================
+
+export async function getVisitorStats() {
+  const db = await getDb();
+  if (!db) return { totalVisitors: 0, activeVisitors: 0, todayRegistrations: 0, weekRegistrations: 0 };
+  
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const weekStart = new Date(todayStart);
+  weekStart.setDate(weekStart.getDate() - 7);
+  
+  const [totalResult, activeResult, todayResult, weekResult] = await Promise.all([
+    db.select({ count: sql<number>`count(*)` }).from(visitors),
+    db.select({ count: sql<number>`count(*)` }).from(visitors).where(eq(visitors.status, "active")),
+    db.select({ count: sql<number>`count(*)` }).from(visitors).where(gte(visitors.createdAt, todayStart)),
+    db.select({ count: sql<number>`count(*)` }).from(visitors).where(gte(visitors.createdAt, weekStart)),
+  ]);
+  
+  return {
+    totalVisitors: totalResult[0]?.count || 0,
+    activeVisitors: activeResult[0]?.count || 0,
+    todayRegistrations: todayResult[0]?.count || 0,
+    weekRegistrations: weekResult[0]?.count || 0,
+  };
+}
+
+export async function getRecentVisitors(limit: number = 20) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select({
+    id: visitors.id,
+    email: visitors.email,
+    name: visitors.name,
+    status: visitors.status,
+    createdAt: visitors.createdAt,
+    lastLogin: visitors.lastLogin,
+  })
+  .from(visitors)
+  .orderBy(desc(visitors.createdAt))
+  .limit(limit);
+}
+
+export async function getVisitorById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const results = await db.select().from(visitors).where(eq(visitors.id, id)).limit(1);
+  return results[0] || null;
+}
+
+export async function updateVisitorStatus(id: number, status: "pending_verification" | "active" | "suspended") {
+  const db = await getDb();
+  if (!db) return null;
+  
+  await db.update(visitors).set({ status }).where(eq(visitors.id, id));
+  return getVisitorById(id);
+}
+
+export async function getVisitorWishlistCount(visitorId: number) {
+  const db = await getDb();
+  if (!db) return 0;
+  
+  const openId = `visitor_${visitorId}`;
+  const userResults = await db.select({ id: users.id }).from(users).where(eq(users.openId, openId)).limit(1);
+  if (userResults.length === 0) return 0;
+  
+  const countResult = await db.select({ count: sql<number>`count(*)` }).from(wishlist).where(eq(wishlist.userId, userResults[0].id));
+  return countResult[0]?.count || 0;
+}
+
+export async function getVisitorSavedSearchCount(visitorId: number) {
+  const db = await getDb();
+  if (!db) return 0;
+  
+  const openId = `visitor_${visitorId}`;
+  const userResults = await db.select({ id: users.id }).from(users).where(eq(users.openId, openId)).limit(1);
+  if (userResults.length === 0) return 0;
+  
+  const countResult = await db.select({ count: sql<number>`count(*)` }).from(savedSearches).where(eq(savedSearches.userId, userResults[0].id));
+  return countResult[0]?.count || 0;
 }

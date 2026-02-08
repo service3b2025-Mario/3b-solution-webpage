@@ -44,6 +44,8 @@
   /* RAL Colors - Custom properties */
   --color-ral-5003: oklch(0.28 0.08 250); /* RAL 5003 Sapphire Blue #1D3461 */
   --color-ral-1028: oklch(0.72 0.18 70); /* RAL 1028 Melon Yellow/Orange #F5A623 */
+  --color-ral-1028-light: oklch(0.78 0.16 70); /* Light (for glossy highlight) */
+  --color-ral-1028-dark: oklch(0.65 0.20 70); /* Dark (for glossy shadow) */
 }
 
 /* 3B Solution Theme - RAL 5003 Sapphire Blue & RAL 1028 Melon Yellow */
@@ -52,9 +54,11 @@
   --primary: oklch(0.28 0.08 250);
   --primary-foreground: oklch(0.98 0.01 250);
   
-  /* Secondary - RAL 1028 Melon Yellow/Orange (Luxury Accent) */
+  /* Secondary - RAL 1028 Melon Yellow/Orange (Luxury Accent with Glossy) */
   --secondary: oklch(0.72 0.18 70);
   --secondary-foreground: oklch(0.15 0.02 70);
+  --secondary-light: oklch(0.78 0.16 70);
+  --secondary-dark: oklch(0.65 0.20 70);
   
   /* Accent - RAL 1028 Melon Yellow/Orange */
   --accent: oklch(0.72 0.18 70);
@@ -310,4 +314,97 @@
   .mobile-filters-only {
     display: none !important;
   }
+}
+
+/* ============================================
+   RAL 1028 Melon Yellow Glossy Button Styles
+   ============================================ */
+
+/* Glossy effect for secondary/accent colored buttons */
+.btn-glossy,
+button.bg-secondary,
+.bg-secondary[role="button"],
+a.bg-secondary {
+  background: linear-gradient(
+    180deg,
+    oklch(0.78 0.16 70) 0%,
+    oklch(0.72 0.18 70) 35%,
+    oklch(0.72 0.18 70) 65%,
+    oklch(0.65 0.20 70) 100%
+  ) !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  border: none;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-glossy:hover,
+button.bg-secondary:hover,
+.bg-secondary[role="button"]:hover,
+a.bg-secondary:hover {
+  background: linear-gradient(
+    180deg,
+    oklch(0.80 0.15 70) 0%,
+    oklch(0.74 0.17 70) 35%,
+    oklch(0.74 0.17 70) 65%,
+    oklch(0.68 0.19 70) 100%
+  ) !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+    0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Glossy effect for hover:bg-secondary elements */
+.hover\:bg-secondary:hover {
+  background: linear-gradient(
+    180deg,
+    oklch(0.78 0.16 70) 0%,
+    oklch(0.72 0.18 70) 35%,
+    oklch(0.72 0.18 70) 65%,
+    oklch(0.65 0.20 70) 100%
+  ) !important;
+}
+
+/* Glossy icon backgrounds */
+.bg-secondary\/10,
+.bg-secondary\/20 {
+  background: linear-gradient(
+    135deg,
+    rgba(245, 166, 35, 0.15) 0%,
+    rgba(245, 166, 35, 0.08) 100%
+  ) !important;
+}
+
+/* Glossy text color with subtle shine */
+.text-secondary {
+  color: oklch(0.72 0.18 70);
+  text-shadow: 0 0 1px rgba(245, 166, 35, 0.3);
+}
+
+/* Glossy border effect */
+.border-secondary {
+  border-color: oklch(0.72 0.18 70);
+  box-shadow: 0 0 0 1px rgba(245, 166, 35, 0.2);
+}
+
+/* Glossy badge/tag styles */
+.bg-secondary.rounded,
+.bg-secondary.rounded-full,
+.bg-secondary.rounded-md,
+.bg-secondary.rounded-lg {
+  background: linear-gradient(
+    180deg,
+    oklch(0.78 0.16 70) 0%,
+    oklch(0.72 0.18 70) 50%,
+    oklch(0.68 0.19 70) 100%
+  ) !important;
+}
+
+/* Ensure consistent color on focus states */
+.focus\:ring-secondary:focus,
+.focus-visible\:ring-secondary:focus-visible {
+  --tw-ring-color: oklch(0.72 0.18 70);
 }

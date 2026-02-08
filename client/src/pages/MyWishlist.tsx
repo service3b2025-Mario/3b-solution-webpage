@@ -7,14 +7,15 @@ import { trpc } from "@/lib/trpc";
 import { Building2, MapPin, Heart, Trash2, Eye, TrendingUp } from "lucide-react";
 import { PropertyDetailModal } from "@/components/PropertyDetailModal";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
 import { toast } from "sonner";
 import { SEO } from "@/components/SEO";
+import { VisitorLoginModal } from "@/components/VisitorLoginModal";
 
 export default function MyWishlist() {
   const { user } = useAuth();
   const [selectedProperty, setSelectedProperty] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   
   const { data: wishlistItems, isLoading, refetch } = trpc.wishlist.list.useQuery(undefined, {
     enabled: !!user,
@@ -53,15 +54,20 @@ export default function MyWishlist() {
             <Heart className="w-16 h-16 mx-auto mb-6 text-muted-foreground" />
             <h1 className="text-3xl font-bold mb-4">Sign In to View Your Wishlist</h1>
             <p className="text-lg text-muted-foreground mb-8">
-              Save your favorite properties and access them anytime by signing in to your account.
+              Save your favorite properties and access them anytime. No password needed — just verify your email.
             </p>
-            <a href={getLoginUrl()}>
-              <Button size="lg">
-                Sign In
-              </Button>
-            </a>
+            <Button size="lg" onClick={() => setShowLoginModal(true)}>
+              <Heart className="w-5 h-5 mr-2" />
+              Sign In with Email
+            </Button>
           </div>
         </div>
+
+        <VisitorLoginModal
+          open={showLoginModal}
+          onOpenChange={setShowLoginModal}
+          triggerContext="wishlist"
+        />
       </Layout>
     );
   }

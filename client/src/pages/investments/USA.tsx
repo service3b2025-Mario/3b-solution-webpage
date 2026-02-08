@@ -90,7 +90,7 @@ export default function InvestmentsUSA() {
             <Card className="border-2 hover:shadow-lg transition-all">
               <CardContent className="p-8 text-center">
                 <div className="text-4xl font-bold text-secondary mb-2">$10M-$100M</div>
-                <div className="text-lg font-semibold mb-2">Investment Range</div>
+                <div className="text-lg font-semibold mb-2">Property Budget Range</div>
                 <p className="text-sm text-muted-foreground">
                   Institutional-grade hospitality opportunities
                 </p>
@@ -198,7 +198,7 @@ export default function InvestmentsUSA() {
               Ready to Invest in the USA?
             </h2>
             <p className="text-xl mb-8 text-white/90">
-              Connect with our USA investment team to explore opportunities
+              Connect with our USA real estate team to explore opportunities
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/contact">

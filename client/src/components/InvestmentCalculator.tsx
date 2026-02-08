@@ -182,7 +182,7 @@ export default function InvestmentCalculator() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calculator className="w-5 h-5 text-secondary" aria-hidden="true" />
-              Configure Your Investment
+              Configure Your Property Purchase
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-8">
@@ -234,7 +234,7 @@ export default function InvestmentCalculator() {
             <div>
               <div className="flex justify-between items-start mb-2">
                 {/* FIXED: Added proper label with htmlFor for accessibility */}
-                <label htmlFor="investment-amount" className="text-sm font-medium text-foreground">Investment Amount</label>
+                <label htmlFor="investment-amount" className="text-sm font-medium text-foreground">Purchase Amount</label>
                 <div className="flex flex-col items-end gap-2">
                   {/* Blue display - shows formatted currency amount */}
                   <span className="text-lg font-bold text-primary" aria-live="polite">{formatCurrency(displayedInvestmentAmount)}</span>
@@ -253,7 +253,7 @@ export default function InvestmentCalculator() {
                       onKeyDown={handleInputKeyDown}
                       className="pl-8 pr-3 text-right text-base font-semibold h-10"
                       placeholder="Enter amount"
-                      aria-label={`Investment amount in ${selectedCurrency.name}`}
+                      aria-label={`Property purchase amount in ${selectedCurrency.name}`}
                     />
                   </div>
                 </div>
@@ -270,7 +270,7 @@ export default function InvestmentCalculator() {
                 max={100000000}
                 step={50000}
                 className="w-full"
-                aria-label="Investment amount slider"
+                aria-label="Property purchase amount slider"
               />
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
                 <span>{formatCurrency(convertAndRoundAmount(100000))}</span>
@@ -281,7 +281,7 @@ export default function InvestmentCalculator() {
             {/* Timeline */}
             <div>
               <div className="flex justify-between mb-2">
-                <label htmlFor="timeline-slider" className="text-sm font-medium text-foreground">Investment Timeline</label>
+                <label htmlFor="timeline-slider" className="text-sm font-medium text-foreground">Property Holding Period</label>
                 <span className="text-lg font-bold text-primary" aria-live="polite">{timeline} Years</span>
               </div>
               {/* FIXED: Added aria-label to slider for accessibility */}
@@ -292,7 +292,7 @@ export default function InvestmentCalculator() {
                 max={15}
                 step={1}
                 className="w-full"
-                aria-label="Investment timeline in years"
+                aria-label="Property holding period in years"
               />
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
                 <span>1 Year</span>
@@ -303,7 +303,7 @@ export default function InvestmentCalculator() {
             {/* Expected Return */}
             <div>
               <div className="flex justify-between mb-2">
-                <label htmlFor="return-slider" className="text-sm font-medium text-foreground">Expected Annual Return</label>
+                <label htmlFor="return-slider" className="text-sm font-medium text-foreground">Projected Annual Yield</label>
                 <span className="text-lg font-bold text-secondary" aria-live="polite">{expectedReturn}%</span>
               </div>
               {/* FIXED: Added aria-label to slider for accessibility */}
@@ -314,7 +314,7 @@ export default function InvestmentCalculator() {
                 max={30}
                 step={1}
                 className="w-full"
-                aria-label="Expected annual return percentage"
+                aria-label="Projected annual yield percentage"
               />
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
                 <span>10%</span>
@@ -325,7 +325,7 @@ export default function InvestmentCalculator() {
             <div className="pt-4 border-t border-border">
               <p className="text-xs text-muted-foreground">
                 * Projections are estimates based on historical performance. Actual returns may vary. 
-                Investment involves risk. Past performance is not indicative of future results.
+                Property investment involves risk. Past performance is not indicative of future results.
               </p>
             </div>
           </CardContent>
@@ -358,10 +358,10 @@ export default function InvestmentCalculator() {
           {/* Chart */}
           <Card className="border-0 shadow-lg">
             <CardHeader>
-              <CardTitle className="text-lg">Investment Projection</CardTitle>
+              <CardTitle className="text-lg">Property Yield Projection</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64" role="img" aria-label="Investment projection chart showing growth over time">
+              <div className="h-64" role="img" aria-label="Property yield projection chart showing growth over time">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={projectionData}>
                     <defs>
@@ -433,9 +433,9 @@ export default function InvestmentCalculator() {
           <Card className="border-0 shadow-lg bg-gradient-to-br from-secondary to-secondary/90 text-white">
             <CardContent className="p-6 text-center">
               {/* FIXED: Changed from h3 to h2 for proper heading hierarchy */}
-              <h2 className="text-xl font-bold mb-2">Schedule Consultation to Learn More</h2>
+              <h2 className="text-xl font-bold mb-2">Schedule Property Consultation</h2>
               <p className="text-sm opacity-90 mb-4">
-                Speak with our investment advisors to explore opportunities tailored to your goals
+                Speak with our property advisors to explore opportunities tailored to your goals
               </p>
               <Link href="/contact">
                 <Button size="lg" variant="outline" className="bg-white text-secondary hover:bg-white/90 border-0">

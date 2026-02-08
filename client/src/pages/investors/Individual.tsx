@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { TrendingUp, GraduationCap, Users, Shield, Home, Award, ArrowRight } from "lucide-react";
+import { Home, GraduationCap, Users, Shield, Building, Award, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
 import { Breadcrumb } from "@/components/Breadcrumb";
@@ -22,18 +22,18 @@ export default function IndividualPage() {
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
             <div className="w-20 h-20 bg-chart-1/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <TrendingUp className="w-10 h-10 text-chart-1" />
+              <Home className="w-10 h-10 text-chart-1" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Individual & First-Time Investors
+              Individual & First-Time Buyers
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              Building wealth through real estate with $100K+ investment capacity, expert guidance, and portfolio diversification strategies.
+              Your partner in property ownership with expert guidance, curated property selection, and end-to-end support for your real estate journey.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/properties">
                 <Button size="lg" className="bg-secondary hover:bg-secondary/90">
-                  Start Your Investment Journey
+                  Start Your Property Journey
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
@@ -53,7 +53,7 @@ export default function IndividualPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose 3B Solution</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Comprehensive support and education for individual investors building wealth through premium real estate.
+              Comprehensive support and education for individual buyers seeking premium real estate opportunities.
             </p>
           </div>
 
@@ -65,7 +65,7 @@ export default function IndividualPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Expert Guidance & Education</h3>
                 <p className="text-muted-foreground">
-                  Comprehensive investor education, market insights, and personalized guidance from experienced real estate professionals throughout your journey.
+                  Comprehensive buyer education, market insights, and personalized guidance from experienced real estate professionals throughout your journey.
                 </p>
               </CardContent>
             </Card>
@@ -73,11 +73,11 @@ export default function IndividualPage() {
             <Card className="border-2 hover:border-chart-1 transition-colors">
               <CardContent className="p-8">
                 <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                  <TrendingUp className="w-7 h-7 text-primary" />
+                  <Building className="w-7 h-7 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Portfolio Diversification</h3>
+                <h3 className="text-xl font-semibold mb-3">Property Selection</h3>
                 <p className="text-muted-foreground">
-                  Strategic property selection across asset classes and locations to build a balanced portfolio optimized for your risk tolerance and goals.
+                  Strategic property selection across different types and locations to help you find properties that match your goals and preferences.
                 </p>
               </CardContent>
             </Card>
@@ -87,9 +87,9 @@ export default function IndividualPage() {
                 <div className="w-14 h-14 bg-secondary/10 rounded-lg flex items-center justify-center mb-6">
                   <Shield className="w-7 h-7 text-secondary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Lower Entry Barriers</h3>
+                <h3 className="text-xl font-semibold mb-3">Accessible Entry Points</h3>
                 <p className="text-muted-foreground">
-                  Accessible investment opportunities starting from $100K with flexible financing options and co-investment structures available.
+                  Property opportunities at various price points with flexible financing options and co-ownership structures available.
                 </p>
               </CardContent>
             </Card>
@@ -101,7 +101,7 @@ export default function IndividualPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Turnkey Solutions</h3>
                 <p className="text-muted-foreground">
-                  End-to-end support including property selection, due diligence, financing assistance, and ongoing property management services.
+                  End-to-end support including property selection, due diligence coordination, financing assistance, and property management referrals.
                 </p>
               </CardContent>
             </Card>
@@ -113,7 +113,7 @@ export default function IndividualPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Community & Networking</h3>
                 <p className="text-muted-foreground">
-                  Join a community of like-minded investors, attend educational workshops, and access networking events with industry experts.
+                  Join a community of like-minded buyers, attend educational workshops, and access networking events with industry experts.
                 </p>
               </CardContent>
             </Card>
@@ -125,7 +125,7 @@ export default function IndividualPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Transparent Process</h3>
                 <p className="text-muted-foreground">
-                  Clear fee structures, detailed investment analysis, and regular performance reporting with no hidden costs or surprises.
+                  Clear fee structures, detailed property information, and regular updates with no hidden costs or surprises.
                 </p>
               </CardContent>
             </Card>
@@ -133,11 +133,11 @@ export default function IndividualPage() {
         </div>
       </section>
 
-      {/* Investment Journey */}
+      {/* Property Journey */}
       <section className="py-20 bg-muted/30">
         <div className="container">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Your Investment Journey</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">Your Property Journey</h2>
             <Card>
               <CardContent className="p-8">
                 <div className="space-y-6">
@@ -148,7 +148,7 @@ export default function IndividualPage() {
                     <div>
                       <h3 className="text-lg font-semibold mb-2">Initial Consultation</h3>
                       <p className="text-muted-foreground">
-                        Meet with our investment advisors to discuss your financial goals, risk tolerance, and investment timeline. We'll assess your readiness and create a personalized strategy.
+                        Meet with our property advisors to discuss your property goals and timeline. We'll understand your preferences and create a personalized search strategy.
                       </p>
                     </div>
                   </div>
@@ -160,7 +160,7 @@ export default function IndividualPage() {
                     <div>
                       <h3 className="text-lg font-semibold mb-2">Property Selection & Due Diligence</h3>
                       <p className="text-muted-foreground">
-                        Review curated property options matching your criteria. Our team conducts comprehensive due diligence including market analysis, legal review, and financial modeling.
+                        Review curated property options matching your criteria. Our team coordinates comprehensive due diligence including market analysis and legal review.
                       </p>
                     </div>
                   </div>
@@ -172,7 +172,7 @@ export default function IndividualPage() {
                     <div>
                       <h3 className="text-lg font-semibold mb-2">Financing & Acquisition</h3>
                       <p className="text-muted-foreground">
-                        Access our network of preferred lenders for competitive financing. We guide you through the acquisition process, negotiation, and closing procedures.
+                        Access our network of preferred lenders for financing options. We guide you through the acquisition process, negotiation, and closing procedures.
                       </p>
                     </div>
                   </div>
@@ -182,9 +182,9 @@ export default function IndividualPage() {
                       <span className="text-chart-1 font-semibold">4</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Ongoing Support & Growth</h3>
+                      <h3 className="text-lg font-semibold mb-2">Ongoing Support</h3>
                       <p className="text-muted-foreground">
-                        Receive ongoing property management support, quarterly performance reports, and strategic advice as you grow your real estate portfolio.
+                        Receive ongoing property management referrals, market updates, and support as you continue your real estate journey.
                       </p>
                     </div>
                   </div>
@@ -195,7 +195,7 @@ export default function IndividualPage() {
         </div>
       </section>
 
-      {/* Investment Criteria */}
+      {/* Getting Started */}
       <section className="py-20">
         <div className="container">
           <div className="max-w-4xl mx-auto">
@@ -208,9 +208,9 @@ export default function IndividualPage() {
                       <span className="text-primary font-semibold">✓</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Minimum Investment: $100K+</h3>
+                      <h3 className="text-lg font-semibold mb-2">Acquisition Capacity</h3>
                       <p className="text-muted-foreground">
-                        Available capital or financing capacity to invest in premium real estate opportunities.
+                        Available capital or financing capacity to acquire premium real estate properties.
                       </p>
                     </div>
                   </div>
@@ -222,7 +222,7 @@ export default function IndividualPage() {
                     <div>
                       <h3 className="text-lg font-semibold mb-2">Long-Term Perspective</h3>
                       <p className="text-muted-foreground">
-                        5-10 year investment horizon for optimal wealth building and capital appreciation.
+                        Interest in long-term property ownership for personal use, rental income, or potential appreciation.
                       </p>
                     </div>
                   </div>
@@ -234,7 +234,7 @@ export default function IndividualPage() {
                     <div>
                       <h3 className="text-lg font-semibold mb-2">Open to Learning</h3>
                       <p className="text-muted-foreground">
-                        Willingness to learn about real estate investing, market dynamics, and portfolio management strategies.
+                        Willingness to learn about real estate markets, property dynamics, and ownership considerations.
                       </p>
                     </div>
                   </div>
@@ -244,9 +244,9 @@ export default function IndividualPage() {
                       <span className="text-primary font-semibold">✓</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Diversification Goals</h3>
+                      <h3 className="text-lg font-semibold mb-2">Property Ownership Goals</h3>
                       <p className="text-muted-foreground">
-                        Interest in adding real estate to your investment portfolio for diversification and inflation protection.
+                        Interest in adding real estate to your assets for personal use, rental income, or geographic diversification.
                       </p>
                     </div>
                   </div>
@@ -262,14 +262,14 @@ export default function IndividualPage() {
         <div className="container">
           <Card className="bg-gradient-to-br from-chart-1/10 to-chart-2/10 border-2">
             <CardContent className="p-12 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Start Building Your Real Estate Portfolio Today</h2>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Start Your Property Journey Today</h2>
               <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Schedule a complimentary consultation to discuss your investment goals and explore available opportunities.
+                Schedule a complimentary consultation to discuss your property goals and explore available opportunities.
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
                 <Link href="/contact">
                   <Button size="lg" className="bg-secondary hover:bg-secondary/90">
-                    Schedule Free Consultation
+                    Schedule Consultation
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>

@@ -33,7 +33,7 @@ const investorTypes: InvestorType[] = [
     color: "accent"
   },
   {
-    title: "Individual Investors",
+    title: "Individual Buyers",
     description: "Building wealth through real estate with $100K+ investment capacity",
     href: "/investors/individual",
     icon: <TrendingUp className="w-6 h-6" />,
@@ -56,10 +56,10 @@ export function InvestorTypesLinks({ currentType }: InvestorTypesLinksProps) {
       <div className="container">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Explore Other Investor Types
+            Explore Other Client Types
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover investment solutions tailored to different investor profiles and requirements
+            Discover real estate services tailored to different client profiles and requirements
           </p>
         </div>
 

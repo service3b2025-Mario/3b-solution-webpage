@@ -104,7 +104,7 @@ export function PropertyInquiryForm({ propertyId, propertyTitle }: PropertyInqui
             <CheckCircle className="w-12 h-12 text-green-600 mx-auto mb-4" />
             <h3 className="text-xl font-bold text-green-900 mb-2">Thank You!</h3>
             <p className="text-green-700 mb-4">
-              Your inquiry has been submitted successfully. Our investment team will contact you within 24 hours.
+              Your inquiry has been submitted successfully. Our real estate team will contact you within 24 hours.
             </p>
             <Button 
               variant="outline" 
@@ -203,10 +203,10 @@ export function PropertyInquiryForm({ propertyId, propertyTitle }: PropertyInqui
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="investmentRange">Investment Range</Label>
+            <Label htmlFor="investmentRange">Property Budget Range</Label>
             <Select value={formData.investmentRange} onValueChange={(value) => handleChange("investmentRange", value)}>
               <SelectTrigger id="investmentRange">
-                <SelectValue placeholder="Select investment range" />
+                <SelectValue placeholder="Select property budget range" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="100k-1m">$100K - $1M</SelectItem>
@@ -247,7 +247,7 @@ export function PropertyInquiryForm({ propertyId, propertyTitle }: PropertyInqui
               id="message"
               value={formData.message}
               onChange={(e) => handleChange("message", e.target.value)}
-              placeholder="Tell us about your investment goals and timeline..."
+              placeholder="Tell us about your property goals and timeline..."
               rows={4}
             />
           </div>
@@ -271,7 +271,7 @@ export function PropertyInquiryForm({ propertyId, propertyTitle }: PropertyInqui
           </Button>
 
           <p className="text-xs text-muted-foreground text-center">
-            By submitting this form, you agree to be contacted by 3B Solution regarding this property and other investment opportunities.
+            By submitting this form, you agree to be contacted by 3B Solution regarding this property and other real estate opportunities.
           </p>
         </form>
       </CardContent>

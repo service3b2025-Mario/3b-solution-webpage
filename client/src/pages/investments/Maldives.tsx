@@ -90,7 +90,7 @@ export default function InvestmentsMaldives() {
             <Card className="border-2 hover:shadow-lg transition-all">
               <CardContent className="p-8 text-center">
                 <div className="text-4xl font-bold mb-2" style={{ color: '#0FA37F' }}>$30M-$200M</div>
-                <div className="text-lg font-semibold mb-2">Investment Range</div>
+                <div className="text-lg font-semibold mb-2">Property Budget Range</div>
                 <p className="text-sm text-muted-foreground">
                   Exclusive 5-star island resort opportunities
                 </p>
@@ -198,7 +198,7 @@ export default function InvestmentsMaldives() {
               Ready to Invest in the Maldives?
             </h2>
             <p className="text-xl mb-8 text-white/90">
-              Connect with our Maldives investment team to explore exclusive luxury resort opportunities
+              Connect with our Maldives real estate team to explore exclusive luxury resort opportunities
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link href="/contact">

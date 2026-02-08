@@ -5,6 +5,7 @@ import { Menu, Phone, Mail, MapPin, Linkedin, Facebook, User, Heart, Bookmark, L
 import { Instagram } from "lucide-react";
 import { BackToTop } from "@/components/BackToTop";
 import { ChatWidget } from "@/components/ChatWidget";
+import { MobileContactMenu } from "@/components/MobileContactMenu";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
@@ -17,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState, useEffect } from "react";
+import { VisitorLoginModal } from "@/components/VisitorLoginModal";
 
 const navLinks = [
   { href: "/", label: "Home", icon: Home },
@@ -35,6 +37,7 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const { user } = useAuth();
   const logoutMutation = trpc.auth.logout.useMutation();
+  const [showVisitorLogin, setShowVisitorLogin] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,7 +49,14 @@ export function Header() {
   }, []);
 
   const handleLogout = async () => {
-    await logoutMutation.mutateAsync();
+    try {
+      // Clear visitor session if applicable
+      await fetch('/api/visitor/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+      // Clear admin session
+      await logoutMutation.mutateAsync();
+    } catch (e) {
+      // Ignore errors
+    }
     window.location.href = '/';
   };
 
@@ -142,13 +152,23 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <a href="/admin" className="hidden md:block">
-                <Button variant="outline" size="sm">
-                  <User className="mr-2 h-4 w-4" aria-hidden="true" />
-                  Sign In
-                </Button>
-              </a>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="hidden md:inline-flex items-center gap-2"
+                onClick={() => setShowVisitorLogin(true)}
+              >
+                <User className="h-4 w-4" aria-hidden="true" />
+                <span>Sign In</span>
+              </Button>
             )}
+
+            {/* Visitor Login Modal */}
+            <VisitorLoginModal
+              open={showVisitorLogin}
+              onOpenChange={setShowVisitorLogin}
+              triggerContext="general"
+            />
             <Link href="/contact" className="hidden md:block">
               <Button className="bg-secondary hover:bg-secondary/90 text-white font-bold text-base px-6 py-6 shadow-lg hover:shadow-xl transition-all">
                 Schedule Consultation
@@ -221,10 +241,10 @@ export function Footer() {
         <div className="container text-center">
           {/* FIXED: Changed from h3 to h2 for proper heading hierarchy */}
           <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4">
-            Ready to Start Your Investment Journey?
+            Ready to Start Your Property Journey?
           </h2>
           <p className="text-white/80 mb-6 max-w-2xl mx-auto">
-            Connect with our expert team for personalized investment guidance and exclusive property access.
+            Connect with our expert team for personalized property guidance and exclusive real estate access.
           </p>
           <Link href="/contact">
             <Button size="lg" className="bg-white text-secondary hover:bg-white/90 font-medium px-8">
@@ -237,7 +257,7 @@ export function Footer() {
       {/* Main Footer */}
       <div className="py-16">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Company Info */}
             <div>
               <div className="mb-6">
@@ -252,10 +272,11 @@ export function Footer() {
                 />
               </div>
               <p className="text-primary-foreground/70 text-sm leading-relaxed mb-6">
-                Premium real estate investment solutions anchored in the Philippines, diversified globally. 
-                Delivering 15-30% annual returns backed by global expertise.
+                Premium real estate brokerage and services anchored in the Philippines, diversified globally. 
+                Targeting 15-30% yields based on developer projections.
               </p>
-              <div className="flex gap-4">
+              {/* Social Media Icons */}
+              <div className="flex gap-4 mb-4">
                 {linkedinUrl && (
                   <a href={linkedinUrl} target="_blank" rel="noopener noreferrer" aria-label="Follow us on LinkedIn" className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition-colors">
                     <Linkedin className="w-5 h-5" aria-hidden="true" />
@@ -293,6 +314,25 @@ export function Footer() {
                   </>
                 )}
               </div>
+              
+              {/* Legal Links - Below Social Media Icons, Highlighted */}
+              <div className="flex flex-wrap gap-3 pt-4 border-t border-white/10">
+                <Link href="/legal/terms-of-service" className="text-secondary hover:text-secondary/80 text-sm font-medium transition-colors">
+                  Terms
+                </Link>
+                <span className="text-white/30">|</span>
+                <Link href="/legal/privacy-policy" className="text-secondary hover:text-secondary/80 text-sm font-medium transition-colors">
+                  Privacy
+                </Link>
+                <span className="text-white/30">|</span>
+                <Link href="/legal/cookie-policy?lang=en" className="text-secondary hover:text-secondary/80 text-sm font-medium transition-colors">
+                  Cookies
+                </Link>
+                <span className="text-white/30">|</span>
+                <Link href="/legal/imprint" className="text-secondary hover:text-secondary/80 text-sm font-medium transition-colors">
+                  Imprint
+                </Link>
+              </div>
             </div>
 
             {/* Quick Links */}
@@ -314,9 +354,9 @@ export function Footer() {
             <div>
               <h3 className="font-semibold mb-6">Our Services</h3>
               <ul className="space-y-3">
-                <li><Link href="/services" className="text-primary-foreground/70 hover:text-white transition-colors text-sm">Investment Advisory</Link></li>
+                <li><Link href="/services" className="text-primary-foreground/70 hover:text-white transition-colors text-sm">Service Advisory</Link></li>
                 <li><Link href="/services" className="text-primary-foreground/70 hover:text-white transition-colors text-sm">Property Acquisition</Link></li>
-                <li><Link href="/services" className="text-primary-foreground/70 hover:text-white transition-colors text-sm">Asset Management</Link></li>
+                <li><Link href="/services" className="text-primary-foreground/70 hover:text-white transition-colors text-sm">Real Estate Services</Link></li>
                 <li><Link href="/services" className="text-primary-foreground/70 hover:text-white transition-colors text-sm">Development Consulting</Link></li>
               </ul>
             </div>
@@ -360,27 +400,30 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Bottom Bar */}
+      {/* Risk Disclaimer Section */}
+      <div className="border-t-2 border-secondary py-6">
+        <div className="container">
+          <p className="text-sm text-primary-foreground/70 leading-relaxed mb-3">
+            <strong className="text-primary-foreground/90">Important Legal Notice:</strong> 3B Solution provides real estate brokerage 
+            (Germany, licensed) and referral/management services (Philippines, SEC-registered). 
+            We are not an investment firm, fund manager, or financial advisor. Any projected 
+            returns (15-30%) represent developer estimates or market analyses and do not 
+            constitute guaranteed performance. Real estate investments involve risks including 
+            illiquidity, market fluctuations, and total loss of capital.
+          </p>
+          <div className="flex flex-wrap gap-4 text-sm text-primary-foreground/60">
+            <span><strong className="text-secondary">Germany:</strong> Licensed broker §34c GewO</span>
+            <span><strong className="text-secondary">Philippines:</strong> SEC 2023100119302-12 (not PRC-licensed broker)</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Bar - Copyright */}
       <div className="border-t border-white/10 py-6">
         <div className="container">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-primary-foreground/60">
+          <div className="flex flex-col items-center gap-4 text-sm text-primary-foreground/60">
             <p>© {new Date().getFullYear()} 3B Solution. All rights reserved.</p>
-            <nav className="flex items-center gap-6" aria-label="Legal navigation">
-              <Link href="/legal/terms-of-service" className="hover:text-white transition-colors">
-                Terms of Service
-              </Link>
-              <Link href="/legal/privacy" className="hover:text-white transition-colors">
-                Privacy
-              </Link>
-              <Link href="/legal/imprint" className="hover:text-white transition-colors">
-                Imprint
-              </Link>
-            </nav>
           </div>
-          <p className="text-center text-xs text-primary-foreground/50 mt-4">
-            Investment involves risk. Past performance is not indicative of future results. 
-            Please consult with a qualified financial advisor before making investment decisions.
-          </p>
         </div>
       </div>
     </footer>
@@ -401,6 +444,7 @@ export default function Layout({ children }: LayoutProps) {
       <Footer />
       <BackToTop />
       <ChatWidget />
+      <MobileContactMenu />
     </div>
   );
 }

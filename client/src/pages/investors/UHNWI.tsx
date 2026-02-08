@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, Shield, Globe, TrendingUp, Award, Lock, ArrowRight } from "lucide-react";
+import { Users, Shield, Globe, Building, Award, Lock, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
 import { Breadcrumb } from "@/components/Breadcrumb";
@@ -28,7 +28,7 @@ export default function UHNWIPage() {
               Ultra High Net Worth Individuals
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              Exclusive real estate opportunities for investors with $30M+ net worth seeking global portfolio diversification and accredited investment status.
+              Exclusive real estate brokerage services for discerning clients with an interest in premium global properties.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/properties">
@@ -53,7 +53,7 @@ export default function UHNWIPage() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Why UHNWI Choose 3B Solution</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Tailored services designed specifically for ultra-high-net-worth individuals seeking premium real estate investments.
+              Tailored brokerage services designed specifically for discerning clients seeking premium real estate opportunities.
             </p>
           </div>
 
@@ -63,9 +63,9 @@ export default function UHNWIPage() {
                 <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
                   <Shield className="w-7 h-7 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Accredited Investor Status</h3>
+                <h3 className="text-xl font-semibold mb-3">Exclusive Property Access</h3>
                 <p className="text-muted-foreground">
-                  Access to exclusive off-market deals and pre-launch opportunities reserved for accredited investors with verified credentials.
+                  Access to exclusive off-market deals and pre-launch opportunities through our extensive network of developers and property owners.
                 </p>
               </CardContent>
             </Card>
@@ -75,9 +75,9 @@ export default function UHNWIPage() {
                 <div className="w-14 h-14 bg-secondary/10 rounded-lg flex items-center justify-center mb-6">
                   <Globe className="w-7 h-7 text-secondary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Global Portfolio Diversification</h3>
+                <h3 className="text-xl font-semibold mb-3">Global Property Selection</h3>
                 <p className="text-muted-foreground">
-                  Strategic property selection across prime international markets to optimize risk-adjusted returns and currency diversification.
+                  Strategic property sourcing across prime international markets to help you find properties in multiple jurisdictions.
                 </p>
               </CardContent>
             </Card>
@@ -97,11 +97,11 @@ export default function UHNWIPage() {
             <Card className="border-2 hover:border-primary transition-colors">
               <CardContent className="p-8">
                 <div className="w-14 h-14 bg-chart-1/10 rounded-lg flex items-center justify-center mb-6">
-                  <TrendingUp className="w-7 h-7 text-chart-1" />
+                  <Building className="w-7 h-7 text-chart-1" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Premium ROI Opportunities</h3>
+                <h3 className="text-xl font-semibold mb-3">Premium Property Opportunities</h3>
                 <p className="text-muted-foreground">
-                  Curated selection of trophy assets and high-yield properties with proven track records of exceptional capital appreciation.
+                  Curated selection of trophy assets and premium properties in sought-after locations with strong market fundamentals.
                 </p>
               </CardContent>
             </Card>
@@ -113,7 +113,7 @@ export default function UHNWIPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">White-Glove Service</h3>
                 <p className="text-muted-foreground">
-                  Dedicated relationship manager, priority access to new listings, and personalized investment strategy consulting.
+                  Dedicated relationship manager, priority access to new listings, and personalized property search assistance.
                 </p>
               </CardContent>
             </Card>
@@ -125,7 +125,7 @@ export default function UHNWIPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Exclusive Network Access</h3>
                 <p className="text-muted-foreground">
-                  Connect with elite investor community, co-investment opportunities, and private events with industry leaders.
+                  Connect with our client community, co-ownership opportunities, and private events with industry leaders.
                 </p>
               </CardContent>
             </Card>
@@ -133,11 +133,11 @@ export default function UHNWIPage() {
         </div>
       </section>
 
-      {/* Investment Criteria */}
+      {/* Client Profile */}
       <section className="py-20 bg-muted/30">
         <div className="container">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">UHNWI Investment Criteria</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">UHNWI Client Profile</h2>
             <Card>
               <CardContent className="p-8">
                 <div className="space-y-6">
@@ -146,9 +146,9 @@ export default function UHNWIPage() {
                       <span className="text-primary font-semibold">1</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Minimum Net Worth: $30M+</h3>
+                      <h3 className="text-lg font-semibold mb-2">Substantial Property Experience</h3>
                       <p className="text-muted-foreground">
-                        Verified ultra-high-net-worth status with liquid assets available for real estate investment.
+                        Experience with significant property transactions and management of a global property portfolio.
                       </p>
                     </div>
                   </div>
@@ -158,9 +158,9 @@ export default function UHNWIPage() {
                       <span className="text-primary font-semibold">2</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Accredited Investor Documentation</h3>
+                      <h3 className="text-lg font-semibold mb-2">Client Onboarding</h3>
                       <p className="text-muted-foreground">
-                        SEC-compliant accredited investor verification through certified financial statements or professional certification.
+                        Standard client registration and identity verification as per real estate brokerage regulations.
                       </p>
                     </div>
                   </div>
@@ -170,9 +170,9 @@ export default function UHNWIPage() {
                       <span className="text-primary font-semibold">3</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Investment Horizon: 5-10 Years</h3>
+                      <h3 className="text-lg font-semibold mb-2">Long-Term Property Goals</h3>
                       <p className="text-muted-foreground">
-                        Long-term wealth preservation strategy with focus on capital appreciation and portfolio diversification.
+                        Interest in long-term property ownership for potential capital appreciation and personal use.
                       </p>
                     </div>
                   </div>
@@ -182,9 +182,9 @@ export default function UHNWIPage() {
                       <span className="text-primary font-semibold">4</span>
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold mb-2">Global Portfolio Strategy</h3>
+                      <h3 className="text-lg font-semibold mb-2">Global Property Interests</h3>
                       <p className="text-muted-foreground">
-                        Interest in international real estate holdings across multiple jurisdictions for geographic and currency diversification.
+                        Interest in acquiring properties in multiple international locations for geographic diversification of assets.
                       </p>
                     </div>
                   </div>
@@ -202,7 +202,7 @@ export default function UHNWIPage() {
             <CardContent className="p-12 text-center">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Explore Exclusive Opportunities?</h2>
               <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-                Schedule a confidential consultation with our UHNWI specialists to discuss your investment objectives.
+                Schedule a confidential consultation with our specialists to discuss your property objectives.
               </p>
               <div className="flex flex-wrap gap-4 justify-center">
                 <Link href="/contact">

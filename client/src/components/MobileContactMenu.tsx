@@ -54,7 +54,7 @@ export function MobileContactMenu() {
       (window as any).umami.track('mobile-whatsapp-click', { region });
     }
     const message = encodeURIComponent(
-      "Hi, I'm interested in learning more about your luxury real estate investment opportunities."
+      "Hi, I'm interested in learning more about your luxury real estate opportunities."
     );
     window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
   };
