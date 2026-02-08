@@ -325,30 +325,29 @@ async function bootstrapAdminUsers(): Promise<void> {
       return;
     }
 
-    // Define the required team members
+    // Bootstrap password from environment variable (required for new user creation)
+    const bootstrapPassword = process.env.ADMIN_BOOTSTRAP_PASSWORD;
+    
+    // Define the required team members (passwords are NEVER hardcoded)
     const requiredUsers = [
       {
         email: "mariobockph@3bsolution.de",
         name: "Mario Bock",
-        password: "3BSolution2025!",
         role: "admin" as const,
       },
       {
         email: "bibianbockph@3bsolution.de",
         name: "Bibian Pacayra Bock",
-        password: "Start@2026!",
         role: "director" as const,
       },
       {
         email: "georgblascheck@3bsolution.de",
         name: "Georg Blascheck",
-        password: "Georg@0123!",
         role: "director" as const,
       },
       {
         email: "engelapacayraph@3bsolution.de",
         name: "Engela Pacayra Espares",
-        password: "Start@2026!",
         role: "director" as const,
       },
     ];
@@ -368,8 +367,14 @@ async function bootstrapAdminUsers(): Promise<void> {
           continue;
         }
 
-        // User doesn't exist - create them
-        const passwordHash = await hashPassword(user.password);
+        // User doesn't exist - create them only if bootstrap password is set
+        if (!bootstrapPassword) {
+          console.warn(`[Auth Bootstrap] User ${user.email} does not exist but ADMIN_BOOTSTRAP_PASSWORD env var is not set. Skipping creation.`);
+          console.warn(`[Auth Bootstrap] To create initial admin users, set ADMIN_BOOTSTRAP_PASSWORD in Render environment variables.`);
+          continue;
+        }
+
+        const passwordHash = await hashPassword(bootstrapPassword);
         await db.insert(adminUsers).values({
           email: user.email,
           name: user.name,
@@ -386,8 +391,9 @@ async function bootstrapAdminUsers(): Promise<void> {
     }
 
     if (created > 0) {
-      console.log(`[Auth Bootstrap] Created ${created} new admin user(s)`);
-      console.log("[Auth Bootstrap] IMPORTANT: All new users should change their passwords after first login.");
+      console.log(`[Auth Bootstrap] Created ${created} new admin user(s) with bootstrap password`);
+      console.log("[Auth Bootstrap] IMPORTANT: All new users MUST change their passwords after first login.");
+      console.log("[Auth Bootstrap] After users have logged in, remove ADMIN_BOOTSTRAP_PASSWORD from env vars for security.");
     } else {
       console.log("[Auth Bootstrap] All required users already exist, no changes needed");
     }
