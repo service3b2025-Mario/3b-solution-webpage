@@ -1,4 +1,4 @@
-const CACHE_NAME = '3b-solution-v3'; // Updated version to force cache invalidation
+const CACHE_NAME = '3b-solution-v4'; // Updated version to force cache invalidation
 const urlsToCache = [
   '/',
   '/favicon.ico',
@@ -10,7 +10,7 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Opened cache v3');
+        console.log('Opened cache v4');
         return cache.addAll(urlsToCache);
       })
       .then(() => {
@@ -23,6 +23,13 @@ self.addEventListener('install', (event) => {
 // Fetch strategy: Network first for JS files, cache first for other resources
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
+  
+  // NEVER cache API calls - always fetch from network
+  // This ensures tRPC queries (wishlist, properties, etc.) always return fresh data
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
   
   // Skip caching for images - always fetch from network (R2 CDN)
   if (event.request.destination === 'image' || 
