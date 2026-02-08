@@ -116,10 +116,16 @@ export default function Home() {
                 Anchored in the Philippines, Diversified Globally (Europe, USA).
               </p>
               
-              {/* Target Returns - Larger, pulsing animation, with asterisk */}
-              <p className="text-4xl md:text-5xl lg:text-6xl text-secondary font-bold mb-2 animate-pulse">
-                Target Returns: 15-30% *
-              </p>
+              {/* Target Returns - Premium frosted glass badge with gold dividers */}
+              <div className="flex items-center justify-center gap-4 mb-2">
+                <div className="h-px w-16 md:w-24 bg-gradient-to-r from-transparent to-secondary/80" />
+                <div className="inline-flex items-center gap-2 px-6 md:px-8 py-3 md:py-4 bg-white/10 backdrop-blur-md border border-secondary/40 rounded-full shadow-lg">
+                  <span className="text-xl md:text-2xl lg:text-3xl font-bold text-white tracking-wide">Target Returns:</span>
+                  <span className="text-xl md:text-2xl lg:text-3xl font-bold text-secondary tracking-wide">15-30%</span>
+                  <span className="text-lg md:text-xl font-bold text-white">*</span>
+                </div>
+                <div className="h-px w-16 md:w-24 bg-gradient-to-l from-transparent to-secondary/80" />
+              </div>
               
               {/* Disclaimer - Smaller, italic, grey with asterisks */}
               <p className="text-sm md:text-base text-gray-300/80 italic mb-4">
