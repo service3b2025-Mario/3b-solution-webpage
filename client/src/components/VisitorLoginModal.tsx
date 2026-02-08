@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -278,9 +279,9 @@ export function VisitorLoginModal({
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       onClick={blockEvent}
       onPointerDown={blockEvent}
       onMouseDown={blockEvent}
@@ -288,7 +289,7 @@ export function VisitorLoginModal({
     >
       {/* Overlay - blocks ALL interaction with page behind */}
       <div
-        className="absolute inset-0 bg-black/50 animate-in fade-in-0 duration-200"
+        className="fixed inset-0 bg-black/50 animate-in fade-in-0 duration-200"
         onClick={handleOverlayClick}
         onPointerDown={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
         onMouseDown={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
@@ -297,7 +298,7 @@ export function VisitorLoginModal({
       {/* Modal Content */}
       <div
         ref={contentRef}
-        className="relative z-[201] w-full max-w-[440px] mx-4 bg-white rounded-lg shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in-0 duration-200"
+        className="relative z-[10000] w-full max-w-[440px] bg-white rounded-lg shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in-0 duration-200 max-h-[90vh] flex flex-col"
         onClick={blockEvent}
         onPointerDown={blockEvent}
         onMouseDown={blockEvent}
@@ -318,7 +319,7 @@ export function VisitorLoginModal({
         </button>
 
         {/* Header with branding */}
-        <div className="bg-gradient-to-r from-[#0f2b46] via-[#1a4a7a] to-[#0f2b46] px-6 pt-6 pb-4">
+        <div className="bg-gradient-to-r from-[#0f2b46] via-[#1a4a7a] to-[#0f2b46] px-6 pt-6 pb-4 flex-shrink-0">
           <div className="flex flex-col gap-2 text-left">
             <h2 id="visitor-modal-title" className="text-white text-lg font-semibold flex items-center gap-2">
               {step === "email" && (
@@ -348,7 +349,7 @@ export function VisitorLoginModal({
           </div>
         </div>
 
-        <div className="px-6 pb-6 pt-4">
+        <div className="px-6 pb-6 pt-4 overflow-y-auto flex-1">
           {/* Error Alert */}
           {error && (
             <Alert variant="destructive" className="mb-4">
@@ -579,6 +580,7 @@ export function VisitorLoginModal({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

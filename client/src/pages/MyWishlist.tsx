@@ -13,18 +13,21 @@ import { VisitorLoginModal } from "@/components/VisitorLoginModal";
 
 export default function MyWishlist() {
   const { user } = useAuth();
+  const utils = trpc.useUtils();
   const [selectedProperty, setSelectedProperty] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   
-  const { data: wishlistItems, isLoading, refetch } = trpc.wishlist.list.useQuery(undefined, {
+  const { data: wishlistItems, isLoading } = trpc.wishlist.list.useQuery(undefined, {
     enabled: !!user,
   });
   
   const removeFromWishlist = trpc.wishlist.remove.useMutation({
-    onSuccess: () => {
+    onSuccess: (_data, propertyId) => {
       toast.success("Property removed from wishlist");
-      refetch();
+      // Invalidate both list and check queries so all components update immediately
+      utils.wishlist.list.invalidate();
+      utils.wishlist.check.invalidate(propertyId);
     },
     onError: () => {
       toast.error("Failed to remove property");
