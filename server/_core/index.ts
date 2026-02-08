@@ -32,6 +32,44 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 async function startServer() {
   const app = express();
   const server = createServer(app);
+
+  // ============================================
+  // SECURITY HARDENING
+  // ============================================
+  
+  // Remove x-powered-by header (hides Express fingerprint)
+  app.disable('x-powered-by');
+  
+  // Security headers middleware (equivalent to helmet defaults)
+  app.use((_req, res, next) => {
+    // Strict-Transport-Security: enforce HTTPS for 1 year, include subdomains
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    // X-Content-Type-Options: prevent MIME-type sniffing
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    // X-Frame-Options: prevent clickjacking via iframe embedding
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    // Referrer-Policy: only send origin on cross-origin requests
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    // Permissions-Policy: restrict browser features
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), interest-cohort=()');
+    // X-XSS-Protection: enable XSS filter in older browsers
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    // Content-Security-Policy: control resource loading
+    res.setHeader('Content-Security-Policy', [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://client.crisp.chat https://www.googletagmanager.com https://www.google-analytics.com https://maps.googleapis.com",
+      "style-src 'self' 'unsafe-inline' https://client.crisp.chat https://fonts.googleapis.com",
+      "img-src 'self' data: blob: https: http:",
+      "font-src 'self' https://client.crisp.chat https://fonts.gstatic.com",
+      "connect-src 'self' https://client.crisp.chat wss://client.relay.crisp.chat https://www.google-analytics.com https://api.frankfurter.dev https://maps.googleapis.com https://*.3bsolution.com https://*.r2.dev",
+      "frame-src 'self' https://client.crisp.chat https://www.google.com https://maps.google.com",
+      "media-src 'self' https: blob:",
+      "object-src 'none'",
+      "base-uri 'self'",
+    ].join('; '));
+    next();
+  });
+
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
