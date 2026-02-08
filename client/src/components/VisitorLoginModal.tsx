@@ -280,7 +280,7 @@ export function VisitorLoginModal({
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center"
+      className="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto py-4"
       onClick={blockEvent}
       onPointerDown={blockEvent}
       onMouseDown={blockEvent}
@@ -288,7 +288,7 @@ export function VisitorLoginModal({
     >
       {/* Overlay - blocks ALL interaction with page behind */}
       <div
-        className="absolute inset-0 bg-black/50 animate-in fade-in-0 duration-200"
+        className="fixed inset-0 bg-black/50 animate-in fade-in-0 duration-200"
         onClick={handleOverlayClick}
         onPointerDown={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
         onMouseDown={(e) => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); }}
@@ -297,7 +297,7 @@ export function VisitorLoginModal({
       {/* Modal Content */}
       <div
         ref={contentRef}
-        className="relative z-[201] w-full max-w-[440px] mx-4 bg-white rounded-lg shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in-0 duration-200"
+        className="relative z-[201] w-full max-w-[440px] mx-4 my-auto bg-white rounded-lg shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in-0 duration-200 max-h-[calc(100vh-2rem)]"
         onClick={blockEvent}
         onPointerDown={blockEvent}
         onMouseDown={blockEvent}
@@ -348,7 +348,7 @@ export function VisitorLoginModal({
           </div>
         </div>
 
-        <div className="px-6 pb-6 pt-4">
+        <div className="px-6 pb-6 pt-4 overflow-y-auto">
           {/* Error Alert */}
           {error && (
             <Alert variant="destructive" className="mb-4">
