@@ -1315,7 +1315,7 @@ export default function Properties() {
         open={isSaveSearchOpen}
         onOpenChange={setIsSaveSearchOpen}
         filters={{
-          region: region !== "all" ? region : undefined,
+          region: selectedLocation || undefined,
           propertyType: propertyType !== "all" ? propertyType : undefined,
           priceMin: priceRange !== "all" ? parseInt(priceRange.split("-")[0]) : undefined,
           priceMax: priceRange !== "all" ? parseInt(priceRange.split("-")[1]) : undefined,
