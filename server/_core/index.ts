@@ -57,12 +57,12 @@ async function startServer() {
     // Content-Security-Policy: control resource loading
     res.setHeader('Content-Security-Policy', [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.3bsolution.com https://client.crisp.chat https://www.googletagmanager.com https://www.google-analytics.com https://maps.googleapis.com",
-      "style-src 'self' 'unsafe-inline' https://cdn.3bsolution.com https://client.crisp.chat https://fonts.googleapis.com",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.3bsolution.com https://code.tidio.co https://www.googletagmanager.com https://www.google-analytics.com https://maps.googleapis.com",
+      "style-src 'self' 'unsafe-inline' https://cdn.3bsolution.com https://fonts.googleapis.com",
       "img-src 'self' data: blob: https: http:",
-      "font-src 'self' https://cdn.3bsolution.com https://client.crisp.chat https://fonts.gstatic.com",
-      "connect-src 'self' https://cdn.3bsolution.com https://client.crisp.chat wss://client.relay.crisp.chat https://www.google-analytics.com https://api.frankfurter.dev https://maps.googleapis.com https://*.3bsolution.com https://*.r2.dev",
-      "frame-src 'self' https://client.crisp.chat https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com https://player.vimeo.com https://my.matterport.com",
+      "font-src 'self' data: https://cdn.3bsolution.com https://code.tidio.co https://fonts.gstatic.com",
+      "connect-src 'self' https://cdn.3bsolution.com https://sentry-new.tidio.co https://socket.tidio.co wss://socket.tidio.co https://uploads.tidio.com https://www.google-analytics.com https://api.frankfurter.dev https://maps.googleapis.com https://*.3bsolution.com https://*.r2.dev",
+      "frame-src 'self' https://www.google.com https://maps.google.com https://www.youtube.com https://youtube.com https://player.vimeo.com https://my.matterport.com",
       "media-src 'self' https: blob:",
       "object-src 'none'",
       "base-uri 'self'",
