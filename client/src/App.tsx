@@ -47,6 +47,7 @@ function Router() {
         <Route path="/" component={Home} />
       <Route path="/properties" component={Properties} />
       <Route path="/properties/:slug" component={PropertyDetail} />
+      <Route path="/property/:slug" component={PropertyDetail} />
       <Route path="/services" component={Services} />
       <Route path="/about" component={About} />
       <Route path="/team" component={Team} />
