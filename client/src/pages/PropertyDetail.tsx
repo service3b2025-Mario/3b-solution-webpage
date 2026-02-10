@@ -14,6 +14,7 @@ import {
   ArrowLeft
 } from "lucide-react";
 import { BookingSelector } from "@/components/BookingSelector";
+import { SEO } from "@/components/SEO";
 
 export default function PropertyDetail({ params }: { params?: { slug?: string } }) {
   const { slug: paramSlug } = useParams<{ slug?: string }>();
@@ -42,6 +43,10 @@ export default function PropertyDetail({ params }: { params?: { slug?: string } 
   const { data: isSaved } = trpc.wishlist.check.useQuery(property?.id ?? 0, {
     enabled: !!user && !!property,
   });
+
+  // Construct full image URL for SEO
+  const seoImage = property?.mainImage || (property?.images && property.images.length > 0 ? property.images[0] : undefined);
+  const fullSeoImage = seoImage?.startsWith('http') ? seoImage : `${window.location.origin}${seoImage}`;
 
   // Add to wishlist mutation
   const addMutation = trpc.wishlist.add.useMutation({
@@ -186,6 +191,13 @@ export default function PropertyDetail({ params }: { params?: { slug?: string } 
         open={showLoginModal} 
         onOpenChange={setShowLoginModal} 
       />
+
+      <SEO 
+        title={`${property.title} | 3B Solution`}
+        description={property.shortDescription || property.description.substring(0, 160)}
+        ogImage={fullSeoImage}
+        canonical={window.location.href}
+      />
       
       {/* Breadcrumb */}
       <div className="bg-muted/30 border-b">
@@ -285,7 +297,7 @@ export default function PropertyDetail({ params }: { params?: { slug?: string } 
                           <img 
                             src={property.images[currentImageIndex]} 
                             alt={`Property view ${currentImageIndex + 1}`}
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-cover"
                           />
                           
                           {/* Navigation Arrows */}
