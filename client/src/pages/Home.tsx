@@ -268,7 +268,10 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(properties?.items || []).slice(0, 3).map((property, index) => (
+            {(properties?.items || [])
+              .filter(p => p && p.id && p.title) // Filter out invalid properties
+              .slice(0, 3)
+              .map((property, index) => (
               <div
                 key={property.id}
                 className="cursor-pointer"

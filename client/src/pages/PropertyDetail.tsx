@@ -14,10 +14,16 @@ import {
   ArrowLeft
 } from "lucide-react";
 import { BookingSelector } from "@/components/BookingSelector";
+import { SEO } from "@/components/SEO";
 
-export default function PropertyDetail() {
-  const { slug } = useParams<{ slug: string }>();
-  const { data: property, isLoading } = trpc.properties.getBySlug.useQuery(slug || "");
+export default function PropertyDetail({ params }: { params?: { slug?: string } }) {
+  const { slug: paramSlug } = useParams<{ slug?: string }>();
+  const slug = params?.slug || paramSlug || "";
+  
+  const { data: property, isLoading } = trpc.properties.getBySlug.useQuery(slug, {
+    enabled: !!slug
+  });
+
   const { user } = useAuth();
   const utils = trpc.useUtils();
 
@@ -37,6 +43,10 @@ export default function PropertyDetail() {
   const { data: isSaved } = trpc.wishlist.check.useQuery(property?.id ?? 0, {
     enabled: !!user && !!property,
   });
+
+  // Construct full image URL for SEO
+  const seoImage = property?.mainImage || (property?.images && property.images.length > 0 ? property.images[0] : undefined);
+  const fullSeoImage = seoImage?.startsWith('http') ? seoImage : `${window.location.origin}${seoImage}`;
 
   // Add to wishlist mutation
   const addMutation = trpc.wishlist.add.useMutation({
@@ -159,11 +169,34 @@ export default function PropertyDetail() {
     ? property.exteriorFeatures 
     : null;
 
+  // Helper to format currency
+  const formatCurrency = (val?: number | null) => {
+    if (val === undefined || val === null) return "N/A";
+    return new Intl.NumberFormat('en-US', { 
+      style: 'currency', 
+      currency: property.currency || 'USD', 
+      maximumFractionDigits: 0 
+    }).format(val);
+  };
+
+  // Helper to format number
+  const formatNumber = (val?: number | null, unit: string = "") => {
+    if (val === undefined || val === null) return "N/A";
+    return `${new Intl.NumberFormat('en-US').format(val)}${unit}`;
+  };
+
   return (
     <Layout>
       <VisitorLoginModal 
-        isOpen={showLoginModal} 
-        onClose={() => setShowLoginModal(false)} 
+        open={showLoginModal} 
+        onOpenChange={setShowLoginModal} 
+      />
+
+      <SEO 
+        title={`${property.title} | 3B Solution`}
+        description={property.shortDescription || property.description.substring(0, 160)}
+        ogImage={fullSeoImage}
+        canonical={window.location.href}
       />
       
       {/* Breadcrumb */}
@@ -257,248 +290,252 @@ export default function PropertyDetail() {
                     </TabsList>
                   </div>
 
-                  <div className="aspect-video bg-black relative group">
-                    <TabsContent value="photos" className="m-0 h-full">
+                  <TabsContent value="photos" className="m-0">
+                    <div className="relative aspect-video bg-black group">
                       {property.images && property.images.length > 0 ? (
                         <>
                           <img 
                             src={property.images[currentImageIndex]} 
                             alt={`Property view ${currentImageIndex + 1}`}
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-cover"
                           />
                           
                           {/* Navigation Arrows */}
                           {property.images.length > 1 && (
                             <>
                               <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setCurrentImageIndex(prev => prev === 0 ? (property.images?.length || 1) - 1 : prev - 1);
-                                }}
-                                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
+                                onClick={() => setCurrentImageIndex(prev => prev === 0 ? property.images!.length - 1 : prev - 1)}
+                                className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                               >
                                 <ChevronLeft className="w-6 h-6" />
                               </button>
                               <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setCurrentImageIndex(prev => prev === (property.images?.length || 1) - 1 ? 0 : prev + 1);
-                                }}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
+                                onClick={() => setCurrentImageIndex(prev => prev === property.images!.length - 1 ? 0 : prev + 1)}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                               >
                                 <ChevronRight className="w-6 h-6" />
                               </button>
                             </>
                           )}
-                          
+
                           {/* Image Counter */}
-                          <div className="absolute bottom-4 right-4 bg-black/60 text-white text-xs px-2 py-1 rounded-md">
+                          <div className="absolute bottom-4 right-4 bg-black/60 text-white text-xs px-2 py-1 rounded">
                             {currentImageIndex + 1} / {property.images.length}
                           </div>
                         </>
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-white/50">
-                          <Building2 className="w-16 h-16 mb-2 opacity-50" />
-                          <p>No images available</p>
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                          <Camera className="w-12 h-12 opacity-20" />
                         </div>
                       )}
-                    </TabsContent>
-                    
-                    <TabsContent value="video" className="m-0 h-full flex items-center justify-center">
-                      {property.videoUrl ? (
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="video" className="m-0">
+                    <div className="aspect-video bg-black">
+                      {property.videoUrl && (
                         <iframe 
-                          src={property.videoUrl.replace('watch?v=', 'embed/')} 
+                          src={property.videoUrl} 
                           className="w-full h-full" 
                           allowFullScreen
-                          title="Property Video"
                         />
-                      ) : (
-                        <div className="text-white/50">No video available</div>
                       )}
-                    </TabsContent>
-                    
-                    <TabsContent value="tour" className="m-0 h-full flex items-center justify-center">
-                      {property.virtualTourUrl ? (
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="tour" className="m-0">
+                    <div className="aspect-video bg-black">
+                      {property.virtualTourUrl && (
                         <iframe 
                           src={property.virtualTourUrl} 
                           className="w-full h-full" 
                           allowFullScreen
-                          title="Virtual Tour"
                         />
-                      ) : (
-                        <div className="text-white/50">No virtual tour available</div>
                       )}
-                    </TabsContent>
-                  </div>
+                    </div>
+                  </TabsContent>
                 </Tabs>
               </div>
 
-              {/* Property Description */}
+              {/* Description */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Property Description</h3>
+                <h2 className="text-xl font-semibold">Property Description</h2>
                 <div className="prose prose-sm max-w-none text-muted-foreground">
-                  <p className="font-medium text-foreground mb-2">
-                    {property.shortDescription}
-                  </p>
-                  <p className="whitespace-pre-line">
-                    {property.description}
-                  </p>
-                  {property.additionalInformation && (
-                    <div className="mt-4 pt-4 border-t">
-                      <h4 className="text-sm font-semibold text-foreground mb-2">Additional Information</h4>
-                      <p>{property.additionalInformation}</p>
+                  <p className="font-medium text-foreground">{property.description}</p>
+                  {property.longDescription && (
+                    <div className="mt-4 space-y-4">
+                      <p className="whitespace-pre-line">{property.longDescription}</p>
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* Features */}
-              {(interiorFeatures || exteriorFeatures) && (
-                <div className="space-y-4 pt-6 border-t">
-                  <h3 className="text-lg font-semibold">Property Features</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {interiorFeatures && (
-                      <div>
-                        <h4 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">Interior Features</h4>
-                        <ul className="space-y-2">
-                          {interiorFeatures.map((feature, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm">
-                              <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                              <span>{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {exteriorFeatures && (
-                      <div>
-                        <h4 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wider">Exterior Features</h4>
-                        <ul className="space-y-2">
-                          {exteriorFeatures.map((feature, i) => (
-                            <li key={i} className="flex items-start gap-2 text-sm">
-                              <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                              <span>{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+              {/* Features Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Interior Features */}
+                {interiorFeatures && (
+                  <div>
+                    <h3 className="font-semibold mb-3 flex items-center gap-2">
+                      <Check className="w-4 h-4 text-primary" /> Interior Features
+                    </h3>
+                    <ul className="space-y-2">
+                      {interiorFeatures.map((feature, i) => (
+                        <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary/40 mt-1.5 flex-shrink-0" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Specifications */}
-              <div className="space-y-4 pt-6 border-t">
-                <h3 className="text-lg font-semibold">Property Specifications</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6">
-                  
-                  {/* Basic Info */}
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-muted-foreground border-b pb-1">Basic Information</h4>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <span className="text-muted-foreground">ID:</span>
-                      <span className="font-medium">#{property.id}</span>
-                      
-                      <span className="text-muted-foreground">Region:</span>
-                      <span className="font-medium">{property.region || 'N/A'}</span>
-                      
-                      <span className="text-muted-foreground">Type:</span>
-                      <span className="font-medium">{property.propertyType}</span>
-                      
-                      <span className="text-muted-foreground">Country:</span>
-                      <span className="font-medium">{property.country}</span>
-                      
-                      <span className="text-muted-foreground">Asset Class:</span>
-                      <span className="font-medium">{property.assetClass || 'N/A'}</span>
+                {/* Exterior Features */}
+                {exteriorFeatures && (
+                  <div>
+                    <h3 className="font-semibold mb-3 flex items-center gap-2">
+                      <Check className="w-4 h-4 text-primary" /> Exterior Features
+                    </h3>
+                    <ul className="space-y-2">
+                      {exteriorFeatures.map((feature, i) => (
+                        <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary/40 mt-1.5 flex-shrink-0" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              {/* Property Specifications (Detailed Layout) */}
+              <div className="bg-muted/30 rounded-xl p-6">
+                <h3 className="font-semibold mb-6">Property Specifications</h3>
+                
+                <div className="space-y-8">
+                  {/* Basic Information */}
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Basic Information</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8">
+                      <div>
+                        <p className="text-xs text-muted-foreground">ID</p>
+                        <p className="font-medium">#{property.id}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Type</p>
+                        <p className="font-medium">{property.propertyType}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Asset Class</p>
+                        <p className="font-medium">{property.assetClass || "Hospitality"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Region</p>
+                        <p className="font-medium">{property.location?.split(',')[0] || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Country</p>
+                        <p className="font-medium">{property.country || property.location?.split(',').pop()?.trim() || "N/A"}</p>
+                      </div>
                     </div>
                   </div>
 
                   {/* Size & Dimensions */}
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-muted-foreground border-b pb-1">Size & Dimensions</h4>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <span className="text-muted-foreground">Land Size (sqm):</span>
-                      <span className="font-medium">{property.landSizeSqm || 'N/A'}</span>
-                      
-                      <span className="text-muted-foreground">Land Size (ha):</span>
-                      <span className="font-medium">{property.landSizeHa || 'N/A'}</span>
-                      
-                      <span className="text-muted-foreground">Land Price per sqm:</span>
-                      <span className="font-medium">{property.landPricePerSqm || 'N/A'}</span>
-                      
-                      <span className="text-muted-foreground">Building Area:</span>
-                      <span className="font-medium">{property.buildingAreaSqm || 'N/A'}</span>
-                      
-                      <span className="text-muted-foreground">Floor Area:</span>
-                      <span className="font-medium">{property.floorAreaSqm || 'N/A'}</span>
-                      
-                      <span className="text-muted-foreground">Floors:</span>
-                      <span className="font-medium">{property.floors || 'N/A'}</span>
-                      
-                      <span className="text-muted-foreground">FAR:</span>
-                      <span className="font-medium">{property.floorAreaRatio || 'N/A'}</span>
-                    </div>
-                  </div>
-
-                  {/* Units Info */}
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-muted-foreground border-b pb-1">Units Information</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Total Units:</span>
-                        <span className="font-medium">{property.units || 'N/A'}</span>
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Size & Dimensions</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Land Size (sqm)</p>
+                        <p className="font-medium">{formatNumber(property.lotSize)}</p>
                       </div>
-                      {property.unitsDetails && (
-                        <div className="text-xs text-muted-foreground mt-1">
-                          <span className="font-medium text-foreground">Details:</span> {property.unitsDetails}
-                        </div>
-                      )}
+                      <div>
+                        <p className="text-xs text-muted-foreground">Land Size (ha)</p>
+                        <p className="font-medium">{formatNumber(property.lotSize ? property.lotSize / 10000 : null)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Land Price per sqm</p>
+                        <p className="font-medium">{property.price && property.lotSize ? formatCurrency(property.price / property.lotSize) : "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Building Area</p>
+                        <p className="font-medium">{formatNumber(property.buildingArea || property.area)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Floor Area</p>
+                        <p className="font-medium">{formatNumber(property.area)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Floors</p>
+                        <p className="font-medium">{property.floors || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">FAR</p>
+                        <p className="font-medium">{property.far || "N/A"}</p>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Pricing */}
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-muted-foreground border-b pb-1">Pricing & Investment</h4>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <span className="text-muted-foreground">Asking Price (Net):</span>
-                      <span className="font-medium">{property.askingPriceNet ? `$${Number(property.askingPriceNet).toLocaleString()}` : 'N/A'}</span>
-                      
-                      <span className="text-muted-foreground">Asking Price (Gross):</span>
-                      <span className="font-medium">{property.askingPriceGross ? `$${Number(property.askingPriceGross).toLocaleString()}` : 'N/A'}</span>
-                      
-                      <span className="text-muted-foreground">Min Price (Display):</span>
-                      <span className="font-medium">{property.priceMin ? `$${Number(property.priceMin).toLocaleString()}` : 'N/A'}</span>
-                      
-                      <span className="text-muted-foreground">Max Price (Display):</span>
-                      <span className="font-medium">{property.priceMax ? `$${Number(property.priceMax).toLocaleString()}` : 'N/A'}</span>
-                      
-                      <span className="text-muted-foreground">Currency:</span>
-                      <span className="font-medium">{property.currency || 'N/A'}</span>
+                  {/* Units Information */}
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Units Information</h4>
+                    <div className="space-y-2">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Total Units</p>
+                        <p className="font-medium">{property.units || property.bedrooms || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Details</p>
+                        <p className="font-medium text-sm">{property.unitDetails || "Multiple standardized room types suitable for city and business stays"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Pricing & Investment */}
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Pricing & Investment</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-y-4 gap-x-8">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Asking Price (Net)</p>
+                        <p className="font-medium">{formatCurrency(property.price)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Asking Price (Gross)</p>
+                        <p className="font-medium">{formatCurrency(property.priceGross || property.price)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Min Price (Display)</p>
+                        <p className="font-medium">{formatCurrency(property.minPrice)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Max Price (Display)</p>
+                        <p className="font-medium">{formatCurrency(property.maxPrice)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Currency</p>
+                        <p className="font-medium">{property.currency || "EUR"}</p>
+                      </div>
                     </div>
                   </div>
 
                   {/* Amenities */}
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-muted-foreground border-b pb-1">Amenities</h4>
-                    <div className="text-sm">
-                      {property.amenities && property.amenities.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {property.amenities.map((amenity, i) => (
-                            <span key={i} className="inline-block bg-muted px-2 py-0.5 rounded text-xs">
-                              {amenity}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">N/A</span>
-                      )}
-                    </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Amenities</h4>
+                    {property.amenities && property.amenities.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {property.amenities.map((amenity, i) => (
+                          <span key={i} className="inline-block bg-background border px-2.5 py-1 rounded-md text-xs font-medium">
+                            {amenity}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">N/A</p>
+                    )}
                   </div>
 
                   {/* Income Generating */}
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-muted-foreground border-b pb-1">Income Generating</h4>
-                    <div className="space-y-2 text-sm">
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Income Generating</h4>
+                    <div className="space-y-2">
                       <div>
                         {property.incomeGenerating ? (
                           <Badge className="bg-green-600 hover:bg-green-700">Yes</Badge>
@@ -507,7 +544,7 @@ export default function PropertyDetail() {
                         )}
                       </div>
                       {property.incomeDetails && (
-                        <p className="text-xs text-muted-foreground italic">
+                        <p className="text-sm text-muted-foreground italic">
                           {property.incomeDetails}
                         </p>
                       )}
@@ -530,7 +567,11 @@ export default function PropertyDetail() {
             {/* Right Column - Sidebar */}
             <div className="space-y-6">
               <div className="sticky top-24">
-                <BookingSelector propertyTitle={property.title} />
+                <div className="bg-card rounded-xl border shadow-sm p-6">
+                  <h3 className="text-lg font-semibold mb-1">Schedule a Consultation</h3>
+                  <p className="text-sm text-muted-foreground mb-6">Interested in this property? Connect with our team.</p>
+                  <BookingSelector layout="vertical" />
+                </div>
               </div>
             </div>
           </div>

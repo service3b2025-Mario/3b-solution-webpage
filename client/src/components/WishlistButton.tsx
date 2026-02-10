@@ -20,7 +20,7 @@ export function WishlistButton({ propertyId, className = "", size = "default" }:
   
   // Check if property is in wishlist
   const { data: isInWishlist } = trpc.wishlist.check.useQuery(propertyId, {
-    enabled: !!user,
+    enabled: !!user && !!propertyId,
   });
   
   // Add to wishlist mutation
