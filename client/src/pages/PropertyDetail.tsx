@@ -164,6 +164,22 @@ export default function PropertyDetail({ params }: { params?: { slug?: string } 
     ? property.exteriorFeatures 
     : null;
 
+  // Helper to format currency
+  const formatCurrency = (val?: number | null) => {
+    if (val === undefined || val === null) return "N/A";
+    return new Intl.NumberFormat('en-US', { 
+      style: 'currency', 
+      currency: property.currency || 'USD', 
+      maximumFractionDigits: 0 
+    }).format(val);
+  };
+
+  // Helper to format number
+  const formatNumber = (val?: number | null, unit: string = "") => {
+    if (val === undefined || val === null) return "N/A";
+    return `${new Intl.NumberFormat('en-US').format(val)}${unit}`;
+  };
+
   return (
     <Layout>
       <VisitorLoginModal 
@@ -331,11 +347,11 @@ export default function PropertyDetail({ params }: { params?: { slug?: string } 
 
               {/* Description */}
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold">About this property</h2>
+                <h2 className="text-xl font-semibold">Property Description</h2>
                 <div className="prose prose-sm max-w-none text-muted-foreground">
-                  <p>{property.description}</p>
+                  <p className="font-medium text-foreground">{property.description}</p>
                   {property.longDescription && (
-                    <div className="mt-4 pt-4 border-t">
+                    <div className="mt-4 space-y-4">
                       <p className="whitespace-pre-line">{property.longDescription}</p>
                     </div>
                   )}
@@ -379,87 +395,135 @@ export default function PropertyDetail({ params }: { params?: { slug?: string } 
                 )}
               </div>
 
-              {/* Property Details Grid */}
+              {/* Property Specifications (Detailed Layout) */}
               <div className="bg-muted/30 rounded-xl p-6">
-                <h3 className="font-semibold mb-4">Property Details</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4">
-                  
-                  {/* Price */}
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Price</p>
-                    <p className="font-medium">
-                      {property.price ? (
-                        new Intl.NumberFormat('en-US', { style: 'currency', currency: property.currency || 'USD', maximumFractionDigits: 0 }).format(property.price)
-                      ) : (
-                        <span className="text-muted-foreground italic">Price on Request</span>
-                      )}
-                    </p>
-                  </div>
-
-                  {/* Property Type */}
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Property Type</p>
-                    <p className="font-medium">{property.propertyType}</p>
-                  </div>
-
-                  {/* Status */}
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Status</p>
-                    <p className="font-medium capitalize">{property.status?.replace(/([A-Z])/g, ' $1').trim()}</p>
-                  </div>
-
-                  {/* Bedrooms */}
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Bedrooms</p>
-                    <p className="font-medium">{property.bedrooms || 'N/A'}</p>
-                  </div>
-
-                  {/* Bathrooms */}
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Bathrooms</p>
-                    <p className="font-medium">{property.bathrooms || 'N/A'}</p>
-                  </div>
-
-                  {/* Area */}
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Living Area</p>
-                    <p className="font-medium">{property.area ? `${property.area} m²` : 'N/A'}</p>
-                  </div>
-
-                  {/* Lot Size */}
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Lot Size</p>
-                    <p className="font-medium">{property.lotSize || 'N/A'}</p>
-                  </div>
-
-                  {/* Year Built */}
-                  <div className="space-y-1">
-                    <p className="text-xs text-muted-foreground">Year Built</p>
-                    <p className="font-medium">{property.yearBuilt || 'N/A'}</p>
-                  </div>
-
-                  {/* Amenities */}
-                  <div className="col-span-2 md:col-span-3">
-                    <div className="space-y-1">
-                      <p className="text-xs text-muted-foreground mb-1">Amenities</p>
-                      {property.amenities && property.amenities.length > 0 ? (
-                        <div className="flex flex-wrap gap-1">
-                          {property.amenities.map((amenity, i) => (
-                            <span key={i} className="inline-block bg-muted px-2 py-0.5 rounded text-xs">
-                              {amenity}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">N/A</span>
-                      )}
+                <h3 className="font-semibold mb-6">Property Specifications</h3>
+                
+                <div className="space-y-8">
+                  {/* Basic Information */}
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Basic Information</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8">
+                      <div>
+                        <p className="text-xs text-muted-foreground">ID</p>
+                        <p className="font-medium">#{property.id}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Type</p>
+                        <p className="font-medium">{property.propertyType}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Asset Class</p>
+                        <p className="font-medium">{property.assetClass || "Hospitality"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Region</p>
+                        <p className="font-medium">{property.location?.split(',')[0] || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Country</p>
+                        <p className="font-medium">{property.country || property.location?.split(',').pop()?.trim() || "N/A"}</p>
+                      </div>
                     </div>
                   </div>
 
+                  {/* Size & Dimensions */}
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Size & Dimensions</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-8">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Land Size (sqm)</p>
+                        <p className="font-medium">{formatNumber(property.lotSize)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Land Size (ha)</p>
+                        <p className="font-medium">{formatNumber(property.lotSize ? property.lotSize / 10000 : null)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Land Price per sqm</p>
+                        <p className="font-medium">{property.price && property.lotSize ? formatCurrency(property.price / property.lotSize) : "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Building Area</p>
+                        <p className="font-medium">{formatNumber(property.buildingArea || property.area)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Floor Area</p>
+                        <p className="font-medium">{formatNumber(property.area)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Floors</p>
+                        <p className="font-medium">{property.floors || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">FAR</p>
+                        <p className="font-medium">{property.far || "N/A"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Units Information */}
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Units Information</h4>
+                    <div className="space-y-2">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Total Units</p>
+                        <p className="font-medium">{property.units || property.bedrooms || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Details</p>
+                        <p className="font-medium text-sm">{property.unitDetails || "Multiple standardized room types suitable for city and business stays"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Pricing & Investment */}
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Pricing & Investment</h4>
+                    <div className="grid grid-cols-2 md:grid-cols-2 gap-y-4 gap-x-8">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Asking Price (Net)</p>
+                        <p className="font-medium">{formatCurrency(property.price)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Asking Price (Gross)</p>
+                        <p className="font-medium">{formatCurrency(property.priceGross || property.price)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Min Price (Display)</p>
+                        <p className="font-medium">{formatCurrency(property.minPrice)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Max Price (Display)</p>
+                        <p className="font-medium">{formatCurrency(property.maxPrice)}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Currency</p>
+                        <p className="font-medium">{property.currency || "EUR"}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Amenities */}
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Amenities</h4>
+                    {property.amenities && property.amenities.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {property.amenities.map((amenity, i) => (
+                          <span key={i} className="inline-block bg-background border px-2.5 py-1 rounded-md text-xs font-medium">
+                            {amenity}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">N/A</p>
+                    )}
+                  </div>
+
                   {/* Income Generating */}
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-muted-foreground border-b pb-1">Income Generating</h4>
-                    <div className="space-y-2 text-sm">
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Income Generating</h4>
+                    <div className="space-y-2">
                       <div>
                         {property.incomeGenerating ? (
                           <Badge className="bg-green-600 hover:bg-green-700">Yes</Badge>
@@ -468,7 +532,7 @@ export default function PropertyDetail({ params }: { params?: { slug?: string } 
                         )}
                       </div>
                       {property.incomeDetails && (
-                        <p className="text-xs text-muted-foreground italic">
+                        <p className="text-sm text-muted-foreground italic">
                           {property.incomeDetails}
                         </p>
                       )}
@@ -491,7 +555,11 @@ export default function PropertyDetail({ params }: { params?: { slug?: string } 
             {/* Right Column - Sidebar */}
             <div className="space-y-6">
               <div className="sticky top-24">
-                <BookingSelector propertyTitle={property.title} />
+                <div className="bg-card rounded-xl border shadow-sm p-6">
+                  <h3 className="text-lg font-semibold mb-1">Schedule a Consultation</h3>
+                  <p className="text-sm text-muted-foreground mb-6">Interested in this property? Connect with our team.</p>
+                  <BookingSelector layout="vertical" />
+                </div>
               </div>
             </div>
           </div>
