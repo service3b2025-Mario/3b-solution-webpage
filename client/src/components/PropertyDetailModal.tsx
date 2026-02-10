@@ -168,7 +168,7 @@ export function PropertyDetailModal({
   const handleShare = async () => {
     if (!property) return;
     
-    const shareUrl = `${window.location.origin}/property/${property.slug}`;
+    const shareUrl = `${window.location.origin}/properties/${property.slug}`;
     const shareData = {
       title: property.title,
       text: `Check out this property: ${property.title} in ${property.location}`,
