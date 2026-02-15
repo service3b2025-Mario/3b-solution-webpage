@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Video, Phone, Mail, Check, Loader2, ChevronDown, X } from "lucide-react";
+import { Video, Phone, Mail, Check, Loader2, ChevronDown } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
@@ -60,11 +60,9 @@ interface BookingSelectorProps {
 
 export function BookingSelector({ className, layout = "horizontal" }: BookingSelectorProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [showBookingModal, setShowBookingModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [optionalDetailsOpen, setOptionalDetailsOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -81,15 +79,6 @@ export function BookingSelector({ className, layout = "horizontal" }: BookingSel
 
   const createLead = trpc.leads.create.useMutation();
 
-  // Detect mobile device
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   const handleOptionSelect = (optionId: string) => {
     setSelectedOption(optionId);
@@ -97,13 +86,9 @@ export function BookingSelector({ className, layout = "horizontal" }: BookingSel
   };
 
   const handleContinueToBooking = () => {
-    if (isMobile) {
-      // Mobile: Open in new tab
-      window.open(BOOKINGS_URL, "_blank");
-    } else {
-      // Desktop: Open modal with iframe
-      setShowBookingModal(true);
-    }
+    // Always open Microsoft Bookings in a new tab
+    // Microsoft blocks iframe embedding via X-Frame-Options headers
+    window.open(BOOKINGS_URL, "_blank", "noopener,noreferrer");
   };
 
   const validateForm = () => {
@@ -242,14 +227,14 @@ export function BookingSelector({ className, layout = "horizontal" }: BookingSel
             /* Booking Flow (Video/Phone) */
             <div className="bg-muted/50 rounded-lg p-6 text-center">
               <p className="text-sm text-muted-foreground mb-4">
-                You will be redirected to our secure scheduling page to choose a time slot.
+                You will be redirected to our secure Microsoft Bookings page to choose a time slot.
               </p>
               <Button
                 onClick={handleContinueToBooking}
                 size="lg"
                 className="bg-secondary hover:bg-secondary/90 text-white px-8"
               >
-                Continue to Booking
+                Open Booking Page ↗
               </Button>
             </div>
           ) : (
@@ -423,30 +408,7 @@ export function BookingSelector({ className, layout = "horizontal" }: BookingSel
         </div>
       )}
 
-      {/* Booking Modal (Desktop only) */}
-      <Dialog open={showBookingModal} onOpenChange={setShowBookingModal}>
-        <DialogContent className="max-w-4xl h-[80vh] p-0">
-          <DialogHeader className="p-4 border-b flex flex-row items-center justify-between">
-            <DialogTitle>Schedule Your Consultation</DialogTitle>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowBookingModal(false)}
-              className="h-8 w-8"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </DialogHeader>
-          <div className="flex-1 h-full">
-            <iframe
-              src={BOOKINGS_URL}
-              className="w-full h-[calc(80vh-60px)] border-0"
-              title="Microsoft Bookings"
-              allow="camera; microphone"
-            />
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Booking now opens in new tab - Microsoft blocks iframe embedding */}
 
       {/* Success Modal */}
       <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
