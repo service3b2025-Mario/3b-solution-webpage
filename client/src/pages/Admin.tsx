@@ -558,7 +558,7 @@ function PropertiesSection({ properties, canCreate, canUpdate, canDelete }: any)
       // Convert formatted number strings to proper types (with NaN protection)
       landSizeSqm: editingProperty.landSizeSqm ? (isNaN(parseFloat(String(editingProperty.landSizeSqm).replace(/,/g, ''))) ? undefined : parseFloat(String(editingProperty.landSizeSqm).replace(/,/g, ''))) : undefined,
       landSizeHa: editingProperty.landSizeHa ? (isNaN(parseFloat(String(editingProperty.landSizeHa).replace(/,/g, ''))) ? undefined : parseFloat(String(editingProperty.landSizeHa).replace(/,/g, ''))) : undefined,
-      landPricePerSqm: editingProperty.landPricePerSqm ? (isNaN(parseFloat(String(editingProperty.landPricePerSqm).replace(/,/g, ''))) ? undefined : parseFloat(String(editingProperty.landPricePerSqm).replace(/,/g, ''))) : undefined,
+      landPricePerSqm: editingProperty.landPricePerSqm ? (isNaN(parseFloat(String(editingProperty.landPricePerSqm).replace(/,/g, ''))) ? null : parseFloat(String(editingProperty.landPricePerSqm).replace(/,/g, ''))) : null,
       buildingAreaSqm: editingProperty.buildingAreaSqm ? (isNaN(parseFloat(String(editingProperty.buildingAreaSqm).replace(/,/g, ''))) ? undefined : parseFloat(String(editingProperty.buildingAreaSqm).replace(/,/g, ''))) : undefined,
       floorAreaSqm: editingProperty.floorAreaSqm ? (isNaN(parseFloat(String(editingProperty.floorAreaSqm).replace(/,/g, ''))) ? undefined : parseFloat(String(editingProperty.floorAreaSqm).replace(/,/g, ''))) : undefined,
       floors: editingProperty.floors ? (isNaN(parseInt(String(editingProperty.floors).replace(/,/g, ''))) ? undefined : parseInt(String(editingProperty.floors).replace(/,/g, ''))) : undefined,

@@ -312,7 +312,7 @@ export async function createProperty(data: InsertProperty) {
   if (sanitizedData.shortDescription === '') sanitizedData.shortDescription = null as any;
   
   // Convert NaN and invalid numbers to null for numeric fields
-  const numericFields = ['landSizeSqm', 'landSizeHa', 'buildingAreaSqm', 'floorAreaSqm', 'floors', 'units', 'floorAreaRatio', 'askingPriceNet', 'askingPriceGross', 'expectedReturn', 'bedrooms', 'bathrooms', 'yearBuilt'] as const;
+  const numericFields = ['landSizeSqm', 'landSizeHa', 'landPricePerSqm', 'buildingAreaSqm', 'floorAreaSqm', 'floors', 'units', 'floorAreaRatio', 'askingPriceNet', 'askingPriceGross', 'expectedReturn', 'roiPercent', 'possibleRoiPercent', 'bedrooms', 'bathrooms', 'yearBuilt'] as const;
   numericFields.forEach(field => {
     const value = (sanitizedData as any)[field];
     if (value !== undefined && value !== null) {
@@ -380,7 +380,7 @@ export async function updateProperty(id: number, data: Partial<InsertProperty>) 
   if (sanitizedData.shortDescription === '') sanitizedData.shortDescription = null as any;
   
   // Convert NaN and invalid numbers to null for numeric fields
-  const numericFields = ['landSizeSqm', 'landSizeHa', 'buildingAreaSqm', 'floorAreaSqm', 'floors', 'units', 'floorAreaRatio', 'askingPriceNet', 'askingPriceGross', 'expectedReturn', 'bedrooms', 'bathrooms', 'yearBuilt'] as const;
+  const numericFields = ['landSizeSqm', 'landSizeHa', 'landPricePerSqm', 'buildingAreaSqm', 'floorAreaSqm', 'floors', 'units', 'floorAreaRatio', 'askingPriceNet', 'askingPriceGross', 'expectedReturn', 'roiPercent', 'possibleRoiPercent', 'bedrooms', 'bathrooms', 'yearBuilt'] as const;
   numericFields.forEach(field => {
     const value = (sanitizedData as any)[field];
     if (value !== undefined && value !== null) {
