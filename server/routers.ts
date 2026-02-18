@@ -7,6 +7,7 @@ import { TRPCError } from "@trpc/server";
 import * as db from "./db";
 import { seedDatabase } from "./seed";
 import { storagePut } from "./storage.js";
+import sharp from "sharp";
 import { cache, CacheTTL } from "./cache";
 import { generateMeetingLink } from "./meetingLinks";
 import { sendBookingConfirmation, sendReschedulingNotification } from "./tourNotifications";
@@ -758,16 +759,40 @@ export const appRouter = router({
       data: z.string(), // base64 encoded
     })).mutation(async ({ input }) => {
       // Convert base64 to buffer
-      const buffer = Buffer.from(input.data, 'base64');
+      const rawBuffer = Buffer.from(input.data, 'base64');
+      
+      // Process image with Sharp: resize to max 1920x1080, convert to WebP
+      let processedBuffer: Buffer;
+      let finalContentType: string;
+      let finalExt: string;
+      
+      try {
+        processedBuffer = await sharp(rawBuffer)
+          .rotate() // Auto-rotate based on EXIF orientation
+          .resize(1920, 1080, {
+            fit: 'inside',
+            withoutEnlargement: true,
+          })
+          .webp({ quality: 82 })
+          .toBuffer();
+        finalContentType = 'image/webp';
+        finalExt = 'webp';
+        console.log(`[Image Optimization] ${input.filename}: ${(rawBuffer.length / 1024).toFixed(0)}KB → ${(processedBuffer.length / 1024).toFixed(0)}KB (WebP)`);
+      } catch (error) {
+        // Fallback: upload original if Sharp processing fails
+        console.warn('[Image Optimization] Sharp processing failed, uploading original:', error);
+        processedBuffer = rawBuffer;
+        finalContentType = input.contentType;
+        finalExt = input.filename.split('.').pop() || 'jpg';
+      }
       
       // Generate unique filename
       const timestamp = Date.now();
       const randomStr = Math.random().toString(36).substring(7);
-      const ext = input.filename.split('.').pop() || 'jpg';
-      const fileKey = `properties/${timestamp}-${randomStr}.${ext}`;
+      const fileKey = `properties/${timestamp}-${randomStr}.${finalExt}`;
       
-      // Upload to S3
-      const result = await storagePut(buffer, input.contentType, fileKey);
+      // Upload optimized image to S3
+      const result = await storagePut(processedBuffer, finalContentType, fileKey);
       
       return result;
     }),
