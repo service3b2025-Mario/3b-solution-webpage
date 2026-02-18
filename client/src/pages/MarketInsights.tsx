@@ -178,6 +178,7 @@ export default function MarketInsights() {
                       src={report.thumbnailUrl} 
                       alt={report.title}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   ) : (
                     <FileText className="w-16 h-16 text-primary/30" />

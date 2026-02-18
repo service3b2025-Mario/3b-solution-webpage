@@ -63,7 +63,7 @@ export default function SuccessStories() {
               <div className="grid grid-cols-1 lg:grid-cols-2">
                 <div className="h-64 lg:h-auto bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden">
                   {featuredStory.image ? (
-                    <img src={featuredStory.image} alt={featuredStory.title} className="w-full h-full object-cover" />
+                    <img src={featuredStory.image} alt={featuredStory.title} className="w-full h-full object-cover" loading="lazy" />
                   ) : (
                     <Building2 className="w-24 h-24 text-primary/30" />
                   )}
@@ -140,7 +140,7 @@ export default function SuccessStories() {
               >
                 <div className="h-48 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center relative overflow-hidden">
                   {story.image ? (
-                    <img src={story.image} alt={story.title} className="w-full h-full object-cover" />
+                    <img src={story.image} alt={story.title} className="w-full h-full object-cover" loading="lazy" />
                   ) : (
                     <Building2 className="w-16 h-16 text-primary/30" />
                   )}
