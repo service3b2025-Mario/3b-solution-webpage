@@ -3,11 +3,15 @@
  * One-time migration script to optimize existing success story images
  * and market report thumbnails to WebP format using Sharp.
  *
- * Uses PostgreSQL (postgres library) — NOT mysql2.
+ * Database: PostgreSQL (uses 'postgres' library)
+ *
+ * Actual column names (from information_schema):
+ *   success_stories: id, title, image
+ *   market_reports:  id, title, thumbnail_url
  *
  * Usage:
- *   node scripts/optimize-stories-reports.mjs --dry-run    # Preview changes without modifying anything
- *   node scripts/optimize-stories-reports.mjs              # Execute the migration
+ *   node scripts/optimize-stories-reports.mjs --dry-run    # Preview changes
+ *   node scripts/optimize-stories-reports.mjs              # Execute migration
  *
  * Required env vars (already set on Render):
  *   DATABASE_URL, CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_R2_ACCESS_KEY_ID,
@@ -106,11 +110,11 @@ async function main() {
   // ── 1. Success Story Images ──────────────────────────────────
   console.log("📸 Processing Success Story Images...\n");
 
-  // Column names from schema: storyTitle, storyImage
+  // Actual PostgreSQL columns: id, title, image
   const stories = await sql`
-    SELECT id, "storyTitle" AS title, "storyImage" AS image 
+    SELECT id, title, image 
     FROM success_stories 
-    WHERE "storyImage" IS NOT NULL AND "storyImage" != ''
+    WHERE image IS NOT NULL AND image != ''
   `;
 
   console.log(`  Found ${stories.length} stories with images\n`);
@@ -145,10 +149,9 @@ async function main() {
         const newKey = `success-stories/story-${story.id}-${timestamp}-${randomStr}.webp`;
         const newUrl = await uploadToR2(newKey, optimizedBuffer, "image/webp");
 
-        // Update database — use the actual column name "storyImage"
         await sql`
           UPDATE success_stories 
-          SET "storyImage" = ${newUrl} 
+          SET image = ${newUrl} 
           WHERE id = ${story.id}
         `;
         console.log(`     ✅ Updated → ${newUrl}`);
@@ -162,11 +165,11 @@ async function main() {
   // ── 2. Market Report Thumbnails ──────────────────────────────
   console.log("\n📄 Processing Market Report Thumbnails...\n");
 
-  // Column names from schema: reportTitle, thumbnailUrl
+  // Actual PostgreSQL columns: id, title, thumbnail_url
   const reports = await sql`
-    SELECT id, "reportTitle" AS title, "thumbnailUrl" AS thumbnail_url 
+    SELECT id, title, thumbnail_url 
     FROM market_reports 
-    WHERE "thumbnailUrl" IS NOT NULL AND "thumbnailUrl" != ''
+    WHERE thumbnail_url IS NOT NULL AND thumbnail_url != ''
   `;
 
   console.log(`  Found ${reports.length} reports with thumbnails\n`);
@@ -201,10 +204,9 @@ async function main() {
         const newKey = `market-reports/thumb-${report.id}-${timestamp}-${randomStr}.webp`;
         const newUrl = await uploadToR2(newKey, optimizedBuffer, "image/webp");
 
-        // Update database — use the actual column name "thumbnailUrl"
         await sql`
           UPDATE market_reports 
-          SET "thumbnailUrl" = ${newUrl} 
+          SET thumbnail_url = ${newUrl} 
           WHERE id = ${report.id}
         `;
         console.log(`     ✅ Updated → ${newUrl}`);
